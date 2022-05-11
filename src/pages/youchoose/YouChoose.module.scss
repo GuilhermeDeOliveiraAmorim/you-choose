@@ -1,6 +1,6 @@
 .container {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    height: 100vh;
+    height: calc(100vh - 47px);
     background-color: #7f8c8d;
 }
