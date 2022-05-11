@@ -33,8 +33,7 @@ export default function Menu() {
     return (
         <div id="myTopnav">
             <ul className={StyleMenu.topnav}>
-                <Link to={}
-                <li className={StyleMenu.menu__li}>Home</li>
+                <li>Home</li>
                 <li>Lists</li>
                 <li>Score</li>
                 <li>You Choose</li>
