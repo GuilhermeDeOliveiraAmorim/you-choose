@@ -2,20 +2,7 @@ import { Link } from "react-router-dom";
 import StyleMenu from "./Menu.module.scss";
 
 export default function Menu() {
-    function myFunction() {
-        var x: HTMLElement | any = document.getElementById("myTopnav");
-        if (x.className === "topnav") {
-            x.className += " responsive";
-        } else {
-            x.className = "topnav";
-        }
-    }
-
     const rotas = [
-		{
-			label: 'Início',
-			to: '/'
-		},
 		{
 			label: 'Home',
 			to: '/home'
@@ -27,17 +14,24 @@ export default function Menu() {
 		{
 			label: 'Score',
 			to: '/score'
+		},
+		{
+			label: 'You Choose',
+			to: '/you-choose'
 		}
 	];
 
     return (
-        <div id="myTopnav">
-            <ul className={StyleMenu.topnav}>
-                <li>Home</li>
-                <li>Lists</li>
-                <li>Score</li>
-                <li>You Choose</li>
-            </ul>
-        </div>
+        <nav>
+			<ul className={StyleMenu.menu__list}>
+				{rotas.map((rota, index) => (
+					<li key={index} className={StyleMenu.menu__link}>
+						<Link to={rota.to}>
+							{rota.label}
+						</Link>
+					</li>
+				))}
+			</ul>
+        </nav>
     );
 }
