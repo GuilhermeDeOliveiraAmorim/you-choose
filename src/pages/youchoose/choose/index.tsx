@@ -11,20 +11,29 @@ export default function Choose() {
         movieIdB: initialIds[1],
     });
 
-    function handleIds(id: number) {
-        let movieIdA = movieIds.movieIdA;
-        let movieIdB = movieIds.movieIdB;
+    function handleIds(idClick: number) {
 
-        let ids = arrayNumberRandom();
+        idClick = idClick;
+        let idA = movieIds.movieIdA;
+        let idB = movieIds.movieIdB;
 
-        if (movieIds.movieIdA === id) {
-            movieIdB = ids[0];
+        if (idA === idClick) {
+            do {
+                var aux = numberRandom();
+                idB = aux;
+            } while (idA === aux);
         } else {
-            movieIdA = ids[0];
+            do {
+                var aux = numberRandom();
+                idA = aux;
+            } while (idB === aux);
         }
 
-        console.log(movieIdA, movieIdB);
+        //console.log(movieIdA, movieIdB);
         /*Os ids não podem ser iguais*/
+
+        let movieIdA = idA;
+        let movieIdB = idB;
 
         setMovieIds({ movieIdA, movieIdB });
     }
