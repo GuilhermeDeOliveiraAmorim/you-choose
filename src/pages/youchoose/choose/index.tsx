@@ -29,9 +29,6 @@ export default function Choose() {
             } while (idB === aux);
         }
 
-        //console.log(movieIdA, movieIdB);
-        /*Os ids não podem ser iguais*/
-
         let movieIdA = idA;
         let movieIdB = idB;
 
@@ -60,7 +57,7 @@ export default function Choose() {
     return (
         <>
             <div className={StyleChoose.box_choose}>
-                <div onClick={() => handleIds(movieIds.movieIdA)}>
+                <div onClick={() => handleIds(movieIds.movieIdA)} className={StyleChoose.card}>
                     <Movie
                         title={movies[movieIds.movieIdA].title}
                         id={movies[movieIds.movieIdA].id}
@@ -69,7 +66,7 @@ export default function Choose() {
                         votes={movies[movieIds.movieIdA].votes}
                     />
                 </div>
-                <div onClick={() => handleIds(movieIds.movieIdB)}>
+                <div onClick={() => handleIds(movieIds.movieIdB)} className={StyleChoose.card}>
                     <Movie
                         title={movies[movieIds.movieIdB].title}
                         id={movies[movieIds.movieIdB].id}
