@@ -21,8 +21,8 @@ export default function Item(props: Props) {
     return (
         <>
             <div key={id} className={StyleItem.item}>
-                <img src={poster} alt={title}  style={myStyle} className={StyleItem.item_img} />
-                <p>{title}</p>
+                <img src={poster} alt={title}  style={myStyle} className={StyleItem.item_poster} />
+                <div className={StyleItem.item_title}>{title}</div>
                 <div className={StyleItem.item_score}>{score}</div>
             </div>
         </>
