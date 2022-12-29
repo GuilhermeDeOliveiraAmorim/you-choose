@@ -3,23 +3,28 @@ package entity
 import "github.com/google/uuid"
 
 type Movie struct {
-	ID         string
-	Title      string
-	Synopsis   string
-	ImdbRating float32
-	Poster     string
-	Directors  []*Director
-	Actors     []*Actor
-	Writers    []*Writer
-	Genres     []*Genre
+	ID              string
+	Title           string
+	Synopsis        string
+	ImdbRating      float32
+	Votes           int32
+	YouChooseRating float32
+	Poster          string
+	Directors       []*Director
+	Actors          []*Actor
+	Writers         []*Writer
+	Genres          []*Genre
 }
 
 func NewMovie(title string, synopsis string, imdbRating float32, poster string) *Movie {
 	return &Movie{
-		ID:         uuid.New().String(),
-		Title:      title,
-		Synopsis:   synopsis,
-		ImdbRating: imdbRating,
+		ID:              uuid.New().String(),
+		Title:           title,
+		Synopsis:        synopsis,
+		ImdbRating:      imdbRating,
+		Votes:           0,
+		YouChooseRating: 0.0,
+		Poster:          poster,
 	}
 }
 
