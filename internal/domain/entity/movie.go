@@ -1,6 +1,10 @@
 package entity
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+
+	director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
+)
 
 type Movie struct {
 	ID              string
@@ -10,7 +14,7 @@ type Movie struct {
 	Votes           int32
 	YouChooseRating float32
 	Poster          string
-	Directors       []*Director
+	Directors       []*director.Director
 	Actors          []*Actor
 	Writers         []*Writer
 	Genres          []*Genre
@@ -28,11 +32,11 @@ func NewMovie(title string, synopsis string, imdbRating float32, poster string) 
 	}
 }
 
-func (m *Movie) AddDirector(director *Director) {
+func (m *Movie) AddDirector(director *director.Director) {
 	m.Directors = append(m.Directors, director)
 }
 
-func (m *Movie) RemoveDirector(director *Director) {
+func (m *Movie) RemoveDirector(director *director.Director) {
 	for i, d := range m.Directors {
 		if d.ID == director.ID {
 			m.Directors = append(m.Directors[:i], m.Directors[i+1:]...)
