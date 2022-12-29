@@ -1,14 +1,16 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Director struct {
 	ID      string
 	Name    string
 	Picture string
 }
 
-func NewDirector(id, name string, picture string) *Director {
+func NewDirector(name string, picture string) *Director {
 	return &Director{
-		ID:      id,
+		ID:      uuid.New().String(),
 		Name:    name,
 		Picture: picture,
 	}

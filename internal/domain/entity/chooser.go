@@ -1,5 +1,7 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Chooser struct {
 	ID        string
 	FirstName string
@@ -8,9 +10,9 @@ type Chooser struct {
 	Picture   string
 }
 
-func NewChooser(id string, firstName string, lastName string, userName string, picture string) *Chooser {
+func NewChooser(firstName string, lastName string, userName string, picture string) *Chooser {
 	return &Chooser{
-		ID:        id,
+		ID:        uuid.New().String(),
 		FirstName: firstName,
 		LastName:  lastName,
 		UserName:  userName,

@@ -1,5 +1,7 @@
 package entity
 
+import "github.com/google/uuid"
+
 type MovieList struct {
 	ID          string
 	Title       string
@@ -8,9 +10,9 @@ type MovieList struct {
 	Movies      []*Movie
 }
 
-func NewMovieList(id, title string, description string) *MovieList {
+func NewMovieList(title string, description string) *MovieList {
 	return &MovieList{
-		ID:          id,
+		ID:          uuid.New().String(),
 		Title:       title,
 		Description: description,
 	}

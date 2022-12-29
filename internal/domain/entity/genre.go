@@ -1,14 +1,16 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Genre struct {
 	ID      string
 	Name    string
 	Picture string
 }
 
-func NewGenre(id, name string, picture string) *Genre {
+func NewGenre(name string, picture string) *Genre {
 	return &Genre{
-		ID:      id,
+		ID:      uuid.New().String(),
 		Name:    name,
 		Picture: picture,
 	}

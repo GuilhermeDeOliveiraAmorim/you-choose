@@ -1,5 +1,7 @@
 package entity
 
+import "github.com/google/uuid"
+
 type Movie struct {
 	ID         string
 	Title      string
@@ -12,9 +14,9 @@ type Movie struct {
 	Genres     []*Genre
 }
 
-func NewMovie(id, title string, synopsis string, imdbRating float32, poster string) *Movie {
+func NewMovie(title string, synopsis string, imdbRating float32, poster string) *Movie {
 	return &Movie{
-		ID:         id,
+		ID:         uuid.New().String(),
 		Title:      title,
 		Synopsis:   synopsis,
 		ImdbRating: imdbRating,
