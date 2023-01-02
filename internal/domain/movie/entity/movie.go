@@ -1,9 +1,15 @@
-package entity
+package domain
 
 import (
+	"errors"
+	"time"
+
 	"github.com/google/uuid"
 
+	actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/entity"
 	director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
+	genre "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/genre/entity"
+	writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
 )
 
 type Movie struct {
@@ -15,13 +21,15 @@ type Movie struct {
 	YouChooseRating float32
 	Poster          string
 	Directors       []*director.Director
-	Actors          []*Actor
-	Writers         []*Writer
-	Genres          []*Genre
+	Actors          []*actor.Actor
+	Writers         []*writer.Writer
+	Genres          []*genre.Genre
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
 }
 
-func NewMovie(title string, synopsis string, imdbRating float32, poster string) *Movie {
-	return &Movie{
+func NewMovie(title string, synopsis string, imdbRating float32, poster string) (*Movie, error) {
+	m := &Movie{
 		ID:              uuid.New().String(),
 		Title:           title,
 		Synopsis:        synopsis,
@@ -29,7 +37,16 @@ func NewMovie(title string, synopsis string, imdbRating float32, poster string) 
 		Votes:           0,
 		YouChooseRating: 0.0,
 		Poster:          poster,
+		CreatedAt:       time.Now(),
 	}
+
+	err := m.Validate()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
 }
 
 func (m *Movie) AddDirector(director *director.Director) {
@@ -45,11 +62,11 @@ func (m *Movie) RemoveDirector(director *director.Director) {
 	}
 }
 
-func (m *Movie) AddActor(actor *Actor) {
+func (m *Movie) AddActor(actor *actor.Actor) {
 	m.Actors = append(m.Actors, actor)
 }
 
-func (m *Movie) RemoveActor(actor *Actor) {
+func (m *Movie) RemoveActor(actor *actor.Actor) {
 	for i, d := range m.Actors {
 		if d.ID == actor.ID {
 			m.Actors = append(m.Actors[:i], m.Actors[i+1:]...)
@@ -58,11 +75,11 @@ func (m *Movie) RemoveActor(actor *Actor) {
 	}
 }
 
-func (m *Movie) AddWriter(writer *Writer) {
+func (m *Movie) AddWriter(writer *writer.Writer) {
 	m.Writers = append(m.Writers, writer)
 }
 
-func (m *Movie) RemoveWriter(writer *Writer) {
+func (m *Movie) RemoveWriter(writer *writer.Writer) {
 	for i, d := range m.Writers {
 		if d.ID == writer.ID {
 			m.Writers = append(m.Writers[:i], m.Writers[i+1:]...)
@@ -71,15 +88,22 @@ func (m *Movie) RemoveWriter(writer *Writer) {
 	}
 }
 
-func (m *Movie) AddGenre(genre *Genre) {
+func (m *Movie) AddGenre(genre *genre.Genre) {
 	m.Genres = append(m.Genres, genre)
 }
 
-func (m *Movie) RemoveGenre(genre *Genre) {
+func (m *Movie) RemoveGenre(genre *genre.Genre) {
 	for i, d := range m.Genres {
 		if d.ID == genre.ID {
 			m.Genres = append(m.Genres[:i], m.Genres[i+1:]...)
 			return
 		}
 	}
+}
+
+func (m *Movie) Validate() error {
+	if m.Title == "" || m.Synopsis == "" || m.ImdbRating >= 0 || m.Poster == "" {
+		return errors.New("invalid entity")
+	}
+	return nil
 }

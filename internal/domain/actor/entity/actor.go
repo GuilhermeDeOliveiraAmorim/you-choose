@@ -1,4 +1,4 @@
-package entity
+package domain
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Director struct {
+type Actor struct {
 	ID        string
 	Name      string
 	Picture   string
@@ -15,25 +15,25 @@ type Director struct {
 	UpdatedAt time.Time
 }
 
-func NewDirector(name string, picture string) (*Director, error) {
-	d := &Director{
+func NewActor(name string, picture string) (*Actor, error) {
+	a := &Actor{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
 		CreatedAt: time.Now(),
 	}
 
-	err := d.Validate()
+	err := a.Validate()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return a, nil
 }
 
-func (d *Director) Validate() error {
-	if d.Name == "" || d.Picture == "" {
+func (a *Actor) Validate() error {
+	if a.Name == "" || a.Picture == "" {
 		return errors.New("invalid entity")
 	}
 	return nil

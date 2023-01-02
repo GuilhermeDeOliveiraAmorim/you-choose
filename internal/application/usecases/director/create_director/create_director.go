@@ -13,7 +13,7 @@ func CreateDirectorUseCase(input *InputCreateDirectorDto) *OutputCreateDirectorD
 		return nil
 	}
 
-	directorOutput := director.NewDirector(input.Name, input.Picture)
+	directorOutput, _ := director.NewDirector(input.Name, input.Picture)
 
 	output := OutputCreateDirectorDto{
 		directorOutput.ID, directorOutput.Name, directorOutput.Picture,

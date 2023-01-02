@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Director struct {
+type Genre struct {
 	ID        string
 	Name      string
 	Picture   string
@@ -15,25 +15,25 @@ type Director struct {
 	UpdatedAt time.Time
 }
 
-func NewDirector(name string, picture string) (*Director, error) {
-	d := &Director{
+func NewGenre(name string, picture string) (*Genre, error) {
+	g := &Genre{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
 		CreatedAt: time.Now(),
 	}
 
-	err := d.Validate()
+	err := g.Validate()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return d, nil
+	return g, nil
 }
 
-func (d *Director) Validate() error {
-	if d.Name == "" || d.Picture == "" {
+func (g *Genre) Validate() error {
+	if g.Name == "" || g.Picture == "" {
 		return errors.New("invalid entity")
 	}
 	return nil
