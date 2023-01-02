@@ -26,6 +26,7 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		LastName:  lastName,
 		UserName:  userName,
 		Picture:   picture,
+		Password:  password,
 		CreatedAt: time.Now(),
 	}
 
@@ -46,9 +47,21 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 }
 
 func (c *Chooser) Validate() error {
-	if c.FirstName == "" || c.LastName == "" || c.UserName == "" || c.Picture == "" || c.Password == "" {
-		return errors.New("invalid entity")
+	inputs := make(map[string]string)
+
+	inputs["first name"] = c.FirstName
+	inputs["last name"] = c.LastName
+	inputs["username"] = c.UserName
+	inputs["picture"] = c.Picture
+	inputs["password"] = c.Password
+
+	for k, v := range inputs {
+		if v == "" {
+			msg := "input " + k + " cannot be empty"
+			return errors.New(msg)
+		}
 	}
+
 	return nil
 }
 
