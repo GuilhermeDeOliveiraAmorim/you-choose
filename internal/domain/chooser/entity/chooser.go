@@ -28,6 +28,7 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		Picture:   picture,
 		Password:  password,
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	err := c.Validate()

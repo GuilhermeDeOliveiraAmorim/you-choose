@@ -21,6 +21,7 @@ func NewGenre(name string, picture string) (*Genre, error) {
 		Name:      name,
 		Picture:   picture,
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	err := g.Validate()

@@ -21,6 +21,7 @@ func NewWriter(name string, picture string) (*Writer, error) {
 		Name:      name,
 		Picture:   picture,
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	err := w.Validate()

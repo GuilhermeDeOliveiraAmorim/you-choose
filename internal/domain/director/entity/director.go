@@ -21,6 +21,7 @@ func NewDirector(name string, picture string) (*Director, error) {
 		Name:      name,
 		Picture:   picture,
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	err := d.Validate()

@@ -4,20 +4,30 @@ import (
 	"fmt"
 
 	// actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/entity"
-	chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/chooser/entity"
+
 	// director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
 	// genre "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/genre/entity"
 	// movieList "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
 	// movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
 	// writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
+	create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
 )
 
 func main() {
-	chooser, _ := chooser.NewChooser("Guilherme", "Amorim", "guiamorim", "guilherme.jpg", "asdqw2e23")
+	// chooser, _ := chooser.NewChooser("Guilherme", "Amorim", "guiamorim", "guilherme.jpg", "asdqw2e23")
 
 	// director, _ := director.NewDirector("Jose", "jose.jpg")
 
-	fmt.Println(chooser)
+	// fmt.Println(chooser)
+
+	output := &create_director.InputCreateDirectorDto{
+		Name:    "Guilherme",
+		Picture: "guilherme.jpg",
+	}
+
+	opa := create_director.CreateDirectorUseCase(output)
+
+	fmt.Println(opa)
 
 	// actor, _ := actor.NewActor("Pedro", "pedro.jpg")
 

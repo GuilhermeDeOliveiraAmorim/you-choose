@@ -38,6 +38,7 @@ func NewMovie(title string, synopsis string, imdbRating float32, poster string) 
 		YouChooseRating: 0.0,
 		Poster:          poster,
 		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}
 
 	err := m.Validate()

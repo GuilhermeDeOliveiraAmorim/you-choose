@@ -27,6 +27,7 @@ func NewMovieList(title string, description string) (*MovieList, error) {
 		Title:       title,
 		Description: description,
 		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	err := ml.Validate()

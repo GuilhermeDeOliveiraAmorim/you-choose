@@ -21,6 +21,7 @@ func NewActor(name string, picture string) (*Actor, error) {
 		Name:      name,
 		Picture:   picture,
 		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	err := a.Validate()
