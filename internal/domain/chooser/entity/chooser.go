@@ -36,7 +36,14 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	pwd, err := GeneratePassword(password)
+	un, err := EncryptString(userName)
+	if err != nil {
+		return nil, err
+	}
+
+	c.UserName = un
+
+	pwd, err := EncryptString(password)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +72,7 @@ func (c *Chooser) Validate() error {
 	return nil
 }
 
-func GeneratePassword(raw string) (string, error) {
+func EncryptString(raw string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(raw), 10)
 	if err != nil {
 		return "", err
