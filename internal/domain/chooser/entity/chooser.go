@@ -44,6 +44,11 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 
 	c.UserName = un
 
+	isAValidPassword, err := PasswordValidator(password)
+	if !isAValidPassword {
+		return nil, err
+	}
+
 	pwd, err := EncryptString(password)
 	if err != nil {
 		return nil, err
@@ -79,4 +84,15 @@ func EncryptString(raw string) (string, error) {
 		return "", err
 	}
 	return string(hash), nil
+}
+
+func PasswordValidator(password string) (bool, error) {
+	chars := []rune(password)
+	if len(chars) > 8 {
+		return false, errors.New(">")
+	}
+	if len(chars) < 4 {
+		return false, errors.New("<")
+	}
+	return true, nil
 }
