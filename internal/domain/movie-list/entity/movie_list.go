@@ -21,11 +21,12 @@ type MovieList struct {
 	UpdatedAt   time.Time
 }
 
-func NewMovieList(title string, description string) (*MovieList, error) {
+func NewMovieList(title string, description string, picture string) (*MovieList, error) {
 	ml := &MovieList{
 		ID:          uuid.New().String(),
 		Title:       title,
 		Description: description,
+		Picture:     picture,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
