@@ -11,6 +11,7 @@ import (
 	// movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
 	// writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
 	create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
+	create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
 )
 
 func main() {
@@ -20,14 +21,24 @@ func main() {
 
 	// fmt.Println(chooser)
 
-	output := &create_director.InputCreateDirectorDto{
+	inputDirector := &create_director.InputCreateDirectorDto{
 		Name:    "Guilherme",
 		Picture: "guilherme.jpg",
 	}
 
-	opa := create_director.CreateDirectorUseCase(output)
+	director := create_director.CreateDirectorUseCase(inputDirector)
 
-	fmt.Println(opa)
+	fmt.Println(director)
+
+	inputMovieList := &create_movie_list.InputCreateMovieListDto{
+		Title:       "Nova Lista",
+		Description: "Uma ótima descrição",
+		Picture:     "nova_lista.jpg",
+	}
+
+	movieList := create_movie_list.CreateMovieList(inputMovieList)
+
+	fmt.Println(movieList)
 
 	// actor, _ := actor.NewActor("Pedro", "pedro.jpg")
 

@@ -37,5 +37,6 @@ func (a *Actor) Validate() error {
 	if a.Name == "" || a.Picture == "" {
 		return errors.New("invalid entity")
 	}
+
 	return nil
 }
