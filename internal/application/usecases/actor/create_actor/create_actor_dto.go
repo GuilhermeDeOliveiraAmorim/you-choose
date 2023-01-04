@@ -1,11 +1,11 @@
-package createdirector
+package createactor
 
-type InputCreateDirectorDto struct {
+type InputCreateActorDto struct {
 	Name    string `json:"name"`
 	Picture string `json:"picture"`
 }
 
-type OutputCreateDirectorDto struct {
+type OutputCreateActorDto struct {
 	ID      string `json:"id"`
 	Name    string `json:"name"`
 	Picture string `json:"picture"`
