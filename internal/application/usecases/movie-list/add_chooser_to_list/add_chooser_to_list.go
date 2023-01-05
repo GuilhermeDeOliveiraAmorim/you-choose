@@ -1,0 +1,5 @@
+package addchoosertolist
+
+func AddChooserToList() {
+
+}
