@@ -8,9 +8,13 @@ import (
 	// movieList "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
 	// movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
 	// writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
+
 	create_chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
 	create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
+	add_chooser_to_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/add_chooser_to_list"
 	create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
+	c "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/chooser/entity"
+	ml "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
 )
 
 func main() {
@@ -49,7 +53,14 @@ func main() {
 
 	chooser := create_chooser.CreateChooserUseCase(inputChooser)
 
-	fmt.Println(chooser)
+	inputAddChooserToMovieList := &add_chooser_to_list.InputAddChooserToMovieListDto{
+		MovieList: &ml.MovieList{ID: movieList.ID, Title: movieList.Title, Description: movieList.Description},
+		Chooser:   &c.Chooser{ID: chooser.ID, UserName: chooser.UserName},
+	}
+
+	add_chooser_to_list.AddChooserToList(inputAddChooserToMovieList)
+
+	fmt.Println(movieList)
 
 	// actor, _ := actor.NewActor("Pedro", "pedro.jpg")
 
