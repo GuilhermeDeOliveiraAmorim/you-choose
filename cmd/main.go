@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-
 	// actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/entity"
-
 	// director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
 	// genre "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/genre/entity"
 	// movieList "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
 	// movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
 	// writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
+	create_chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
 	create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
 	create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
 )
@@ -39,6 +38,18 @@ func main() {
 	movieList := create_movie_list.CreateMovieList(inputMovieList)
 
 	fmt.Println(movieList)
+
+	inputChooser := &create_chooser.InputCreateChooserDto{
+		FirstName: "Guilherme",
+		LastName:  "Amorim",
+		UserName:  "guiamorim",
+		Picture:   "guilherme.jpg",
+		Password:  "asd123",
+	}
+
+	chooser := create_chooser.CreateChooserUseCase(inputChooser)
+
+	fmt.Println(chooser)
 
 	// actor, _ := actor.NewActor("Pedro", "pedro.jpg")
 
