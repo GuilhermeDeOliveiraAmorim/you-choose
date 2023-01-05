@@ -7,7 +7,7 @@ import (
 )
 
 type GenreRepositoryInterface interface {
-	Add(ctx context.Context, g *genre.Genre) (*genre.Genre, error)
-	Find(ctx context.Context, id string) (*genre.Genre, error)
+	Create(ctx context.Context, g *genre.Genre) (*genre.Genre, error)
+	FindById(ctx context.Context, id string) (*genre.Genre, error)
 	FindAll(ctx context.Context) ([]*genre.Genre, error)
 }

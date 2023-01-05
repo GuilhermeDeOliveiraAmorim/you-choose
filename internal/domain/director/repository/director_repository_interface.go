@@ -7,7 +7,7 @@ import (
 )
 
 type DirectorRepositoryInterface interface {
-	Add(ctx context.Context, d *director.Director) (*director.Director, error)
-	Find(ctx context.Context, id string) (*director.Director, error)
+	Create(ctx context.Context, d *director.Director) (*director.Director, error)
+	FindById(ctx context.Context, id string) (*director.Director, error)
 	FindAll(ctx context.Context) ([]*director.Director, error)
 }
