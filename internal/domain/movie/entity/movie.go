@@ -28,6 +28,16 @@ type Movie struct {
 	UpdatedAt       time.Time
 }
 
+func (m *Movie) AddVote() {
+	votes := m.GetVotes()
+	votes = votes + 1
+	m.Votes = votes
+}
+
+func (m *Movie) GetVotes() int32 {
+	return m.Votes
+}
+
 func NewMovie(title string, synopsis string, imdbRating float32, poster string) (*Movie, error) {
 	m := &Movie{
 		ID:              uuid.New().String(),
@@ -103,7 +113,7 @@ func (m *Movie) RemoveGenre(genre *genre.Genre) {
 }
 
 func (m *Movie) Validate() error {
-	if m.Title == "" || m.Synopsis == "" || m.ImdbRating >= 0 || m.Poster == "" {
+	if m.Title == "" || m.Synopsis == "" || m.ImdbRating < 0.0 || m.Poster == "" {
 		return errors.New("invalid entity")
 	}
 	return nil

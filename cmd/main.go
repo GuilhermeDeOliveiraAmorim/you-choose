@@ -6,11 +6,11 @@ import (
 	// director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
 	// genre "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/genre/entity"
 	// movieList "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
-	// movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
+	movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
 	// writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
-	create_chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
-	create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
-	create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
+	// create_chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
+	// create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
+	// create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
 )
 
 func main() {
@@ -20,36 +20,36 @@ func main() {
 
 	// fmt.Println(chooser)
 
-	inputDirector := &create_director.InputCreateDirectorDto{
-		Name:    "Guilherme",
-		Picture: "guilherme.jpg",
-	}
+	// inputDirector := &create_director.InputCreateDirectorDto{
+	// 	Name:    "Guilherme",
+	// 	Picture: "guilherme.jpg",
+	// }
 
-	director := create_director.CreateDirectorUseCase(inputDirector)
+	// director := create_director.CreateDirectorUseCase(inputDirector)
 
-	fmt.Println(director)
+	// fmt.Println(director)
 
-	inputMovieList := &create_movie_list.InputCreateMovieListDto{
-		Title:       "Nova Lista",
-		Description: "Uma ótima descrição",
-		Picture:     "nova_lista.jpg",
-	}
+	// inputMovieList := &create_movie_list.InputCreateMovieListDto{
+	// 	Title:       "Nova Lista",
+	// 	Description: "Uma ótima descrição",
+	// 	Picture:     "nova_lista.jpg",
+	// }
 
-	movieList := create_movie_list.CreateMovieList(inputMovieList)
+	// movieList := create_movie_list.CreateMovieList(inputMovieList)
 
-	fmt.Println(movieList)
+	// fmt.Println(movieList)
 
-	inputChooser := &create_chooser.InputCreateChooserDto{
-		FirstName: "Guilherme",
-		LastName:  "Amorim",
-		UserName:  "guiamorim",
-		Picture:   "guilherme.jpg",
-		Password:  "asd123",
-	}
+	// inputChooser := &create_chooser.InputCreateChooserDto{
+	// 	FirstName: "Guilherme",
+	// 	LastName:  "Amorim",
+	// 	UserName:  "guiamorim",
+	// 	Picture:   "guilherme.jpg",
+	// 	Password:  "asd123",
+	// }
 
-	chooser := create_chooser.CreateChooserUseCase(inputChooser)
+	// chooser := create_chooser.CreateChooserUseCase(inputChooser)
 
-	fmt.Println(chooser)
+	// fmt.Println(chooser)
 
 	// actor, _ := actor.NewActor("Pedro", "pedro.jpg")
 
@@ -57,7 +57,16 @@ func main() {
 
 	// genre, _ := genre.NewGenre("acao", "acao.jpg")
 
-	// movie, _ := movie.NewMovie("Filme Novo", "Like the previous output, your current date and time will be different from the example, but the format should be similar.", 4.8, "filme_novo.jpeg")
+	newMovie, _ := movie.NewMovie("Filme Novo", "Like the previous output, your current date and time will be different from the example, but the format should be similar.", 4.8, "filme_novo.jpeg")
+
+	newMovie.AddVote()
+	newMovie.AddVote()
+	newMovie.AddVote()
+	newMovie.AddVote()
+	newMovie.AddVote()
+	newMovie.AddVote()
+	newMovie.AddVote()
+	newMovie.AddVote()
 
 	// movie.AddActor(actor)
 	// movie.AddDirector(director)
@@ -69,5 +78,5 @@ func main() {
 	// list.AddMovie(movie)
 	// list.AddChooser(chooser)
 
-	// fmt.Println(list)
+	fmt.Println(newMovie.GetVotes())
 }
