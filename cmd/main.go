@@ -66,7 +66,6 @@ func main() {
 	newMovie.AddVote()
 	newMovie.AddVote()
 	newMovie.AddVote()
-	newMovie.AddVote()
 
 	// movie.AddActor(actor)
 	// movie.AddDirector(director)
