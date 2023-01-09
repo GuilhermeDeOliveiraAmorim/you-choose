@@ -1,7 +1,7 @@
 package updateyouchooserating
 
 func UpdateYouChooseRatingMovieUseCase(input *InputUpdateYouChooseRatingMovieDto) *OutputUpdateYouChooseRatingMovieDto {
-	id := input.MovieID
+	// id := input.MovieID
 
 	output := OutputUpdateYouChooseRatingMovieDto{}
 
