@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"time"
+	"unicode"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -88,11 +89,52 @@ func EncryptString(raw string) (string, error) {
 
 func PasswordValidator(password string) (bool, error) {
 	chars := []rune(password)
-	if len(chars) > 8 {
-		return false, errors.New(">")
+
+	validCharacters := []rune("!@#$%&*?")
+
+	countUpper := 0
+	countLower := 0
+	countNumber := 0
+	countValidCharacters := 0
+
+	if len(chars) < 8 {
+		return false, nil
 	}
-	if len(chars) < 4 {
-		return false, errors.New("<")
+
+	for i := 0; i < len(chars); i++ {
+		if unicode.IsUpper(chars[i]) {
+			countUpper = countUpper + 1
+		}
+
+		if unicode.IsLower(chars[i]) {
+			countLower = countLower + 1
+		}
+
+		if unicode.IsNumber(chars[i]) {
+			countNumber = countNumber + 1
+		}
+		for y := 0; y < len(validCharacters); y++ {
+			if chars[i] == validCharacters[y] {
+				countValidCharacters = countValidCharacters + 1
+			}
+		}
 	}
+
+	if countUpper < 2 {
+		return false, nil
+	}
+
+	if countLower < 2 {
+		return false, nil
+	}
+
+	if countNumber < 2 {
+		return false, nil
+	}
+
+	if countValidCharacters < 2 {
+		return false, nil
+	}
+
 	return true, nil
 }
