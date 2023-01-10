@@ -44,7 +44,7 @@ func main() {
 		LastName:  "Amorim",
 		UserName:  "guiamorim123",
 		Picture:   "guilherme.jpg",
-		Password:  "AFT12rt$%#",
+		Password:  "AFT12õt$%#",
 	}
 
 	chooser := create_chooser.CreateChooserUseCase(inputChooser)

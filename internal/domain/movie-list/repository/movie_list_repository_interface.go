@@ -7,7 +7,9 @@ import (
 )
 
 type MovieListRepositoryInterface interface {
-	Create(ctx context.Context, ml *movieList.MovieList) (*movieList.MovieList, error)
+	Create(ctx context.Context, a *movieList.MovieList) (*movieList.MovieList, error)
+	Update(ctx context.Context, a *movieList.MovieList) (*movieList.MovieList, error)
 	FindById(ctx context.Context, id string) (*movieList.MovieList, error)
+	DeleteById(ctx context.Context, id string) (*movieList.MovieList, error)
 	FindAll(ctx context.Context) ([]*movieList.MovieList, error)
 }
