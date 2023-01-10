@@ -6,9 +6,9 @@ import (
 	// director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
 	// genre "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/genre/entity"
 	// movieList "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
-	movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
+	// movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
 	// writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
-	// create_chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
+	create_chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
 	// create_director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/director/create_director"
 	// create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
 )
@@ -39,17 +39,17 @@ func main() {
 
 	// fmt.Println(movieList)
 
-	// inputChooser := &create_chooser.InputCreateChooserDto{
-	// 	FirstName: "Guilherme",
-	// 	LastName:  "Amorim",
-	// 	UserName:  "guiamorim",
-	// 	Picture:   "guilherme.jpg",
-	// 	Password:  "asd123",
-	// }
+	inputChooser := &create_chooser.InputCreateChooserDto{
+		FirstName: "Guilherme",
+		LastName:  "Amorim",
+		UserName:  "guiamorim123",
+		Picture:   "guilherme.jpg",
+		Password:  "AFT12rt$%#",
+	}
 
-	// chooser := create_chooser.CreateChooserUseCase(inputChooser)
+	chooser := create_chooser.CreateChooserUseCase(inputChooser)
 
-	// fmt.Println(chooser)
+	fmt.Println(chooser)
 
 	// actor, _ := actor.NewActor("Pedro", "pedro.jpg")
 
@@ -57,15 +57,15 @@ func main() {
 
 	// genre, _ := genre.NewGenre("acao", "acao.jpg")
 
-	newMovie, _ := movie.NewMovie("Filme Novo", "Like the previous output, your current date and time will be different from the example, but the format should be similar.", 4.8, "filme_novo.jpeg")
+	// newMovie, _ := movie.NewMovie("Filme Novo", "Like the previous output, your current date and time will be different from the example, but the format should be similar.", 4.8, "filme_novo.jpeg")
 
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
 
 	// movie.AddActor(actor)
 	// movie.AddDirector(director)
@@ -77,5 +77,5 @@ func main() {
 	// list.AddMovie(movie)
 	// list.AddChooser(chooser)
 
-	fmt.Println(newMovie.GetVotes())
+	// fmt.Println(newMovie.GetVotes())
 }

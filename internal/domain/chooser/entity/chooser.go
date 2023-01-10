@@ -38,6 +38,11 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
+	isValidUserName, err := UserNameValidator(userName)
+	if !isValidUserName {
+		return nil, err
+	}
+
 	un, err := EncryptString(userName)
 	if err != nil {
 		return nil, err
@@ -45,8 +50,8 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 
 	c.UserName = un
 
-	isAValidPassword, err := PasswordValidator(password)
-	if !isAValidPassword {
+	isValidPassword, err := PasswordValidator(password)
+	if !isValidPassword {
 		return nil, err
 	}
 
@@ -97,7 +102,7 @@ func PasswordValidator(password string) (bool, error) {
 	countNumber := 0
 	countValidCharacters := 0
 
-	if len(chars) < 8 {
+	if len(chars) < 10 {
 		return false, nil
 	}
 
@@ -113,6 +118,13 @@ func PasswordValidator(password string) (bool, error) {
 		if unicode.IsNumber(chars[i]) {
 			countNumber = countNumber + 1
 		}
+
+		if (len(chars) - 1) != i {
+			if chars[i] == chars[i+1] {
+				return false, nil
+			}
+		}
+
 		for y := 0; y < len(validCharacters); y++ {
 			if chars[i] == validCharacters[y] {
 				countValidCharacters = countValidCharacters + 1
@@ -120,7 +132,7 @@ func PasswordValidator(password string) (bool, error) {
 		}
 	}
 
-	if countUpper < 2 {
+	if countUpper < 3 {
 		return false, nil
 	}
 
@@ -132,7 +144,38 @@ func PasswordValidator(password string) (bool, error) {
 		return false, nil
 	}
 
-	if countValidCharacters < 2 {
+	if countValidCharacters < 3 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func UserNameValidator(username string) (bool, error) {
+	chars := []rune(username)
+
+	if len(chars) < 4 {
+		return false, nil
+	}
+
+	countUpper := 0
+	countInvalidCharacters := 0
+
+	for i := 0; i < len(chars); i++ {
+		if unicode.IsUpper(chars[i]) {
+			countUpper = countUpper + 1
+		}
+
+		if !unicode.IsLetter(chars[i]) && !unicode.IsNumber(chars[i]) {
+			countInvalidCharacters = countInvalidCharacters + 1
+		}
+	}
+
+	if countUpper != 0 {
+		return false, nil
+	}
+
+	if countInvalidCharacters != 0 {
 		return false, nil
 	}
 
