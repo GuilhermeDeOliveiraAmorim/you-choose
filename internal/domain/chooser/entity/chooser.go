@@ -43,24 +43,24 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	un, err := EncryptString(userName)
+	userNameEncrypt, err := EncryptString(userName)
 	if err != nil {
 		return nil, err
 	}
 
-	c.UserName = un
+	c.UserName = userNameEncrypt
 
 	isValidPassword, err := PasswordValidator(password)
 	if !isValidPassword {
 		return nil, err
 	}
 
-	pwd, err := EncryptString(password)
+	passwordEncrypt, err := EncryptString(password)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Password = pwd
+	c.Password = passwordEncrypt
 
 	return c, nil
 }
@@ -74,10 +74,10 @@ func (c *Chooser) Validate() error {
 	inputs["picture"] = c.Picture
 	inputs["password"] = c.Password
 
-	for k, v := range inputs {
-		if v == "" {
-			msg := "input " + k + " cannot be empty"
-			return errors.New(msg)
+	for key, value := range inputs {
+		if value == "" {
+			message := "input " + key + " cannot be empty"
+			return errors.New(message)
 		}
 	}
 

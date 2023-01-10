@@ -40,7 +40,7 @@ func main() {
 	// fmt.Println(movieList)
 
 	inputChooser := &create_chooser.InputCreateChooserDto{
-		FirstName: "Guilherme",
+		FirstName: "",
 		LastName:  "Amorim",
 		UserName:  "guiamorim123",
 		Picture:   "guilherme.jpg",
