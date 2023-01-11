@@ -25,12 +25,12 @@ func CreateChooserUseCase(input *InputCreateChooserDto) *OutputCreateChooserDto 
 		return nil
 	}
 
-	chooserOutput, _ := chooser.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture, input.Password)
+	newChooser, _ := chooser.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture, input.Password)
 
 	output := OutputCreateChooserDto{
-		chooserOutput.ID,
-		chooserOutput.UserName,
-		chooserOutput.Picture,
+		newChooser.ID,
+		newChooser.UserName,
+		newChooser.Picture,
 	}
 
 	return &output

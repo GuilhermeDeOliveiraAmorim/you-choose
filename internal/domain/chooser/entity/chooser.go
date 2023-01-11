@@ -21,7 +21,7 @@ type Chooser struct {
 }
 
 func NewChooser(firstName string, lastName string, userName string, picture string, password string) (*Chooser, error) {
-	c := &Chooser{
+	chooser := &Chooser{
 		ID:        uuid.New().String(),
 		FirstName: firstName,
 		LastName:  lastName,
@@ -32,9 +32,8 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		UpdatedAt: time.Now(),
 	}
 
-	err := c.Validate()
-
-	if err != nil {
+	isValidChooser, err := chooser.Validate()
+	if !isValidChooser {
 		return nil, err
 	}
 
@@ -48,7 +47,7 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	c.UserName = userNameEncrypt
+	chooser.UserName = userNameEncrypt
 
 	isValidPassword, err := PasswordValidator(password)
 	if !isValidPassword {
@@ -60,12 +59,12 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	c.Password = passwordEncrypt
+	chooser.Password = passwordEncrypt
 
-	return c, nil
+	return chooser, nil
 }
 
-func (c *Chooser) Validate() error {
+func (c *Chooser) Validate() (bool, error) {
 	inputs := make(map[string]string)
 
 	inputs["first name"] = c.FirstName
@@ -77,11 +76,11 @@ func (c *Chooser) Validate() error {
 	for key, value := range inputs {
 		if value == "" {
 			message := "input " + key + " cannot be empty"
-			return errors.New(message)
+			return false, errors.New(message)
 		}
 	}
 
-	return nil
+	return true, nil
 }
 
 func EncryptString(raw string) (string, error) {
@@ -155,7 +154,7 @@ func UserNameValidator(username string) (bool, error) {
 	chars := []rune(username)
 
 	if len(chars) < 4 {
-		return false, nil
+		return false, errors.New("your username must be more than 3 characters")
 	}
 
 	countUpper := 0
@@ -172,11 +171,11 @@ func UserNameValidator(username string) (bool, error) {
 	}
 
 	if countUpper != 0 {
-		return false, nil
+		return false, errors.New("your username must only contain lowercase letters")
 	}
 
 	if countInvalidCharacters != 0 {
-		return false, nil
+		return false, errors.New("your username must only contain letters and numbers")
 	}
 
 	return true, nil
