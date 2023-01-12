@@ -13,6 +13,7 @@ type Genre struct {
 	Picture   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	IsDeleted bool
 }
 
 func NewGenre(name string, picture string) (*Genre, error) {
@@ -22,6 +23,7 @@ func NewGenre(name string, picture string) (*Genre, error) {
 		Picture:   picture,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		IsDeleted: false,
 	}
 
 	err := g.Validate()

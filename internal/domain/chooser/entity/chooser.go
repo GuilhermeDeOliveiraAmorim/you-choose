@@ -18,6 +18,7 @@ type Chooser struct {
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	IsDeleted bool
 }
 
 func NewChooser(firstName string, lastName string, userName string, picture string, password string) (*Chooser, error) {
@@ -30,6 +31,7 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		Password:  password,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		IsDeleted: false,
 	}
 
 	isValidChooser, err := chooser.Validate()
@@ -42,7 +44,7 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	userNameEncrypt, err := EncryptString(userName)
+	userNameEncrypt, err := StringEncrypt(userName)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +56,7 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	passwordEncrypt, err := EncryptString(password)
+	passwordEncrypt, err := StringEncrypt(password)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +85,7 @@ func (c *Chooser) Validate() (bool, error) {
 	return true, nil
 }
 
-func EncryptString(raw string) (string, error) {
+func StringEncrypt(raw string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(raw), 10)
 	if err != nil {
 		return "", err
@@ -132,19 +134,19 @@ func PasswordValidator(password string) (bool, error) {
 	}
 
 	if countUpper < 3 {
-		return false, nil
+		return false, errors.New("your password must be have 3 or more uppercase letter")
 	}
 
 	if countLower < 2 {
-		return false, nil
+		return false, errors.New("your password must be have 2 or more lowercase letter")
 	}
 
 	if countNumber < 2 {
-		return false, nil
+		return false, errors.New("your password must be have 2 or more numbers")
 	}
 
 	if countValidCharacters < 3 {
-		return false, nil
+		return false, errors.New("your password must be have 3 or more characters in sample: !@#$%&*?")
 	}
 
 	return true, nil
@@ -159,8 +161,13 @@ func UserNameValidator(username string) (bool, error) {
 
 	countUpper := 0
 	countInvalidCharacters := 0
+	countSpaces := 0
 
 	for i := 0; i < len(chars); i++ {
+		if unicode.IsSpace(chars[i]) {
+			countSpaces = countSpaces + 1
+		}
+
 		if unicode.IsUpper(chars[i]) {
 			countUpper = countUpper + 1
 		}
@@ -168,6 +175,10 @@ func UserNameValidator(username string) (bool, error) {
 		if !unicode.IsLetter(chars[i]) && !unicode.IsNumber(chars[i]) {
 			countInvalidCharacters = countInvalidCharacters + 1
 		}
+	}
+
+	if countSpaces != 0 {
+		return false, errors.New("your username must not have any blank spaces")
 	}
 
 	if countUpper != 0 {

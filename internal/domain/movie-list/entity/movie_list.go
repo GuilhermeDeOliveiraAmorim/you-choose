@@ -19,6 +19,7 @@ type MovieList struct {
 	Movies      []*movie.Movie
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	IsDeleted   bool
 }
 
 func NewMovieList(title string, description string, picture string) (*MovieList, error) {
@@ -29,6 +30,7 @@ func NewMovieList(title string, description string, picture string) (*MovieList,
 		Picture:     picture,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
+		IsDeleted:   false,
 	}
 
 	err := ml.Validate()

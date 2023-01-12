@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	// actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/entity"
 	// director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
 	// genre "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/genre/entity"
 	// movieList "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie-list/entity"
 	chooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/chooser/entity"
-	movie "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/movie/entity"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // writer "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/writer/entity"
@@ -17,15 +18,34 @@ import (
 // create_movie_list "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/movie-list/create_movie_list"
 
 func main() {
-	chooser, err := chooser.NewChooser("Guilherme", "Amorim", "guia@", "guilherme.jpg", "AFT12õt$%#")
+	chooser, err := chooser.NewChooser("Guilherme", "Amorim", "guia", "guilherme", "AFT12õt$%#")
 
 	// director, _ := director.NewDirector("Jose", "jose.jpg")
 
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		fmt.Println(chooser)
+		fmt.Println(chooser.ID)
+		fmt.Println(chooser.FirstName)
+		fmt.Println(chooser.LastName)
+		fmt.Println(chooser.UserName)
+		fmt.Println(chooser.Picture)
+		fmt.Println(chooser.Password)
+		fmt.Println(chooser.CreatedAt)
+		fmt.Println(chooser.UpdatedAt)
+		fmt.Println(chooser.IsDeleted)
 	}
+
+	currentTime := time.Now()
+
+	fmt.Println(chooser.Picture + "-" + currentTime.Format("2006-01-02T15:04:05.000000Z") + ".jpg")
+
+	// isTheSame := bcrypt.CompareHashAndPassword([]byte(chooser.Password), []byte("AFT12õts$%#"))
+	// if isTheSame == nil {
+	// 	fmt.Println("Ok")
+	// } else {
+	// 	fmt.Println(isTheSame)
+	// }
 
 	// inputDirector := &create_director.InputCreateDirectorDto{
 	// 	Name:    "Guilherme",
@@ -64,14 +84,14 @@ func main() {
 
 	// genre, _ := genre.NewGenre("acao", "acao.jpg")
 
-	newMovie, _ := movie.NewMovie("Filme Novo", "Like the previous output, your current date and time will be different from the example, but the format should be similar.", 4.8, "filme_novo.jpeg")
+	// newMovie, _ := movie.NewMovie("Filme Novo", "Like the previous output, your current date and time will be different from the example, but the format should be similar.", 4.8, "filme_novo.jpeg")
 
-	fmt.Println(newMovie.GetVotes())
+	// fmt.Println(newMovie.GetVotes())
 
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
-	newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
+	// newMovie.AddVote()
 	// newMovie.AddVote()
 	// newMovie.AddVote()
 	// newMovie.AddVote()
@@ -95,9 +115,17 @@ func main() {
 	// abc(&variavel)
 
 	// fmt.Println(variavel)
-	fmt.Println(newMovie.GetVotes())
+	// fmt.Println(newMovie.GetVotes())
 }
 
-func abc(a *int) {
-	*a = 100
+// Save password in hash
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+// check password in hash
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

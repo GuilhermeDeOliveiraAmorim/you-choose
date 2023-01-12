@@ -26,6 +26,7 @@ type Movie struct {
 	Genres          []*genre.Genre
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+	IsDeleted       bool
 }
 
 func (m *Movie) AddVote() {
@@ -49,6 +50,7 @@ func NewMovie(title string, synopsis string, imdbRating float32, poster string) 
 		Poster:          poster,
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
+		IsDeleted:       false,
 	}
 
 	err := m.Validate()

@@ -13,6 +13,7 @@ type Director struct {
 	Picture   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	IsDeleted bool
 }
 
 func NewDirector(name string, picture string) (*Director, error) {
@@ -22,6 +23,7 @@ func NewDirector(name string, picture string) (*Director, error) {
 		Picture:   picture,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		IsDeleted: false,
 	}
 
 	err := d.Validate()
