@@ -26,6 +26,7 @@ type Movie struct {
 	Genres          []*genre.Genre
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+	DeletedAt       time.Time
 	IsDeleted       bool
 }
 
@@ -50,6 +51,7 @@ func NewMovie(title string, synopsis string, imdbRating float32, poster string) 
 		Poster:          poster,
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
+		DeletedAt:       time.Now(),
 		IsDeleted:       false,
 	}
 

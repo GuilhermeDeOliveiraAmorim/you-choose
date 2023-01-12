@@ -18,10 +18,12 @@ type Chooser struct {
 	Password  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt time.Time
 	IsDeleted bool
 }
 
 func NewChooser(firstName string, lastName string, userName string, picture string, password string) (*Chooser, error) {
+	dateNow := time.Now()
 	chooser := &Chooser{
 		ID:        uuid.New().String(),
 		FirstName: firstName,
@@ -29,8 +31,9 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		UserName:  userName,
 		Picture:   picture,
 		Password:  password,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: dateNow,
+		UpdatedAt: dateNow,
+		DeletedAt: dateNow,
 		IsDeleted: false,
 	}
 

@@ -13,6 +13,7 @@ type Actor struct {
 	Picture   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt time.Time
 	IsDeleted bool
 }
 
@@ -23,6 +24,7 @@ func NewActor(name string, picture string) (*Actor, error) {
 		Picture:   picture,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		DeletedAt: time.Now(),
 		IsDeleted: false,
 	}
 

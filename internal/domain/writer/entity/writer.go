@@ -13,6 +13,7 @@ type Writer struct {
 	Picture   string
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	DeletedAt time.Time
 	IsDeleted bool
 }
 
@@ -23,6 +24,7 @@ func NewWriter(name string, picture string) (*Writer, error) {
 		Picture:   picture,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+		DeletedAt: time.Now(),
 		IsDeleted: false,
 	}
 

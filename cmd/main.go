@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	// actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/entity"
 	// director "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/director/entity"
@@ -20,6 +19,8 @@ import (
 func main() {
 	chooser, err := chooser.NewChooser("Guilherme", "Amorim", "guia", "guilherme", "AFT12õt$%#")
 
+	fmt.Println(chooser)
+
 	// director, _ := director.NewDirector("Jose", "jose.jpg")
 
 	if err != nil {
@@ -33,12 +34,13 @@ func main() {
 		fmt.Println(chooser.Password)
 		fmt.Println(chooser.CreatedAt)
 		fmt.Println(chooser.UpdatedAt)
+		fmt.Println(chooser.DeletedAt)
 		fmt.Println(chooser.IsDeleted)
 	}
 
-	currentTime := time.Now()
+	// currentTime := time.Now()
 
-	fmt.Println(chooser.Picture + "-" + currentTime.Format("2006-01-02T15:04:05.000000Z") + ".jpg")
+	// fmt.Println(chooser.Picture + "-" + currentTime.Format("2006-01-02T15:04:05.000000Z") + ".jpg")
 
 	// isTheSame := bcrypt.CompareHashAndPassword([]byte(chooser.Password), []byte("AFT12õts$%#"))
 	// if isTheSame == nil {
