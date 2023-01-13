@@ -18,7 +18,7 @@ type Actor struct {
 }
 
 func NewActor(name string, picture string) (*Actor, error) {
-	a := &Actor{
+	actor := &Actor{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
@@ -28,17 +28,17 @@ func NewActor(name string, picture string) (*Actor, error) {
 		IsDeleted: false,
 	}
 
-	err := a.Validate()
+	err := actor.Validate()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return a, nil
+	return actor, nil
 }
 
-func (a *Actor) Validate() error {
-	if a.Name == "" || a.Picture == "" {
+func (actor *Actor) Validate() error {
+	if actor.Name == "" || actor.Picture == "" {
 		return errors.New("invalid entity")
 	}
 

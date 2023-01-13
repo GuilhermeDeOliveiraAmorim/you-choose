@@ -2,24 +2,33 @@ package createactor
 
 import (
 	actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/entity"
+	actorRepository "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/actor/repository"
 )
 
-func CreateActorUseCase(input *InputCreateActorDto) *OutputCreateActorDto {
-	if input.Name == "" {
-		return nil
+type CreateActorUseCase struct {
+	ActorRepository actorRepository.ActorRepositoryInterface
+}
+
+func NewCreateActorUseCase(ActorRepository actorRepository.ActorRepositoryInterface) *CreateActorUseCase {
+	return &CreateActorUseCase{
+		ActorRepository: ActorRepository,
+	}
+}
+
+func (c *CreateActorUseCase) Execute(input InputCreateActorDto) (OutputCreateActorDto, error) {
+	actor, err := actor.NewActor(input.Name, input.Picture)
+
+	output := OutputCreateActorDto{}
+
+	if err != nil {
+		return output, err
 	}
 
-	if input.Picture == "" {
-		return nil
-	}
+	c.ActorRepository.Create(actor)
 
-	actorOutput, _ := actor.NewActor(input.Name, input.Picture)
+	output.ID = actor.ID
+	output.Name = actor.Name
+	output.Picture = actor.Picture
 
-	output := OutputCreateActorDto{
-		actorOutput.ID,
-		actorOutput.Name,
-		actorOutput.Picture,
-	}
-
-	return &output
+	return output, nil
 }
