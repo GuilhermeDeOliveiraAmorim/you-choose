@@ -42,29 +42,29 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	isValidUserName, err := UserNameValidator(userName)
+	isValidUserName, err := ValidateUserName(userName)
 	if !isValidUserName {
 		return nil, err
 	}
 
-	userNameEncrypt, err := StringEncrypt(userName)
+	userNameEncrypted, err := EncryptString(userName)
 	if err != nil {
 		return nil, err
 	}
 
-	chooser.UserName = userNameEncrypt
+	chooser.UserName = userNameEncrypted
 
-	isValidPassword, err := PasswordValidator(password)
+	isValidPassword, err := ValidatePassword(password)
 	if !isValidPassword {
 		return nil, err
 	}
 
-	passwordEncrypt, err := StringEncrypt(password)
+	passwordEncrypted, err := EncryptString(password)
 	if err != nil {
 		return nil, err
 	}
 
-	chooser.Password = passwordEncrypt
+	chooser.Password = passwordEncrypted
 
 	return chooser, nil
 }
@@ -88,7 +88,7 @@ func (c *Chooser) Validate() (bool, error) {
 	return true, nil
 }
 
-func StringEncrypt(raw string) (string, error) {
+func EncryptString(raw string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(raw), 10)
 	if err != nil {
 		return "", err
@@ -96,7 +96,12 @@ func StringEncrypt(raw string) (string, error) {
 	return string(hash), nil
 }
 
-func PasswordValidator(password string) (bool, error) {
+func VerifyWord(word string, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(word))
+	return err == nil
+}
+
+func ValidatePassword(password string) (bool, error) {
 	chars := []rune(password)
 
 	validCharacters := []rune("!@#$%&*?")
@@ -155,7 +160,7 @@ func PasswordValidator(password string) (bool, error) {
 	return true, nil
 }
 
-func UserNameValidator(username string) (bool, error) {
+func ValidateUserName(username string) (bool, error) {
 	chars := []rune(username)
 
 	if len(chars) < 4 {
