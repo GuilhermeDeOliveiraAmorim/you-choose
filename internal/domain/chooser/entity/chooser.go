@@ -154,7 +154,7 @@ func ValidatePassword(password string) (bool, error) {
 	}
 
 	if countValidCharacters < 3 {
-		return false, errors.New("your password must be have 3 or more characters in sample: !@#$%&*?")
+		return false, errors.New("your password must be have 3 or more characters in sample: ! @ # $ % & * ?")
 	}
 
 	return true, nil
