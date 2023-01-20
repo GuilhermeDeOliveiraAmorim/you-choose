@@ -8,31 +8,19 @@ package main
 
 import (
 	"database/sql"
-	webserver "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/web"
 
-	dbChooser "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/database"
-
-	chooserCreateUseCase "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
-
-	chooserRepository "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/chooser/repository"
-
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/database"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 	"github.com/google/wire"
 )
 
-// Injectors from wire.go:
-
-func NewCreateChooserUseCaseGen(db *sql.DB) *chooserCreateUseCase.CreateChooserUseCase {
-	chooserRepoo := dbChooser.NewChooserRepository(db)
-	createChooserUseCase := chooserCreateUseCase.NewCreateChooserUseCase()
-	return createChooserUseCase
+func NewCreateChooserUseCaseGen(db *sql.DB) *usecases.ChooserUseCase {
+	chooserRepository := database.NewChooserRepository(db)
+	chooserUseCase := usecases.NewChooserUseCase(chooserRepository)
+	return chooserUseCase
 }
 
-func NewWebChooserHandlerGen(db *sql.DB) *webserver.WebChooserHandler{
-	chooserRepo := dbChooser.NewChooserRepository(db)
-	webTaskHandler := webserver.NewChooserHandler()
-	return webTaskHandler
+func NewWebChooserHandlerGen() {
 }
 
-// wire.go:
-
-var setTaskRepositoryDependency = wire.NewSet(dbChooser.NewChooserRepository, wire.Bind(new(chooserRepository.ChooserRepositoryInterface), new(*dbChooser.ChooserRepository)))
+var setTaskRepositoryDependency = wire.NewSet()
