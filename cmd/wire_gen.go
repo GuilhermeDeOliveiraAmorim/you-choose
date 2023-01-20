@@ -9,7 +9,9 @@ package main
 import (
 	"database/sql"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/database"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/web"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 	"github.com/google/wire"
 )
@@ -20,7 +22,10 @@ func NewCreateChooserUseCaseGen(db *sql.DB) *usecases.ChooserUseCase {
 	return chooserUseCase
 }
 
-func NewWebChooserHandlerGen() {
+func NewWebChooserHandlerGen(db *sql.DB) *web.WebChooserHandler{
+	chooserRepository := database.NewChooserRepository(db)
+	webChooserHandler := web.NewChooserHandler(chooserRepository)
+	return webChooserHandler
 }
 
-var setTaskRepositoryDependency = wire.NewSet()
+var setTaskRepositoryDependency = wire.NewSet(database.NewChooserRepository, wire.Bind(new(entity.ChooserRepositoryInterface), new(*database.ChooserRepository)))

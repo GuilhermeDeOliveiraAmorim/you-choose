@@ -15,4 +15,9 @@ func main() {
 	defer db.Close()
 
 	webserver := webserver.NewWebServer(":8080")
+	newWebTaskHandler := NewWebChooserHandlerGen(db)
+
+	webserver.AddHandler("/choosers", newWebTaskHandler.Create)
+
+	webserver.Start()
 }
