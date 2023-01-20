@@ -11,5 +11,6 @@ require (
 require (
 	github.com/go-chi/chi v1.5.4
 	github.com/go-chi/chi/v5 v5.0.8 // indirect
+	github.com/google/wire v0.5.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 )

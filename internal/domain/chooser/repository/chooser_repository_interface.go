@@ -5,7 +5,7 @@ import (
 )
 
 type ChooserRepositoryInterface interface {
-	Create(c *chooser.Chooser) (*chooser.Chooser, error)
+	Create(c *chooser.Chooser) error
 	Update(c *chooser.Chooser) (*chooser.Chooser, error)
 	FindById(id string) (*chooser.Chooser, error)
 	DeleteById(id string) (*chooser.Chooser, error)

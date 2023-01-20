@@ -9,9 +9,9 @@ type CreateChooserUseCase struct {
 	ChooserRepository chooserRepository.ChooserRepositoryInterface
 }
 
-func NewCreateActorUseCase(ChooserRepository chooserRepository.ChooserRepositoryInterface) *CreateChooserUseCase {
+func NewCreateChooserUseCase(chooserRepository chooserRepository.ChooserRepositoryInterface) *CreateChooserUseCase {
 	return &CreateChooserUseCase{
-		ChooserRepository: ChooserRepository,
+		ChooserRepository: chooserRepository,
 	}
 }
 
