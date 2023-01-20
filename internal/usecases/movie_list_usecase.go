@@ -32,17 +32,3 @@ func (ml *MovieListUseCase) CreateMovieList(input InputCreateMovieListDto) (Outp
 
 	return output, nil
 }
-
-func AddChooserToMovieList(input InputAddChooserToMovieListDto) (OutputAddChooserToMovieListDto, error) {
-	chooser := input.Chooser
-	movieList := input.MovieList
-
-	movieList.AddChooser(chooser)
-
-	output := &OutputAddChooserToMovieListDto{
-		IDMovieList: movieList.ID,
-		IDChooser:   chooser.ID,
-	}
-
-	return output, nil
-}

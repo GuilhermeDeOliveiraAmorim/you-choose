@@ -1,27 +1,26 @@
-package web
+package infra
 
 import (
 	"encoding/json"
 	"net/http"
 
-	chooserCreateUseCase "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/application/usecases/chooser/create_chooser"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 
-	chooserRepository "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/domain/chooser/repository"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
 
 type WebChooserHandler struct {
-	ChooserRepository chooserRepository.ChooserRepositoryInterface
+	ChooserRepository entity.ChooserRepositoryInterface
 }
 
-func NewChooserHandler(chooserRepository chooserRepository.ChooserRepositoryInterface) *WebChooserHandler {
+func NewChooserHandler(chooserRepository entity.ChooserRepositoryInterface) *WebChooserHandler {
 	return &WebChooserHandler{
 		ChooserRepository: chooserRepository,
 	}
 }
 
 func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
-
-	var dto chooserCreateUseCase.InputCreateChooserDto
+	var dto usecases.InputCreateChooserDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
 	if err != nil {
@@ -29,8 +28,8 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createChooser := *chooserCreateUseCase.NewCreateChooserUseCase(h.ChooserRepository)
-	output, err := createChooser.Execute(dto)
+	createChooser := *usecases.NewChooserUseCase(h.ChooserRepository)
+	output, err := createChooser.Create(dto)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,5 +40,4 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	// defer r.Body.Close()
 }
