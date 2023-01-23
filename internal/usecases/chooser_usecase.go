@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"fmt"
+
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
 
@@ -22,6 +24,8 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 	if err != nil {
 		return output, err
 	}
+
+	fmt.Println(chooser.FirstName)
 
 	if err := c.ChooserRepository.Create(chooser); err != nil {
 		return output, err

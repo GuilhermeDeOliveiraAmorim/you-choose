@@ -2,8 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/web/webserver"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -18,6 +21,8 @@ func main() {
 	newWebTaskHandler := NewWebChooserHandlerGen(db)
 
 	webserver.AddHandler("/choosers", newWebTaskHandler.Create)
+
+	fmt.Println("Opa!")
 
 	webserver.Start()
 }

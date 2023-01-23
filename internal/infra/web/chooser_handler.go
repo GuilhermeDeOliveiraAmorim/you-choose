@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
@@ -29,6 +30,7 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	createChooser := *usecases.NewChooserUseCase(h.ChooserRepository)
+	fmt.Println(dto)
 	output, err := createChooser.Create(dto)
 
 	if err != nil {
