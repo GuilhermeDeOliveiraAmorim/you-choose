@@ -9,11 +9,11 @@ package main
 import (
 	"database/sql"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
+	// "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/web"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"github.com/google/wire"
+	// "github.com/google/wire"
 )
 
 func NewCreateChooserUseCaseGen(db *sql.DB) *usecases.ChooserUseCase {
@@ -28,4 +28,14 @@ func NewWebChooserHandlerGen(db *sql.DB) *web.WebChooserHandler{
 	return webChooserHandler
 }
 
-var setTaskRepositoryDependency = wire.NewSet(database.NewChooserRepository, wire.Bind(new(entity.ChooserRepositoryInterface), new(*database.ChooserRepository)))
+func NewCreateMovieListUseCaseGen(db *sql.DB) *usecases.MovieListUseCase {
+	MovieListRepository := database.NewMovieListRepository(db)
+	MovieListUseCase := usecases.NewMovieListUseCase(MovieListRepository)
+	return MovieListUseCase
+}
+
+func NewWebMovieListHandlerGen(db *sql.DB) *web.WebMovieListHandler{
+	movieListRepository := database.NewMovieListRepository(db)
+	webMovieListHandler := web.NewMovieListHandler(movieListRepository)
+	return webMovieListHandler
+}

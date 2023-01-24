@@ -12,7 +12,7 @@ type MovieList struct {
 	Title       string
 	Description string
 	Picture     string
-	Chooser     []*Chooser
+	Choosers    []*Chooser
 	Movies      []*Movie
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
@@ -21,7 +21,7 @@ type MovieList struct {
 }
 
 func NewMovieList(title string, description string, picture string) (*MovieList, error) {
-	ml := &MovieList{
+	movieList := &MovieList{
 		ID:          uuid.New().String(),
 		Title:       title,
 		Description: description,
@@ -32,44 +32,53 @@ func NewMovieList(title string, description string, picture string) (*MovieList,
 		IsDeleted:   false,
 	}
 
-	err := ml.Validate()
-
-	if err != nil {
+	isValidMovieList, err := movieList.Validate()
+	if !isValidMovieList {
 		return nil, err
 	}
 
-	return ml, nil
+	return movieList, nil
 }
 
-func (ml *MovieList) AddChooser(chooser *Chooser) {
-	ml.Chooser = append(ml.Chooser, chooser)
+func (movieList *MovieList) AddChooser(chooser *Chooser) {
+	movieList.Choosers = append(movieList.Choosers, chooser)
 }
 
-func (ml *MovieList) RemoveChooser(chooser *Chooser) {
-	for i, c := range ml.Chooser {
-		if c.ID == chooser.ID {
-			ml.Chooser = append(ml.Chooser[:i], ml.Chooser[i+1:]...)
+func (movieList *MovieList) RemoveChooser(chooserForRemove *Chooser) {
+	for position, chooser := range movieList.Choosers {
+		if chooser.ID == chooserForRemove.ID {
+			movieList.Choosers = append(movieList.Choosers[:position], movieList.Choosers[position+1:]...)
 			return
 		}
 	}
 }
 
-func (ml *MovieList) AddMovie(movie *Movie) {
-	ml.Movies = append(ml.Movies, movie)
+func (movieList *MovieList) AddMovie(movie *Movie) {
+	movieList.Movies = append(movieList.Movies, movie)
 }
 
-func (ml *MovieList) RemoveMovie(movie *Movie) {
-	for i, m := range ml.Movies {
-		if m.ID == movie.ID {
-			ml.Movies = append(ml.Movies[:i], ml.Movies[i+1:]...)
+func (movieList *MovieList) RemoveMovie(movieForRemove *Movie) {
+	for position, movie := range movieList.Movies {
+		if movie.ID == movieForRemove.ID {
+			movieList.Movies = append(movieList.Movies[:position], movieList.Movies[position+1:]...)
 			return
 		}
 	}
 }
 
-func (ml *MovieList) Validate() error {
-	if ml.Title == "" || ml.Description == "" || ml.Picture == "" {
-		return errors.New("invalid entity")
+func (movieList *MovieList) Validate() (bool, error) {
+	inputs := make(map[string]string)
+
+	inputs["title"] = movieList.Title
+	inputs["description"] = movieList.Description
+	inputs["picture"] = movieList.Picture
+
+	for key, value := range inputs {
+		if value == "" {
+			message := key + " cannot be empty"
+			return false, errors.New(message)
+		}
 	}
-	return nil
+
+	return true, nil
 }

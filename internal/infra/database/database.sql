@@ -1,22 +1,25 @@
--- Table: public.choosers
-
--- DROP TABLE IF EXISTS public.choosers;
-
-CREATE TABLE IF NOT EXISTS public.choosers
+CREATE TABLE IF NOT EXISTS choosers
 (
-    id text COLLATE pg_catalog."default",
-    first_name text COLLATE pg_catalog."default",
-    last_name text COLLATE pg_catalog."default",
-    username text COLLATE pg_catalog."default",
-    password text COLLATE pg_catalog."default",
-    picture text COLLATE pg_catalog."default",
+    id text,
+    first_name text,
+    last_name text,
+    username text,
+    password text,
+    picture text,
     is_deleted boolean,
     created_at date,
     updated_at date,
     deleted_at date
-)
+);
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.choosers
-    OWNER to root;
+CREATE TABLE IF NOT EXISTS movie_lists
+(
+    id text,
+    title text,
+    description text,
+    picture text,
+    is_deleted boolean,
+    created_at date,
+    updated_at date,
+    deleted_at date
+);

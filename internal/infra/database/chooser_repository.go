@@ -57,10 +57,10 @@ func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
 	return choosers, nil
 }
 
-func (chooserRepository *ChooserRepository) Find(chooserId string) (entity.Chooser, error) {
+func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, error) {
 	var chooser entity.Chooser
 
-	rows, err := chooserRepository.Db.Query("SELECT * FROM choosers WHERE id = $1", chooserId)
+	rows, err := chooserRepository.Db.Query("SELECT * FROM choosers WHERE id = $1", id)
 	if err != nil {
 		return chooser, err
 	}

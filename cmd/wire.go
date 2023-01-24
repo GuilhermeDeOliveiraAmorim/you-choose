@@ -19,6 +19,11 @@ var SetChooserRepositoryDependency = wire.NewSet(
 	wire.Bind(new(*entity.ChooserRepositoryInterface), new(*database.ChooserRepository)),
 )
 
+var SetMovieListRepositoryDependency = wire.NewSet(
+	database.NewMovieListRepository,
+	wire.Bind(new(*entity.MovieListRepositoryInterface), new(*database.MovieListRepository)),
+)
+
 func NewCreateChooserUseCase(db *sql.DB) *usecases.ChooserUseCase {
 	wire.Build(
 		SetChooserRepositoryDependency,
@@ -31,4 +36,18 @@ func NewWebChooserHandler(db *sql.DB) *web.WebChooserHandler {
 		SetChooserRepositoryDependency,
 	)
 	return &web.WebChooserHandler{}
+}
+
+func NewCreateMovieListUseCase(db *sql.DB) *usecases.MovieListUseCase {
+	wire.Build(
+		SetMovieListRepositoryDependency,
+	)
+	return &usecases.MovieListUseCase{}
+}
+
+func NewWebMovieListHandler(db *sql.DB) *web.WebMovieListHandler {
+	wire.Build(
+		SetMovieListRepositoryDependency,
+	)
+	return &web.WebMovieListHandler{}
 }

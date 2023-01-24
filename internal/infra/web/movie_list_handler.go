@@ -2,25 +2,25 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 )
 
-type WebActorHandler struct {
-	ActorRepository entity.ActorRepositoryInterface
+type WebMovieListHandler struct {
+	MovieListRepository entity.MovieListRepositoryInterface
 }
 
-func NewWebActorHandler(ActorRepository entity.ActorRepositoryInterface) *WebActorHandler {
-	return &WebActorHandler{
-		ActorRepository: ActorRepository,
+func NewMovieListHandler(movieListRepository entity.MovieListRepositoryInterface) *WebMovieListHandler {
+	return &WebMovieListHandler{
+		MovieListRepository: movieListRepository,
 	}
 }
 
-func (h *WebActorHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var dto usecases.InputCreateActorDto
-
+func (h *WebMovieListHandler) Create(w http.ResponseWriter, r *http.Request) {
+	var dto usecases.InputCreateMovieListDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
 	if err != nil {
@@ -28,13 +28,15 @@ func (h *WebActorHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createActor := usecases.NewActorUseCase(h.ActorRepository)
-	output, err := createActor.Create(dto)
+	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository)
+	fmt.Println(dto)
 
+	output, err := movieListUseCase.Create(dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(output)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -29,10 +29,10 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createChooser := *usecases.NewChooserUseCase(h.ChooserRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
 	fmt.Println(dto)
 
-	output, err := createChooser.Create(dto)
+	output, err := chooserUseCase.Create(dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

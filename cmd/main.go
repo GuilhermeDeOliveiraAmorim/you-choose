@@ -17,11 +17,14 @@ func main() {
 	defer db.Close()
 
 	webserver := webserver.NewWebServer(":8080")
-	newWebTaskHandler := NewWebChooserHandlerGen(db)
+	newWebChooserHandler := NewWebChooserHandlerGen(db)
+	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
 
-	webserver.AddHandler("/choosers/add", newWebTaskHandler.Create)
-	webserver.AddHandler("/choosers", newWebTaskHandler.FindAll)
-	webserver.AddHandler("/chooser", newWebTaskHandler.Find)
+	webserver.AddHandler("/choosers/add", newWebChooserHandler.Create)
+	webserver.AddHandler("/movielists/add", newWebMovieListHandler.Create)
+
+	webserver.AddHandler("/choosers", newWebChooserHandler.FindAll)
+	webserver.AddHandler("/chooser", newWebChooserHandler.Find)
 
 	webserver.Start()
 }

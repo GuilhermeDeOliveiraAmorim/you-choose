@@ -1,9 +1,9 @@
 package entity
 
 type MovieListRepositoryInterface interface {
-	Create(a *MovieList) error
-	Update(a *MovieList) error
-	Find(id string) (*MovieList, error)
-	Delete(id string) error
-	FindAll() ([]*MovieList, error)
+	Create(movie *MovieList) error
+	// Find(id string) (*MovieList, error)
+	// FindAll() ([]*MovieList, error)
+	// Update(a *MovieList) error
+	// Delete(id string) error
 }

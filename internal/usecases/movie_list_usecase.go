@@ -1,6 +1,10 @@
 package usecases
 
-import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
+import (
+	"errors"
+
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
+)
 
 type MovieListUseCase struct {
 	MovieListRepository entity.MovieListRepositoryInterface
@@ -12,17 +16,17 @@ func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface
 	}
 }
 
-func (ml *MovieListUseCase) CreateMovieList(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
+func (ml *MovieListUseCase) Create(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
 	movieList, err := entity.NewMovieList(input.Title, input.Description, input.Picture)
 
 	output := OutputCreateMovieListDto{}
 
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	if err := ml.MovieListRepository.Create(movieList); err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	output.ID = movieList.ID
