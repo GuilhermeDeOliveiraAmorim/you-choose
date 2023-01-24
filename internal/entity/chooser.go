@@ -80,7 +80,7 @@ func (c *Chooser) Validate() (bool, error) {
 
 	for key, value := range inputs {
 		if value == "" {
-			message := "input " + key + " cannot be empty"
+			message := key + " cannot be empty"
 			return false, errors.New(message)
 		}
 	}

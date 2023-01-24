@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -22,13 +22,11 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 	output := OutputCreateChooserDto{}
 
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(chooser.FirstName)
-
 	if err := c.ChooserRepository.Create(chooser); err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	output.ID = chooser.ID
@@ -44,7 +42,7 @@ func (c *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
 	output := OutputFindAllChooserDto{}
 
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	output = OutputFindAllChooserDto{
@@ -60,7 +58,7 @@ func (c *ChooserUseCase) Find(input InputFindChooserDto) (entity.Chooser, error)
 	var chooser entity.Chooser
 
 	if err != nil {
-		return chooser, err
+		return chooser, errors.New(err.Error())
 	}
 
 	var chooserIdToFind = input.ID
@@ -71,5 +69,5 @@ func (c *ChooserUseCase) Find(input InputFindChooserDto) (entity.Chooser, error)
 		}
 	}
 
-	return chooser, err
+	return chooser, errors.New(err.Error())
 }
