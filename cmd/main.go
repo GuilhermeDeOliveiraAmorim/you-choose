@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/web/webserver"
 
@@ -20,9 +19,9 @@ func main() {
 	webserver := webserver.NewWebServer(":8080")
 	newWebTaskHandler := NewWebChooserHandlerGen(db)
 
-	webserver.AddHandler("/choosers", newWebTaskHandler.Create)
-
-	fmt.Println("Opa!")
+	webserver.AddHandler("/choosers/add", newWebTaskHandler.Create)
+	webserver.AddHandler("/choosers", newWebTaskHandler.FindAll)
+	webserver.AddHandler("/chooser", newWebTaskHandler.Find)
 
 	webserver.Start()
 }

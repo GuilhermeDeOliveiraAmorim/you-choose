@@ -31,13 +31,55 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	createChooser := *usecases.NewChooserUseCase(h.ChooserRepository)
 	fmt.Println(dto)
-	output, err := createChooser.Create(dto)
 
+	output, err := createChooser.Create(dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+
+	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
+
+	choosers, err := chooserUseCase.FindAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(choosers)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
+	chooserId := r.URL.Query().Get("id")
+
+	fmt.Println(chooserId)
+
+	input := usecases.InputFindChooserDto{
+		ID: chooserId,
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
+
+	chooser, err := chooserUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(chooser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -37,3 +37,39 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 
 	return output, nil
 }
+
+func (c *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
+	choosers, err := c.ChooserRepository.FindAll()
+
+	output := OutputFindAllChooserDto{}
+
+	if err != nil {
+		return output, err
+	}
+
+	output = OutputFindAllChooserDto{
+		Choosers: choosers,
+	}
+
+	return output, nil
+}
+
+func (c *ChooserUseCase) Find(input InputFindChooserDto) (entity.Chooser, error) {
+	choosers, err := c.ChooserRepository.FindAll()
+
+	var chooser entity.Chooser
+
+	if err != nil {
+		return chooser, err
+	}
+
+	var chooserIdToFind = input.ID
+
+	for _, chooser := range choosers {
+		if chooserIdToFind == chooser.ID {
+			return chooser, nil
+		}
+	}
+
+	return chooser, err
+}
