@@ -26,3 +26,18 @@ type OutputCreateMovieListDto struct {
 	Description string `json:"description"`
 	Picture     string `json:"picture"`
 }
+
+type InputFindMovieListDto struct {
+	ID string `json:"id"`
+}
+
+type OutputFindMovieListDto struct {
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Picture     string `json:"picture"`
+}
+
+type OutputFindAllMovieListDto struct {
+	MovieLists []OutputFindMovieListDto `json:"movie_lists"`
+}

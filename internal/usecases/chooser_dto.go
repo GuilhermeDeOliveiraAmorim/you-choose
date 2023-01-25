@@ -1,7 +1,5 @@
 package usecases
 
-import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
-
 type InputCreateChooserDto struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -35,5 +33,5 @@ type OutputFindChooserDto struct {
 }
 
 type OutputFindAllChooserDto struct {
-	Choosers []entity.Chooser `json:"choosers"`
+	Choosers []OutputFindChooserDto `json:"choosers"`
 }

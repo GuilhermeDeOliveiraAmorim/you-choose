@@ -25,6 +25,17 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 		return output, errors.New(err.Error())
 	}
 
+	choosers, err := c.ChooserRepository.FindAll()
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	for _, existingChooser := range choosers {
+		if input.UserName == existingChooser.UserName {
+			return output, errors.New("username already exists")
+		}
+	}
+
 	if err := c.ChooserRepository.Create(chooser); err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -45,29 +56,36 @@ func (c *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
 		return output, errors.New(err.Error())
 	}
 
+	choosersOutput := []OutputFindChooserDto{}
+
+	for _, chooser := range choosers {
+		choosersOutput = append(choosersOutput, OutputFindChooserDto{chooser.ID, chooser.Picture, chooser.UserName})
+	}
+
 	output = OutputFindAllChooserDto{
-		Choosers: choosers,
+		Choosers: choosersOutput,
 	}
 
 	return output, nil
 }
 
-func (c *ChooserUseCase) Find(input InputFindChooserDto) (entity.Chooser, error) {
+func (c *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, error) {
 	choosers, err := c.ChooserRepository.FindAll()
 
-	var chooser entity.Chooser
+	output := OutputFindChooserDto{}
 
 	if err != nil {
-		return chooser, errors.New(err.Error())
+		return output, errors.New(err.Error())
 	}
 
-	var chooserIdToFind = input.ID
-
 	for _, chooser := range choosers {
-		if chooserIdToFind == chooser.ID {
-			return chooser, nil
+		if input.ID == chooser.ID {
+			output.ID = chooser.ID
+			output.UserName = chooser.UserName
+			output.Picture = chooser.Picture
+			return output, nil
 		}
 	}
 
-	return chooser, errors.New(err.Error())
+	return output, errors.New(err.Error())
 }

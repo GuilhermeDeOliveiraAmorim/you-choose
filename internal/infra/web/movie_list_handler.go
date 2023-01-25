@@ -43,3 +43,19 @@ func (h *WebMovieListHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *WebMovieListHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository)
+
+	movieLists, err := movieListUseCase.FindAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movieLists)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

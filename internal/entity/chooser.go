@@ -47,12 +47,12 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	userNameEncrypted, err := EncryptString(userName)
-	if err != nil {
-		return nil, err
-	}
+	// userNameEncrypted, err := EncryptString(userName)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	chooser.UserName = userNameEncrypted
+	// chooser.UserName = userNameEncrypted
 
 	isValidPassword, err := ValidatePassword(password)
 	if !isValidPassword {

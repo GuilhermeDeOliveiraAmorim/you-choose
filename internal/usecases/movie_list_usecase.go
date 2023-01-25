@@ -16,7 +16,7 @@ func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface
 	}
 }
 
-func (ml *MovieListUseCase) Create(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
+func (movieListUseCase *MovieListUseCase) Create(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
 	movieList, err := entity.NewMovieList(input.Title, input.Description, input.Picture)
 
 	output := OutputCreateMovieListDto{}
@@ -25,7 +25,7 @@ func (ml *MovieListUseCase) Create(input InputCreateMovieListDto) (OutputCreateM
 		return output, errors.New(err.Error())
 	}
 
-	if err := ml.MovieListRepository.Create(movieList); err != nil {
+	if err := movieListUseCase.MovieListRepository.Create(movieList); err != nil {
 		return output, errors.New(err.Error())
 	}
 
@@ -33,6 +33,28 @@ func (ml *MovieListUseCase) Create(input InputCreateMovieListDto) (OutputCreateM
 	output.Title = movieList.Title
 	output.Description = movieList.Description
 	output.Picture = movieList.Picture
+
+	return output, nil
+}
+
+func (movieListUseCase *MovieListUseCase) FindAll() (OutputFindAllMovieListDto, error) {
+	movieLists, err := movieListUseCase.MovieListRepository.FindAll()
+
+	output := OutputFindAllMovieListDto{}
+
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieListsOutput := []OutputFindMovieListDto{}
+
+	for _, movieList := range movieLists {
+		movieListsOutput = append(movieListsOutput, OutputFindMovieListDto{movieList.ID, movieList.Title, movieList.Description, movieList.Picture})
+	}
+
+	output = OutputFindAllMovieListDto{
+		MovieLists: movieListsOutput,
+	}
 
 	return output, nil
 }

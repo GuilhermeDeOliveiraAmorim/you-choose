@@ -31,47 +31,28 @@ func (movieListRepository *MovieListRepository) Create(movieList *entity.MovieLi
 	return nil
 }
 
-// func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
-// 	rows, err := c.Db.Query("SELECT id, first_name, last_name, username, password, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil, err
-// 	}
+func (movieListRepository *MovieListRepository) FindAll() ([]entity.MovieList, error) {
+	rows, err := movieListRepository.Db.Query("SELECT id, title, description, picture, is_deleted, created_at, updated_at, deleted_at FROM movie_lists")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
 
-// 	var choosers []entity.Chooser
+	var movieLists []entity.MovieList
 
-// 	for rows.Next() {
-// 		var chooser entity.Chooser
+	for rows.Next() {
+		var movieList entity.MovieList
 
-// 		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Password, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
-// 			return choosers, err
-// 		}
+		if err := rows.Scan(&movieList.ID, &movieList.Title, &movieList.Description, &movieList.Picture, &movieList.IsDeleted, &movieList.CreatedAt, &movieList.UpdatedAt, &movieList.DeletedAt); err != nil {
+			return movieLists, err
+		}
 
-// 		choosers = append(choosers, chooser)
-// 	}
+		movieLists = append(movieLists, movieList)
+	}
 
-// 	if err = rows.Err(); err != nil {
-// 		return choosers, err
-// 	}
+	if err = rows.Err(); err != nil {
+		return movieLists, err
+	}
 
-// 	return choosers, nil
-// }
-
-// func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, error) {
-// 	var chooser entity.Chooser
-
-// 	rows, err := chooserRepository.Db.Query("SELECT * FROM choosers WHERE id = $1", id)
-// 	if err != nil {
-// 		return chooser, err
-// 	}
-
-// 	if err := rows.Scan(&chooser); err != nil {
-// 		return chooser, err
-// 	}
-
-// 	if err = rows.Err(); err != nil {
-// 		return chooser, err
-// 	}
-
-// 	return chooser, nil
-// }
+	return movieLists, nil
+}

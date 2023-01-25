@@ -21,10 +21,11 @@ func main() {
 	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
 
 	webserver.AddHandler("/choosers/add", newWebChooserHandler.Create)
-	webserver.AddHandler("/movielists/add", newWebMovieListHandler.Create)
-
 	webserver.AddHandler("/choosers", newWebChooserHandler.FindAll)
 	webserver.AddHandler("/chooser", newWebChooserHandler.Find)
+
+	webserver.AddHandler("/movielists/add", newWebMovieListHandler.Create)
+	webserver.AddHandler("/movielists", newWebMovieListHandler.FindAll)
 
 	webserver.Start()
 }
