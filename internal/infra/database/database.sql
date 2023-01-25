@@ -1,5 +1,4 @@
-CREATE TABLE IF NOT EXISTS choosers
-(
+CREATE TABLE IF NOT EXISTS choosers (
     id text,
     first_name text,
     last_name text,
@@ -12,8 +11,7 @@ CREATE TABLE IF NOT EXISTS choosers
     deleted_at date
 );
 
-CREATE TABLE IF NOT EXISTS movie_lists
-(
+CREATE TABLE IF NOT EXISTS movie_lists (
     id text,
     title text,
     description text,
@@ -23,3 +21,5 @@ CREATE TABLE IF NOT EXISTS movie_lists
     updated_at date,
     deleted_at date
 );
+
+CREATE TABLE IF NOT EXISTS chooser_movie_list (chooser_id text, movie_list_id text);

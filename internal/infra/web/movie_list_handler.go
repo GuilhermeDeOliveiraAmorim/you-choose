@@ -59,3 +59,49 @@ func (h *WebMovieListHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (h *WebMovieListHandler) Find(w http.ResponseWriter, r *http.Request) {
+	movieListId := r.URL.Query().Get("id")
+
+	input := usecases.InputFindMovieListDto{
+		ID: movieListId,
+	}
+
+	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository)
+
+	movieList, err := movieListUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movieList)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *WebMovieListHandler) AddChooserToMovieList(w http.ResponseWriter, r *http.Request) {
+	chooserId := r.URL.Query().Get("chooser_id")
+	movieListId := r.URL.Query().Get("movie_list_id")
+
+	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository)
+
+	input := usecases.InputAddChooserToMovieListDto{
+		ChooserId:   chooserId,
+		MovieListId: movieListId,
+	}
+
+	movieListWithChooser, err := movieListUseCase.AddChooserToMovieList(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movieListWithChooser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

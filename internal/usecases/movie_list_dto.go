@@ -1,17 +1,13 @@
 package usecases
 
-import (
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
-)
-
 type InputAddChooserToMovieListDto struct {
-	MovieList entity.MovieList `json:"movieList"`
-	Chooser   entity.Chooser   `json:"chooser"`
+	ChooserId   string `json:"chooser_id"`
+	MovieListId string `json:"movie_list_id"`
 }
 
 type OutputAddChooserToMovieListDto struct {
-	IDMovieList string `json:"id_movie_list"`
-	IDChooser   string `json:"id_chooser"`
+	Chooser   OutputFindChooserDto   `json:"chooser"`
+	MovieList OutputFindMovieListDto `json:"movie_list"`
 }
 
 type InputCreateMovieListDto struct {

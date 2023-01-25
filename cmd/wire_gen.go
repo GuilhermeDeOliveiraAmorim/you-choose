@@ -29,8 +29,8 @@ func NewWebChooserHandlerGen(db *sql.DB) *web.WebChooserHandler{
 }
 
 func NewCreateMovieListUseCaseGen(db *sql.DB) *usecases.MovieListUseCase {
-	MovieListRepository := database.NewMovieListRepository(db)
-	MovieListUseCase := usecases.NewMovieListUseCase(MovieListRepository)
+	movieListRepository := database.NewMovieListRepository(db)
+	MovieListUseCase := usecases.NewMovieListUseCase(movieListRepository)
 	return MovieListUseCase
 }
 
