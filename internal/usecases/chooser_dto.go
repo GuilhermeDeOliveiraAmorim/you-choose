@@ -1,5 +1,7 @@
 package usecases
 
+import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
+
 type InputCreateChooserDto struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -19,7 +21,7 @@ type InputDeleteChooserDto struct {
 }
 
 type OutputDeleteChooserDto struct {
-	IsDeleted bool `json:"is_deleted"`
+	Chosser entity.Chooser `json:"chooser"`
 }
 
 type InputFindChooserDto struct {

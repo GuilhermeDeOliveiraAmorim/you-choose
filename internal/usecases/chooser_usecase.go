@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -16,7 +17,7 @@ func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface) *Cho
 	}
 }
 
-func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChooserDto, error) {
+func (chooserUseCase *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChooserDto, error) {
 	chooser, err := entity.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture, input.Password)
 
 	output := OutputCreateChooserDto{}
@@ -25,7 +26,7 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 		return output, errors.New(err.Error())
 	}
 
-	choosers, err := c.ChooserRepository.FindAll()
+	choosers, err := chooserUseCase.ChooserRepository.FindAll()
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -36,7 +37,7 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 		}
 	}
 
-	if err := c.ChooserRepository.Create(chooser); err != nil {
+	if err := chooserUseCase.ChooserRepository.Create(chooser); err != nil {
 		return output, errors.New(err.Error())
 	}
 
@@ -47,8 +48,8 @@ func (c *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChoose
 	return output, nil
 }
 
-func (c *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
-	choosers, err := c.ChooserRepository.FindAll()
+func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
+	choosers, err := chooserUseCase.ChooserRepository.FindAll()
 
 	output := OutputFindAllChooserDto{}
 
@@ -69,8 +70,8 @@ func (c *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
 	return output, nil
 }
 
-func (c *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, error) {
-	choosers, err := c.ChooserRepository.FindAll()
+func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, error) {
+	choosers, err := chooserUseCase.ChooserRepository.FindAll()
 
 	output := OutputFindChooserDto{}
 
@@ -88,4 +89,21 @@ func (c *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, 
 	}
 
 	return output, errors.New(err.Error())
+}
+
+func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (OutputDeleteChooserDto, error) {
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+
+	output := OutputDeleteChooserDto{}
+
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	chooser.IsDeleted = true
+	chooser.DeletedAt = time.Now()
+
+	output.Chosser = chooser
+
+	return output, nil
 }

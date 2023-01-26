@@ -19,7 +19,7 @@ func NewChooserHandler(chooserRepository entity.ChooserRepositoryInterface) *Web
 	}
 }
 
-func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
+func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var dto usecases.InputCreateChooserDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
@@ -28,7 +28,7 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
 	// fmt.Println(dto)
 
 	output, err := chooserUseCase.Create(dto)
@@ -44,9 +44,9 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 
-	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
 
 	choosers, err := chooserUseCase.FindAll()
 	if err != nil {
@@ -61,18 +61,38 @@ func (h *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
+func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
 	chooserId := r.URL.Query().Get("id")
-
-	// fmt.Println(chooserId)
 
 	input := usecases.InputFindChooserDto{
 		ID: chooserId,
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
 
 	chooser, err := chooserUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(chooser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	chooserId := r.URL.Query().Get("id")
+
+	input := usecases.InputDeleteChooserDto{
+		ID: chooserId,
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
+
+	chooser, err := chooserUseCase.Delete(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
