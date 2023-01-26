@@ -37,3 +37,19 @@ type OutputFindChooserDto struct {
 type OutputFindAllChooserDto struct {
 	Choosers []OutputFindChooserDto `json:"choosers"`
 }
+
+type InputUpdateChooserDto struct {
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	UserName  string `json:"username"`
+	Picture   string `json:"picture"`
+}
+
+type OutputUpdateChooserDto struct {
+	ID        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	UserName  string `json:"username"`
+	Picture   string `json:"picture"`
+}

@@ -2,8 +2,8 @@ package entity
 
 type ChooserRepositoryInterface interface {
 	Create(chooser *Chooser) error
-	FindAll() ([]Chooser, error)
-	Find(id string) (Chooser, error)
+	Update(chooser *Chooser) error
 	Delete(chooser *Chooser) error
-	// Update(c *Chooser) (*Chooser, error)
+	Find(id string) (Chooser, error)
+	FindAll() ([]Chooser, error)
 }

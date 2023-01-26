@@ -80,13 +80,26 @@ func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, err
 }
 
 func (chooserRepository *ChooserRepository) Delete(chooser *entity.Chooser) error {
-	stmt, err := chooserRepository.Db.Prepare("UPDATE INTO choosers (is_deleted, deleted_at) VALUES ($1, $2) WHERE id = $3")
+	stmt, err := chooserRepository.Db.Prepare("UPDATE choosers SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	_, err = stmt.Exec(chooser.IsDeleted, chooser.DeletedAt, chooser.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (chooserRepository *ChooserRepository) Update(chooser *entity.Chooser) error {
+	stmt, err := chooserRepository.Db.Prepare("UPDATE choosers SET first_name = $1, last_name = $2, username = $3, picture = $4, updated_at = $5 WHERE id = $6")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture, chooser.UpdatedAt, chooser.ID)
 	if err != nil {
 		return err
 	}

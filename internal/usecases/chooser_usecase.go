@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -60,7 +61,7 @@ func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error)
 	choosersOutput := []OutputFindChooserDto{}
 
 	for _, chooser := range choosers {
-		choosersOutput = append(choosersOutput, OutputFindChooserDto{chooser.ID, chooser.Picture, chooser.UserName})
+		choosersOutput = append(choosersOutput, OutputFindChooserDto{chooser.ID, chooser.UserName, chooser.Picture})
 	}
 
 	output = OutputFindAllChooserDto{
@@ -92,10 +93,9 @@ func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFin
 }
 
 func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (OutputDeleteChooserDto, error) {
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
-
 	output := OutputDeleteChooserDto{}
 
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -104,6 +104,42 @@ func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (Outpu
 	chooser.DeletedAt = time.Now()
 
 	output.Chosser = chooser
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (OutputUpdateChooserDto, error) {
+	output := OutputUpdateChooserDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	chooser.FirstName = input.FirstName
+	chooser.LastName = input.LastName
+	chooser.UserName = input.UserName
+	chooser.Picture = input.Picture
+
+	isValidChooser, err := chooser.Validate()
+	if !isValidChooser {
+		return output, errors.New(err.Error())
+	}
+
+	fmt.Println(chooser)
+
+	chooser.UpdatedAt = time.Now()
+
+	err = chooserUseCase.ChooserRepository.Update(&chooser)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.ID = chooser.ID
+	output.FirstName = chooser.FirstName
+	output.LastName = chooser.LastName
+	output.UserName = chooser.UserName
+	output.Picture = chooser.Picture
 
 	return output, nil
 }

@@ -29,7 +29,6 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 	}
 
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
-	// fmt.Println(dto)
 
 	output, err := chooserUseCase.Create(dto)
 	if err != nil {
@@ -93,6 +92,30 @@ func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.R
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
 
 	chooser, err := chooserUseCase.Delete(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(chooser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.Request) {
+	var input usecases.InputUpdateChooserDto
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
+
+	chooser, err := chooserUseCase.Update(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

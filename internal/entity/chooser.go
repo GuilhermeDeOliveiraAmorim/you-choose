@@ -42,11 +42,6 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	isValidUserName, err := ValidateUserName(userName)
-	if !isValidUserName {
-		return nil, err
-	}
-
 	// userNameEncrypted, err := EncryptString(userName)
 	// if err != nil {
 	// 	return nil, err
@@ -69,20 +64,25 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 	return chooser, nil
 }
 
-func (c *Chooser) Validate() (bool, error) {
+func (chooser *Chooser) Validate() (bool, error) {
 	inputs := make(map[string]string)
 
-	inputs["first name"] = c.FirstName
-	inputs["last name"] = c.LastName
-	inputs["username"] = c.UserName
-	inputs["picture"] = c.Picture
-	inputs["password"] = c.Password
+	inputs["first name"] = chooser.FirstName
+	inputs["last name"] = chooser.LastName
+	inputs["username"] = chooser.UserName
+	inputs["picture"] = chooser.Picture
+	inputs["password"] = chooser.Password
 
 	for key, value := range inputs {
 		if value == "" {
 			message := key + " cannot be empty"
 			return false, errors.New(message)
 		}
+	}
+
+	isValidUserName, err := ValidateUserName(chooser.UserName)
+	if !isValidUserName {
+		return false, err
 	}
 
 	return true, nil
