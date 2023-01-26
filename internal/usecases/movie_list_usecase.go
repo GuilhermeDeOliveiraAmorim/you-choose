@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -81,40 +80,4 @@ func (movieListUseCase *MovieListUseCase) Find(input InputFindMovieListDto) (Out
 	}
 
 	return output, errors.New(err.Error())
-
-}
-
-func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddChooserToMovieListDto) (OutputAddChooserToMovieListDto, error) {
-	output := OutputAddChooserToMovieListDto{}
-
-	fmt.Println(input)
-
-	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
-	if err != nil {
-		fmt.Println(err)
-		return output, errors.New("list not found")
-	}
-
-	chooser, err := movieListUseCase.ChooserRepository.Find(input.ChooserId)
-	if err != nil {
-		return output, errors.New("chooser not found")
-	}
-
-	movieList.AddChooser(&chooser)
-
-	choosersOutput := OutputFindChooserDto{
-		ID:       chooser.ID,
-		UserName: chooser.UserName,
-		Picture:  chooser.Picture,
-	}
-
-	output.Chooser = choosersOutput
-	output.MovieList = OutputFindMovieListDto{
-		ID:          movieList.ID,
-		Title:       movieList.Title,
-		Description: movieList.Description,
-		Picture:     movieList.Picture,
-	}
-
-	return output, nil
 }

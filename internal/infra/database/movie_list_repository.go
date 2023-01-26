@@ -60,13 +60,13 @@ func (movieListRepository *MovieListRepository) FindAll() ([]entity.MovieList, e
 func (movieListRepository *MovieListRepository) Find(id string) (entity.MovieList, error) {
 	var movieList entity.MovieList
 
-	rows, err := movieListRepository.Db.Query("SELECT * FROM movie_lists WHERE id = $1", id)
+	rows, err := movieListRepository.Db.Query("SELECT id, title, description, picture, is_deleted, created_at, updated_at, deleted_at FROM movie_lists WHERE id = $1", id)
 	if err != nil {
 		return movieList, err
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&movieList); err != nil {
+		if err := rows.Scan(&movieList.ID, &movieList.Title, &movieList.Description, &movieList.Picture, &movieList.IsDeleted, &movieList.CreatedAt, &movieList.UpdatedAt, &movieList.DeletedAt); err != nil {
 			return movieList, err
 		}
 	}
@@ -76,18 +76,4 @@ func (movieListRepository *MovieListRepository) Find(id string) (entity.MovieLis
 	}
 
 	return movieList, nil
-}
-
-func (movieListRepository *MovieListRepository) AddChooserToMovieList(chooserId string, movieListId string) error {
-	stmt, err := movieListRepository.Db.Prepare("INSERT INTO chooser_movie_list (chooser_id, movie_list_id) VALUES ($1, $2)")
-	if err != nil {
-		fmt.Print(err)
-		return err
-	}
-	_, err = stmt.Exec(chooserId, movieListId)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

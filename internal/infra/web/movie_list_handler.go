@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -29,7 +28,7 @@ func (h *WebMovieListHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository)
-	fmt.Println(dto)
+	// fmt.Println(dto)
 
 	output, err := movieListUseCase.Create(dto)
 	if err != nil {
@@ -76,30 +75,6 @@ func (h *WebMovieListHandler) Find(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = json.NewEncoder(w).Encode(movieList)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (h *WebMovieListHandler) AddChooserToMovieList(w http.ResponseWriter, r *http.Request) {
-	chooserId := r.URL.Query().Get("chooser_id")
-	movieListId := r.URL.Query().Get("movie_list_id")
-
-	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository)
-
-	input := usecases.InputAddChooserToMovieListDto{
-		ChooserId:   chooserId,
-		MovieListId: movieListId,
-	}
-
-	movieListWithChooser, err := movieListUseCase.AddChooserToMovieList(input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(movieListWithChooser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

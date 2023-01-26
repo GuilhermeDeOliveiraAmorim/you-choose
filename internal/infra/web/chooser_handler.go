@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
@@ -30,7 +29,7 @@ func (h *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	chooserUseCase := *usecases.NewChooserUseCase(h.ChooserRepository)
-	fmt.Println(dto)
+	// fmt.Println(dto)
 
 	output, err := chooserUseCase.Create(dto)
 	if err != nil {
@@ -65,7 +64,7 @@ func (h *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 func (h *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
 	chooserId := r.URL.Query().Get("id")
 
-	fmt.Println(chooserId)
+	// fmt.Println(chooserId)
 
 	input := usecases.InputFindChooserDto{
 		ID: chooserId,
