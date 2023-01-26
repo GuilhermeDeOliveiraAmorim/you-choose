@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS choosers (
     password text,
     picture text,
     is_deleted boolean,
-    created_at date,
-    updated_at date,
-    deleted_at date
+    created_at text,
+    updated_at text,
+    deleted_at text
 );
 
 CREATE TABLE IF NOT EXISTS movie_lists (
@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS movie_lists (
     description text,
     picture text,
     is_deleted boolean,
-    created_at date,
-    updated_at date,
-    deleted_at date
+    created_at text,
+    updated_at text,
+    deleted_at text
 );
 
 CREATE TABLE IF NOT EXISTS chooser_movie_list (chooser_id text, movie_list_id text);

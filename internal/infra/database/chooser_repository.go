@@ -33,7 +33,7 @@ func (c *ChooserRepository) Create(chooser *entity.Chooser) error {
 }
 
 func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
-	rows, err := c.Db.Query("SELECT * FROM choosers")
+	rows, err := c.Db.Query("SELECT id, first_name, last_name, username, password, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

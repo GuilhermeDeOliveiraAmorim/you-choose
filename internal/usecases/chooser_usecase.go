@@ -101,7 +101,7 @@ func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (Outpu
 	}
 
 	chooser.IsDeleted = true
-	chooser.DeletedAt = time.Now()
+	chooser.DeletedAt = time.Now().Local().String()
 
 	output.Chosser = chooser
 
@@ -116,6 +116,9 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 		return output, errors.New(err.Error())
 	}
 
+	fmt.Println(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture)
+	fmt.Println(input.FirstName, input.LastName, input.UserName, input.Picture)
+
 	chooser.FirstName = input.FirstName
 	chooser.LastName = input.LastName
 	chooser.UserName = input.UserName
@@ -126,9 +129,11 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(chooser)
+	fmt.Println(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture, chooser.UpdatedAt)
 
-	chooser.UpdatedAt = time.Now()
+	chooser.UpdatedAt = time.Now().Local().String()
+
+	fmt.Println(input.FirstName, input.LastName, input.UserName, input.Picture, chooser.UpdatedAt)
 
 	err = chooserUseCase.ChooserRepository.Update(&chooser)
 	if err != nil {
