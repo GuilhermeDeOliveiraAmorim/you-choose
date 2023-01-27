@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -11,9 +12,10 @@ type MovieListUseCase struct {
 	ChooserRepository   entity.ChooserRepositoryInterface
 }
 
-func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface) *MovieListUseCase {
+func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface, chooserRepository entity.ChooserRepositoryInterface) *MovieListUseCase {
 	return &MovieListUseCase{
 		MovieListRepository: movieListRepository,
+		ChooserRepository:   chooserRepository,
 	}
 }
 
@@ -80,4 +82,40 @@ func (movieListUseCase *MovieListUseCase) Find(input InputFindMovieListDto) (Out
 	}
 
 	return output, errors.New(err.Error())
+}
+
+func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddChooserToMovieListDto) (OutputAddChooserToMovieListDto, error) {
+	output := OutputAddChooserToMovieListDto{}
+
+	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	chooser, err := movieListUseCase.ChooserRepository.Find(input.ChooserId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	timeNow := time.Now().Local().String()
+
+	err = movieListUseCase.MovieListRepository.AddChooserToMovieList(&movieList, &chooser, timeNow, timeNow, timeNow)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Chooser = OutputFindChooserDto{
+		ID:       chooser.ID,
+		UserName: chooser.UserName,
+		Picture:  chooser.Picture,
+	}
+
+	output.MovieList = OutputFindMovieListDto{
+		ID:          movieList.ID,
+		Title:       movieList.Title,
+		Description: movieList.Description,
+		Picture:     movieList.Picture,
+	}
+
+	return output, nil
 }

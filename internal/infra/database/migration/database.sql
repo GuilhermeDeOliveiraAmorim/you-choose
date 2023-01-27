@@ -21,4 +21,10 @@ CREATE TABLE IF NOT EXISTS movie_lists (
     deleted_at text
 );
 
-CREATE TABLE IF NOT EXISTS chooser_movie_list (chooser_id text, movie_list_id text);
+CREATE TABLE IF NOT EXISTS choosers_movie_lists (
+    chooser_id text,
+    movie_list_id text,
+    created_at text,
+    updated_at text,
+    deleted_at text
+);
