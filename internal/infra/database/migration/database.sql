@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS choosers (
     first_name text,
     last_name text,
     username text,
-    password text,
     picture text,
     is_deleted boolean,
     created_at text,

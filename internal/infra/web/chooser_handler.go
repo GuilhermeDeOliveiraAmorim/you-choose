@@ -44,7 +44,6 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
-
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
 
 	choosers, err := chooserUseCase.FindAll()

@@ -18,13 +18,13 @@ func NewChooserRepository(db *sql.DB) *ChooserRepository {
 }
 
 func (c *ChooserRepository) Create(chooser *entity.Chooser) error {
-	stmt, err := c.Db.Prepare("INSERT INTO choosers (id, first_name, last_name, username, password, picture, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)")
+	stmt, err := c.Db.Prepare("INSERT INTO choosers (id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)")
 	if err != nil {
 		fmt.Print(err)
 		return err
 	}
 
-	_, err = stmt.Exec(chooser.ID, chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Password, chooser.Picture, chooser.IsDeleted, chooser.CreatedAt, chooser.UpdatedAt, chooser.DeletedAt)
+	_, err = stmt.Exec(chooser.ID, chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture, chooser.IsDeleted, chooser.CreatedAt, chooser.UpdatedAt, chooser.DeletedAt)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (c *ChooserRepository) Create(chooser *entity.Chooser) error {
 }
 
 func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
-	rows, err := c.Db.Query("SELECT id, first_name, last_name, username, password, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
+	rows, err := c.Db.Query("SELECT id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -44,7 +44,7 @@ func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
 	for rows.Next() {
 		var chooser entity.Chooser
 
-		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Password, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
+		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
 			return choosers, err
 		}
 
@@ -67,7 +67,7 @@ func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, err
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Password, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
+		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
 			return chooser, err
 		}
 	}

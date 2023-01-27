@@ -15,14 +15,13 @@ type Chooser struct {
 	LastName  string
 	UserName  string
 	Picture   string
-	Password  string
 	IsDeleted bool
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
 }
 
-func NewChooser(firstName string, lastName string, userName string, picture string, password string) (*Chooser, error) {
+func NewChooser(firstName string, lastName string, userName string, picture string) (*Chooser, error) {
 	dateNow := time.Now()
 	chooser := &Chooser{
 		ID:        uuid.New().String(),
@@ -30,7 +29,6 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		LastName:  lastName,
 		UserName:  userName,
 		Picture:   picture,
-		Password:  password,
 		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
@@ -42,25 +40,6 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		return nil, err
 	}
 
-	// userNameEncrypted, err := EncryptString(userName)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// chooser.UserName = userNameEncrypted
-
-	isValidPassword, err := ValidatePassword(password)
-	if !isValidPassword {
-		return nil, err
-	}
-
-	passwordEncrypted, err := EncryptString(password)
-	if err != nil {
-		return nil, err
-	}
-
-	chooser.Password = passwordEncrypted
-
 	return chooser, nil
 }
 
@@ -71,7 +50,6 @@ func (chooser *Chooser) Validate() (bool, error) {
 	inputs["last name"] = chooser.LastName
 	inputs["username"] = chooser.UserName
 	inputs["picture"] = chooser.Picture
-	inputs["password"] = chooser.Password
 
 	for key, value := range inputs {
 		if value == "" {

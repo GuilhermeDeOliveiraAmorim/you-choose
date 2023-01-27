@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -19,7 +18,7 @@ func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface) *Cho
 }
 
 func (chooserUseCase *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChooserDto, error) {
-	chooser, err := entity.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture, input.Password)
+	chooser, err := entity.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture)
 
 	output := OutputCreateChooserDto{}
 
@@ -114,15 +113,13 @@ func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (Outpu
 }
 
 func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (OutputUpdateChooserDto, error) {
+	timeNow := time.Now().Local().String()
 	output := OutputUpdateChooserDto{}
 
 	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
-
-	fmt.Println(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture)
-	fmt.Println(input.FirstName, input.LastName, input.UserName, input.Picture)
 
 	chooser.FirstName = input.FirstName
 	chooser.LastName = input.LastName
@@ -134,11 +131,7 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture, chooser.UpdatedAt)
-
-	chooser.UpdatedAt = time.Now().Local().String()
-
-	fmt.Println(input.FirstName, input.LastName, input.UserName, input.Picture, chooser.UpdatedAt)
+	chooser.UpdatedAt = timeNow
 
 	err = chooserUseCase.ChooserRepository.Update(&chooser)
 	if err != nil {

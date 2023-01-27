@@ -5,7 +5,6 @@ type InputCreateChooserDto struct {
 	LastName  string `json:"last_name"`
 	UserName  string `json:"username"`
 	Picture   string `json:"picture"`
-	Password  string `json:"password"`
 }
 
 type OutputCreateChooserDto struct {
