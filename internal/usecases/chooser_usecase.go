@@ -103,7 +103,12 @@ func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (Outpu
 	chooser.IsDeleted = true
 	chooser.DeletedAt = time.Now().Local().String()
 
-	output.Chosser = chooser
+	err = chooserUseCase.ChooserRepository.Delete(&chooser)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.IsDeleted = true
 
 	return output, nil
 }
