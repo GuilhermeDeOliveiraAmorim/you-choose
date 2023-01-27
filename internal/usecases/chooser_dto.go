@@ -50,3 +50,11 @@ type OutputUpdateChooserDto struct {
 	UserName  string `json:"username"`
 	Picture   string `json:"picture"`
 }
+
+type InputIsDeletedChooserDto struct {
+	ID string `json:"id"`
+}
+
+type OutputIsDeletedChooserDto struct {
+	IsDeleted bool `json:"has_been_deleted"`
+}

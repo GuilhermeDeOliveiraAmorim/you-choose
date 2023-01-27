@@ -106,3 +106,24 @@ func (chooserRepository *ChooserRepository) Update(chooser *entity.Chooser) erro
 
 	return nil
 }
+
+func (chooserRepository *ChooserRepository) IsDeleted(id string) error {
+	var chooser entity.Chooser
+
+	rows, err := chooserRepository.Db.Query("SELECT * FROM choosers WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
+			return err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}

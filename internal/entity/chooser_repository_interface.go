@@ -6,4 +6,5 @@ type ChooserRepositoryInterface interface {
 	Delete(chooser *Chooser) error
 	Find(id string) (Chooser, error)
 	FindAll() ([]Chooser, error)
+	IsDeleted(id string) error
 }

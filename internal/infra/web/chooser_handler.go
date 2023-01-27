@@ -126,3 +126,25 @@ func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.R
 		return
 	}
 }
+
+func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
+	chooserId := r.URL.Query().Get("id")
+
+	input := usecases.InputIsDeletedChooserDto{
+		ID: chooserId,
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository)
+
+	chooser, err := chooserUseCase.IsDeleted(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(chooser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

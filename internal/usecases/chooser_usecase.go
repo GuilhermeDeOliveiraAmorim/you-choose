@@ -146,3 +146,24 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 
 	return output, nil
 }
+
+func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) (OutputIsDeletedChooserDto, error) {
+	output := OutputIsDeletedChooserDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output = OutputIsDeletedChooserDto{
+		IsDeleted: false,
+	}
+
+	if chooser.IsDeleted {
+		output = OutputIsDeletedChooserDto{
+			IsDeleted: true,
+		}
+	}
+
+	return output, nil
+}
