@@ -37,3 +37,12 @@ type OutputFindMovieListDto struct {
 type OutputFindAllMovieListDto struct {
 	MovieLists []OutputFindMovieListDto `json:"movie_lists"`
 }
+
+type InputFindChooserInMovieList struct {
+	ChooserId   string `json:"chooser_id"`
+	MovieListId string `json:"movie_list_id"`
+}
+
+type OutpuFindChooserInMovieList struct {
+	ChooserIsInTheMovieList bool `json:"chooser_is_in_the_movie_list"`
+}

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -41,10 +42,9 @@ func (movieListUseCase *MovieListUseCase) Create(input InputCreateMovieListDto) 
 }
 
 func (movieListUseCase *MovieListUseCase) FindAll() (OutputFindAllMovieListDto, error) {
-	movieLists, err := movieListUseCase.MovieListRepository.FindAll()
-
 	output := OutputFindAllMovieListDto{}
 
+	movieLists, err := movieListUseCase.MovieListRepository.FindAll()
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -63,10 +63,9 @@ func (movieListUseCase *MovieListUseCase) FindAll() (OutputFindAllMovieListDto, 
 }
 
 func (movieListUseCase *MovieListUseCase) Find(input InputFindMovieListDto) (OutputFindMovieListDto, error) {
-	movieLists, err := movieListUseCase.MovieListRepository.FindAll()
-
 	output := OutputFindMovieListDto{}
 
+	movieLists, err := movieListUseCase.MovieListRepository.FindAll()
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -97,6 +96,14 @@ func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddCh
 		return output, errors.New(err.Error())
 	}
 
+	fmt.Println(movieList.ID, chooser.ID)
+
+	isChooserInMovieList := movieListUseCase.VeryfingChooserInMovieList(chooser, movieList)
+	fmt.Println(isChooserInMovieList)
+	if isChooserInMovieList {
+		return output, errors.New(err.Error())
+	}
+
 	timeNow := time.Now().Local().String()
 
 	err = movieListUseCase.MovieListRepository.AddChooserToMovieList(&movieList, &chooser, timeNow, timeNow, timeNow)
@@ -118,4 +125,15 @@ func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddCh
 	}
 
 	return output, nil
+}
+
+func (movieListUseCase *MovieListUseCase) VeryfingChooserInMovieList(chooserToFind entity.Chooser, movieList entity.MovieList) bool {
+	for _, chooser := range movieList.Choosers {
+		if chooser.ID == chooserToFind.ID {
+			fmt.Println(chooser.ID + "==" + chooserToFind.ID)
+			return true
+		}
+	}
+
+	return false
 }

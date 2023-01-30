@@ -82,7 +82,7 @@ func (movieListRepository *MovieListRepository) AddChooserToMovieList(movieList 
 		return err
 	}
 
-	_, err = stmt.Exec(movieList.ID, chooser.ID, created_at, updated_at, deleted_at)
+	_, err = stmt.Exec(chooser.ID, movieList.ID, created_at, updated_at, deleted_at)
 	if err != nil {
 		return err
 	}

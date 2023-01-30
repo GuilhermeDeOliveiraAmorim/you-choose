@@ -5,6 +5,4 @@ type MovieListRepositoryInterface interface {
 	FindAll() ([]MovieList, error)
 	Find(id string) (MovieList, error)
 	AddChooserToMovieList(movieList *MovieList, chooserId *Chooser, created_at string, updated_at string, deleted_at string) error
-	// Update(a *MovieList) error
-	// Delete(id string) error
 }
