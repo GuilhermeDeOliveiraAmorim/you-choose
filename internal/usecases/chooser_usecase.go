@@ -8,12 +8,14 @@ import (
 )
 
 type ChooserUseCase struct {
-	ChooserRepository entity.ChooserRepositoryInterface
+	ChooserRepository   entity.ChooserRepositoryInterface
+	MovieListRepository entity.MovieListRepositoryInterface
 }
 
-func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface) *ChooserUseCase {
+func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface) *ChooserUseCase {
 	return &ChooserUseCase{
-		ChooserRepository: chooserRepository,
+		ChooserRepository:   chooserRepository,
+		MovieListRepository: movieListRepository,
 	}
 }
 
@@ -164,6 +166,39 @@ func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) 
 			IsDeleted: true,
 		}
 	}
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) CreateChooserMovieList(input InputCreateChooserMovieListDto) (OutputCreateChooserMovieListDto, error) {
+	output := OutputCreateChooserMovieListDto{}
+
+	chooser, err := entity.NewChooser(input.Chooser.FirstName, input.Chooser.LastName, input.Chooser.UserName, input.Chooser.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieList, err := entity.NewMovieList(input.MovieList.Title, input.MovieList.Description, input.MovieList.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	outputChooser := OutputChooser{
+		ID:       chooser.ID,
+		UserName: chooser.UserName,
+		Picture:  chooser.Picture,
+	}
+
+	outputMovieList := OutputMovieList{
+		ID:          movieList.ID,
+		Title:       movieList.Title,
+		Description: movieList.Description,
+		Picture:     movieList.Picture,
+	}
+
+	outputMovieList.Choosers = append(outputMovieList.Choosers, outputChooser)
+
+	output.MovieList = outputMovieList
 
 	return output, nil
 }
