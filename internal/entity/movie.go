@@ -11,7 +11,7 @@ type Movie struct {
 	ID              string
 	Title           string
 	Synopsis        string
-	ImdbRating      float32
+	ImdbRating      string
 	Votes           int32
 	YouChooseRating float32
 	Poster          string
@@ -19,9 +19,9 @@ type Movie struct {
 	Actors          []*Actor
 	Writers         []*Writer
 	Genres          []*Genre
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       time.Time
+	CreatedAt       string
+	UpdatedAt       string
+	DeletedAt       string
 	IsDeleted       bool
 }
 
@@ -35,8 +35,9 @@ func (m *Movie) GetVotes() int32 {
 	return m.Votes
 }
 
-func NewMovie(title string, synopsis string, imdbRating float32, poster string) (*Movie, error) {
-	m := &Movie{
+func NewMovie(title string, synopsis string, imdbRating string, poster string) (*Movie, error) {
+	dateNow := time.Now()
+	movie := &Movie{
 		ID:              uuid.New().String(),
 		Title:           title,
 		Synopsis:        synopsis,
@@ -44,19 +45,18 @@ func NewMovie(title string, synopsis string, imdbRating float32, poster string) 
 		Votes:           0,
 		YouChooseRating: 0.0,
 		Poster:          poster,
-		CreatedAt:       time.Now(),
-		UpdatedAt:       time.Now(),
-		DeletedAt:       time.Now(),
+		CreatedAt:       dateNow.Local().String(),
+		UpdatedAt:       dateNow.Local().String(),
+		DeletedAt:       dateNow.Local().String(),
 		IsDeleted:       false,
 	}
 
-	err := m.Validate()
-
-	if err != nil {
+	isValid, err := movie.Validate()
+	if !isValid {
 		return nil, err
 	}
 
-	return m, nil
+	return movie, nil
 }
 
 func (m *Movie) AddDirector(director *Director) {
@@ -111,9 +111,20 @@ func (m *Movie) RemoveGenre(genre *Genre) {
 	}
 }
 
-func (m *Movie) Validate() error {
-	if m.Title == "" || m.Synopsis == "" || m.ImdbRating < 0.0 || m.Poster == "" {
-		return errors.New("invalid entity")
+func (movie *Movie) Validate() (bool, error) {
+	inputs := make(map[string]string)
+
+	inputs["title"] = movie.Title
+	inputs["synopsis"] = movie.Synopsis
+	inputs["poster"] = movie.Poster
+	inputs["imdbRating"] = movie.ImdbRating
+
+	for key, value := range inputs {
+		if value == "" {
+			message := key + " cannot be empty"
+			return false, errors.New(message)
+		}
 	}
-	return nil
+
+	return true, nil
 }

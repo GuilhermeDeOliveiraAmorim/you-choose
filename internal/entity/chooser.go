@@ -15,10 +15,10 @@ type Chooser struct {
 	LastName  string
 	UserName  string
 	Picture   string
-	IsDeleted bool
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
+	IsDeleted bool
 }
 
 func NewChooser(firstName string, lastName string, userName string, picture string) (*Chooser, error) {
@@ -29,14 +29,14 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		LastName:  lastName,
 		UserName:  userName,
 		Picture:   picture,
-		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
 		DeletedAt: dateNow.Local().String(),
+		IsDeleted: false,
 	}
 
-	isValidChooser, err := chooser.Validate()
-	if !isValidChooser {
+	isValid, err := chooser.Validate()
+	if !isValid {
 		return nil, err
 	}
 

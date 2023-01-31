@@ -11,35 +11,44 @@ type Director struct {
 	ID        string
 	Name      string
 	Picture   string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	CreatedAt string
+	UpdatedAt string
+	DeletedAt string
 	IsDeleted bool
 }
 
 func NewDirector(name string, picture string) (*Director, error) {
-	d := &Director{
+	dateNow := time.Now()
+	director := &Director{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		DeletedAt: time.Now(),
+		CreatedAt: dateNow.Local().String(),
+		UpdatedAt: dateNow.Local().String(),
+		DeletedAt: dateNow.Local().String(),
 		IsDeleted: false,
 	}
 
-	err := d.Validate()
-
-	if err != nil {
+	isValid, err := director.Validate()
+	if !isValid {
 		return nil, err
 	}
 
-	return d, nil
+	return director, nil
 }
 
-func (d *Director) Validate() error {
-	if d.Name == "" || d.Picture == "" {
-		return errors.New("invalid entity")
+func (director *Director) Validate() (bool, error) {
+	inputs := make(map[string]string)
+
+	inputs["name"] = director.Name
+	inputs["picture"] = director.Picture
+
+	for key, value := range inputs {
+		if value == "" {
+			message := key + " cannot be empty"
+			return false, errors.New(message)
+		}
 	}
-	return nil
+
+	return true, nil
 }

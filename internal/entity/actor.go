@@ -11,36 +11,44 @@ type Actor struct {
 	ID        string
 	Name      string
 	Picture   string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	CreatedAt string
+	UpdatedAt string
+	DeletedAt string
 	IsDeleted bool
 }
 
 func NewActor(name string, picture string) (*Actor, error) {
+	dateNow := time.Now()
 	actor := &Actor{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		DeletedAt: time.Now(),
+		CreatedAt: dateNow.Local().String(),
+		UpdatedAt: dateNow.Local().String(),
+		DeletedAt: dateNow.Local().String(),
 		IsDeleted: false,
 	}
 
-	err := actor.Validate()
-
-	if err != nil {
+	isValid, err := actor.Validate()
+	if !isValid {
 		return nil, err
 	}
 
 	return actor, nil
 }
 
-func (actor *Actor) Validate() error {
-	if actor.Name == "" || actor.Picture == "" {
-		return errors.New("invalid entity")
+func (actor *Actor) Validate() (bool, error) {
+	inputs := make(map[string]string)
+
+	inputs["name"] = actor.Name
+	inputs["picture"] = actor.Picture
+
+	for key, value := range inputs {
+		if value == "" {
+			message := key + " cannot be empty"
+			return false, errors.New(message)
+		}
 	}
 
-	return nil
+	return true, nil
 }

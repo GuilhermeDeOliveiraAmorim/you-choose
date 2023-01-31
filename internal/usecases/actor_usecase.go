@@ -45,7 +45,7 @@ func (a *ActorUseCase) Delete(input InputDeleteActorDto) (OutputDeleteActorDto, 
 	}
 
 	actor.IsDeleted = true
-	actor.DeletedAt = time.Now()
+	actor.DeletedAt = time.Now().Local().String()
 
 	output.IsDeleted = actor.IsDeleted
 

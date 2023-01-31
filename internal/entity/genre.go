@@ -11,35 +11,44 @@ type Genre struct {
 	ID        string
 	Name      string
 	Picture   string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	CreatedAt string
+	UpdatedAt string
+	DeletedAt string
 	IsDeleted bool
 }
 
 func NewGenre(name string, picture string) (*Genre, error) {
-	g := &Genre{
+	dateNow := time.Now()
+	genre := &Genre{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		DeletedAt: time.Now(),
+		CreatedAt: dateNow.Local().String(),
+		UpdatedAt: dateNow.Local().String(),
+		DeletedAt: dateNow.Local().String(),
 		IsDeleted: false,
 	}
 
-	err := g.Validate()
-
-	if err != nil {
+	isValid, err := genre.Validate()
+	if !isValid {
 		return nil, err
 	}
 
-	return g, nil
+	return genre, nil
 }
 
-func (g *Genre) Validate() error {
-	if g.Name == "" || g.Picture == "" {
-		return errors.New("invalid entity")
+func (genre *Genre) Validate() (bool, error) {
+	inputs := make(map[string]string)
+
+	inputs["name"] = genre.Name
+	inputs["picture"] = genre.Picture
+
+	for key, value := range inputs {
+		if value == "" {
+			message := key + " cannot be empty"
+			return false, errors.New(message)
+		}
 	}
-	return nil
+
+	return true, nil
 }

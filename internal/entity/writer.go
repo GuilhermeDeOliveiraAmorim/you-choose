@@ -11,35 +11,44 @@ type Writer struct {
 	ID        string
 	Name      string
 	Picture   string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+	CreatedAt string
+	UpdatedAt string
+	DeletedAt string
 	IsDeleted bool
 }
 
 func NewWriter(name string, picture string) (*Writer, error) {
-	w := &Writer{
+	dateNow := time.Now()
+	writer := &Writer{
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-		DeletedAt: time.Now(),
+		CreatedAt: dateNow.Local().String(),
+		UpdatedAt: dateNow.Local().String(),
+		DeletedAt: dateNow.Local().String(),
 		IsDeleted: false,
 	}
 
-	err := w.Validate()
-
-	if err != nil {
+	isValid, err := writer.Validate()
+	if !isValid {
 		return nil, err
 	}
 
-	return w, nil
+	return writer, nil
 }
 
-func (w *Writer) Validate() error {
-	if w.Name == "" || w.Picture == "" {
-		return errors.New("invalid entity")
+func (writer *Writer) Validate() (bool, error) {
+	inputs := make(map[string]string)
+
+	inputs["name"] = writer.Name
+	inputs["picture"] = writer.Picture
+
+	for key, value := range inputs {
+		if value == "" {
+			message := key + " cannot be empty"
+			return false, errors.New(message)
+		}
 	}
-	return nil
+
+	return true, nil
 }
