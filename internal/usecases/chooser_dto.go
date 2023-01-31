@@ -78,13 +78,13 @@ type InputCreateChooserMovieListDto struct {
 }
 
 type OutputChooser struct {
-	ID       string `json:"id"`
+	ID       string `json:"chooser_id"`
 	UserName string `json:"username"`
 	Picture  string `json:"picture"`
 }
 
 type OutputMovieList struct {
-	ID          string          `json:"id"`
+	ID          string          `json:"movie_list_id"`
 	Title       string          `json:"title"`
 	Description string          `json:"description"`
 	Picture     string          `json:"picture"`
@@ -93,4 +93,17 @@ type OutputMovieList struct {
 
 type OutputCreateChooserMovieListDto struct {
 	MovieList OutputMovieList `json:"movie_list"`
+}
+
+type InputChooserCreateMovieListDto struct {
+	ChooserId string         `json:"chooser_id"`
+	MovieList InputMovieList `json:"movie_list"`
+}
+
+type OutputChooserCreateMovieListDto struct {
+	ID          string        `json:"movie_list_id"`
+	Title       string        `json:"title"`
+	Description string        `json:"description"`
+	Picture     string        `json:"picture"`
+	Chooser     OutputChooser `json:"chooser"`
 }

@@ -139,3 +139,18 @@ func (chooserRepository *ChooserRepository) CreateChooserMovieList(chooser *enti
 
 	return nil
 }
+
+func (chooserRepository *ChooserRepository) ChooserCreateMovieList(chooser *entity.Chooser, movieList *entity.MovieList) error {
+	stmt, err := chooserRepository.Db.Prepare("INSERT INTO choosers_movie_lists (chooser_id, movie_list_id, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5)")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(chooser.ID, movieList.ID, movieList.CreatedAt, movieList.UpdatedAt, movieList.DeletedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

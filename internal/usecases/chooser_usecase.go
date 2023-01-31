@@ -202,3 +202,42 @@ func (chooserUseCase *ChooserUseCase) CreateChooserMovieList(input InputCreateCh
 
 	return output, nil
 }
+
+func (chooserUseCase *ChooserUseCase) ChooserCreateMovieList(input InputChooserCreateMovieListDto) (OutputChooserCreateMovieListDto, error) {
+	output := OutputChooserCreateMovieListDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieList, err := entity.NewMovieList(input.MovieList.Title, input.MovieList.Description, input.MovieList.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if err := chooserUseCase.MovieListRepository.Create(movieList); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	timeNow := time.Now().Local().String()
+
+	err = chooserUseCase.MovieListRepository.AddChooserToMovieList(movieList, &chooser, timeNow, timeNow, timeNow)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	outputChooser := OutputChooser{
+		ID:       chooser.ID,
+		UserName: chooser.UserName,
+		Picture:  chooser.Picture,
+	}
+
+	output.ID = movieList.ID
+	output.Title = movieList.Title
+	output.Description = movieList.Description
+	output.Picture = movieList.Picture
+	output.Chooser = outputChooser
+
+	return output, nil
+}
