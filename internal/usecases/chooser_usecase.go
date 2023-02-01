@@ -184,9 +184,9 @@ func (chooserUseCase *ChooserUseCase) CreateChooserMovieList(input InputCreateCh
 	}
 
 	outputChooser := OutputChooser{
-		ID:       chooser.ID,
-		UserName: chooser.UserName,
-		Picture:  chooser.Picture,
+		ChooserId: chooser.ID,
+		UserName:  chooser.UserName,
+		Picture:   chooser.Picture,
 	}
 
 	outputMovieList := OutputMovieList{
@@ -228,9 +228,9 @@ func (chooserUseCase *ChooserUseCase) ChooserCreateMovieList(input InputChooserC
 	}
 
 	outputChooser := OutputChooser{
-		ID:       chooser.ID,
-		UserName: chooser.UserName,
-		Picture:  chooser.Picture,
+		ChooserId: chooser.ID,
+		UserName:  chooser.UserName,
+		Picture:   chooser.Picture,
 	}
 
 	output.ID = movieList.ID
@@ -238,6 +238,55 @@ func (chooserUseCase *ChooserUseCase) ChooserCreateMovieList(input InputChooserC
 	output.Description = movieList.Description
 	output.Picture = movieList.Picture
 	output.Chooser = outputChooser
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) FindAllChooserMovieLists(input InputFindAllChooserMovieListsDto) (OutputFindAllChooserMovieListsDto, error) {
+	output := OutputFindAllChooserMovieListsDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieLists, err := chooserUseCase.ChooserRepository.FindAllChooserMovieLists(chooser.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	outputChooser := OutputChooser{
+		ChooserId: chooser.ID,
+		UserName:  chooser.UserName,
+		Picture:   chooser.Picture,
+	}
+
+	outputMovieLists := []OutputMovieList{}
+	outputChoosers := []OutputChooser{}
+
+	for _, movieList := range movieLists {
+		outputMovieLists = append(outputMovieLists, OutputMovieList{
+			ID:          movieList.ID,
+			Title:       movieList.Title,
+			Description: movieList.Description,
+			Picture:     movieList.Picture,
+		})
+
+		for _, chooserMovieList := range movieList.Choosers {
+			chooserInList := OutputChooser{
+				ChooserId: chooserMovieList.ID,
+				UserName:  chooserMovieList.UserName,
+				Picture:   chooserMovieList.Picture,
+			}
+			outputChoosers = append(outputChoosers, chooserInList)
+		}
+		outputMovieLists = append(outputMovieLists, OutputMovieList{
+			Choosers: outputChoosers,
+		})
+	}
+
+	output.Chooser = outputChooser
+	output.MovieLists = outputMovieLists
 
 	return output, nil
 }

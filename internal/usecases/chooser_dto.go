@@ -78,9 +78,9 @@ type InputCreateChooserMovieListDto struct {
 }
 
 type OutputChooser struct {
-	ID       string `json:"chooser_id"`
-	UserName string `json:"username"`
-	Picture  string `json:"picture"`
+	ChooserId string `json:"chooser_id"`
+	UserName  string `json:"username"`
+	Picture   string `json:"picture"`
 }
 
 type OutputMovieList struct {
@@ -107,3 +107,58 @@ type OutputChooserCreateMovieListDto struct {
 	Picture     string        `json:"picture"`
 	Chooser     OutputChooser `json:"chooser"`
 }
+
+type InputFindAllChooserMovieListsDto struct {
+	ChooserId string `json:"chooser_id"`
+}
+
+type OutputFindAllChooserMovieListsDto struct {
+	Chooser    OutputChooser     `json:"chooser"`
+	MovieLists []OutputMovieList `json:"movie_lists"`
+}
+
+// {
+// 	chooser: {
+// 		chooser_id,
+// 		username,
+// 		picture,
+// 		movie_lists: [
+// 			{
+// 				movie_list_id,
+// 				title,
+// 				description,
+// 				picture,
+// 				choosers: [
+// 					{
+// 						chooser_id,
+// 						username,
+// 						picture,
+// 					},
+// 					{
+// 						chooser_id,
+// 						username,
+// 						picture,
+// 					},
+// 				]
+// 			},
+// 			{
+// 				movie_list_id,
+// 				title,
+// 				description,
+// 				picture,
+// 				choosers: [
+// 					{
+// 						chooser_id,
+// 						username,
+// 						picture,
+// 					},
+// 					{
+// 						chooser_id,
+// 						username,
+// 						picture,
+// 					},
+// 				]
+// 			},
+// 		]
+// 	}
+// }

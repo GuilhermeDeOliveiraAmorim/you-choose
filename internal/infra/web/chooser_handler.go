@@ -198,3 +198,25 @@ func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseW
 		return
 	}
 }
+
+func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.ResponseWriter, r *http.Request) {
+	chooserId := r.URL.Query().Get("id")
+
+	input := usecases.InputFindAllChooserMovieListsDto{
+		ChooserId: chooserId,
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+
+	allChooserMovieLists, err := chooserUseCase.FindAllChooserMovieLists(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(allChooserMovieLists)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
