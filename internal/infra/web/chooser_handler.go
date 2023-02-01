@@ -62,7 +62,7 @@ func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.
 }
 
 func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
-	chooserId := r.URL.Query().Get("id")
+	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputFindChooserDto{
 		ID: chooserId,
@@ -84,7 +84,7 @@ func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Req
 }
 
 func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	chooserId := r.URL.Query().Get("id")
+	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputDeleteChooserDto{
 		ID: chooserId,
@@ -130,7 +130,7 @@ func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
-	chooserId := r.URL.Query().Get("id")
+	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputIsDeletedChooserDto{
 		ID: chooserId,
@@ -200,7 +200,7 @@ func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseW
 }
 
 func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.ResponseWriter, r *http.Request) {
-	chooserId := r.URL.Query().Get("id")
+	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputFindAllChooserMovieListsDto{
 		ChooserId: chooserId,

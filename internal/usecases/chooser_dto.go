@@ -8,25 +8,25 @@ type InputCreateChooserDto struct {
 }
 
 type OutputCreateChooserDto struct {
-	ID       string `json:"id"`
+	ID       string `json:"chooser_id"`
 	UserName string `json:"username"`
 	Picture  string `json:"picture"`
 }
 
 type InputDeleteChooserDto struct {
-	ID string `json:"id"`
+	ID string `json:"chooser_id"`
 }
 
 type OutputDeleteChooserDto struct {
-	IsDeleted bool `json:"has_been_deleted"`
+	IsDeleted bool `json:"chooser_has_been_deleted"`
 }
 
 type InputFindChooserDto struct {
-	ID string `json:"id"`
+	ID string `json:"chooser_id"`
 }
 
 type OutputFindChooserDto struct {
-	ID       string `json:"id"`
+	ID       string `json:"chooser_id"`
 	UserName string `json:"username"`
 	Picture  string `json:"picture"`
 }
@@ -36,7 +36,7 @@ type OutputFindAllChooserDto struct {
 }
 
 type InputUpdateChooserDto struct {
-	ID        string `json:"id"`
+	ID        string `json:"chooser_id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	UserName  string `json:"username"`
@@ -44,7 +44,7 @@ type InputUpdateChooserDto struct {
 }
 
 type OutputUpdateChooserDto struct {
-	ID        string `json:"id"`
+	ID        string `json:"chooser_id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	UserName  string `json:"username"`
@@ -52,11 +52,11 @@ type OutputUpdateChooserDto struct {
 }
 
 type InputIsDeletedChooserDto struct {
-	ID string `json:"id"`
+	ID string `json:"chooser_id"`
 }
 
 type OutputIsDeletedChooserDto struct {
-	IsDeleted bool `json:"has_been_deleted"`
+	IsDeleted bool `json:"is_chooser_deleted"`
 }
 
 type InputChooser struct {
