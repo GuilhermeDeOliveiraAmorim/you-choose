@@ -184,9 +184,9 @@ func (chooserUseCase *ChooserUseCase) CreateChooserMovieList(input InputCreateCh
 	}
 
 	outputChooser := OutputChooser{
-		ID:       chooser.ID,
-		UserName: chooser.UserName,
-		Picture:  chooser.Picture,
+		ChooserId: chooser.ID,
+		UserName:  chooser.UserName,
+		Picture:   chooser.Picture,
 	}
 
 	outputMovieList := OutputMovieList{
@@ -199,6 +199,94 @@ func (chooserUseCase *ChooserUseCase) CreateChooserMovieList(input InputCreateCh
 	outputMovieList.Choosers = append(outputMovieList.Choosers, outputChooser)
 
 	output.MovieList = outputMovieList
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) ChooserCreateMovieList(input InputChooserCreateMovieListDto) (OutputChooserCreateMovieListDto, error) {
+	output := OutputChooserCreateMovieListDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieList, err := entity.NewMovieList(input.MovieList.Title, input.MovieList.Description, input.MovieList.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if err := chooserUseCase.MovieListRepository.Create(movieList); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	timeNow := time.Now().Local().String()
+
+	err = chooserUseCase.MovieListRepository.AddChooserToMovieList(movieList, &chooser, timeNow, timeNow, timeNow)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	outputChooser := OutputChooser{
+		ChooserId: chooser.ID,
+		UserName:  chooser.UserName,
+		Picture:   chooser.Picture,
+	}
+
+	output.ID = movieList.ID
+	output.Title = movieList.Title
+	output.Description = movieList.Description
+	output.Picture = movieList.Picture
+	output.Chooser = outputChooser
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) FindAllChooserMovieLists(input InputFindAllChooserMovieListsDto) (OutputFindAllChooserMovieListsDto, error) {
+	output := OutputFindAllChooserMovieListsDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieLists, err := chooserUseCase.ChooserRepository.FindAllChooserMovieLists(chooser.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	outputChooser := OutputChooser{
+		ChooserId: chooser.ID,
+		UserName:  chooser.UserName,
+		Picture:   chooser.Picture,
+	}
+
+	outputMovieLists := []OutputMovieList{}
+	outputChoosers := []OutputChooser{}
+
+	for _, movieList := range movieLists {
+		outputMovieLists = append(outputMovieLists, OutputMovieList{
+			ID:          movieList.ID,
+			Title:       movieList.Title,
+			Description: movieList.Description,
+			Picture:     movieList.Picture,
+		})
+
+		for _, chooserMovieList := range movieList.Choosers {
+			chooserInList := OutputChooser{
+				ChooserId: chooserMovieList.ID,
+				UserName:  chooserMovieList.UserName,
+				Picture:   chooserMovieList.Picture,
+			}
+			outputChoosers = append(outputChoosers, chooserInList)
+		}
+		outputMovieLists = append(outputMovieLists, OutputMovieList{
+			Choosers: outputChoosers,
+		})
+	}
+
+	output.Chooser = outputChooser
+	output.MovieLists = outputMovieLists
 
 	return output, nil
 }

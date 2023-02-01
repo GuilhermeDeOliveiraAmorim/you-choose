@@ -174,3 +174,49 @@ func (chooserHandler *WebChooserHandler) CreateChooserMovieList(w http.ResponseW
 		return
 	}
 }
+
+func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseWriter, r *http.Request) {
+	var dto usecases.InputChooserCreateMovieListDto
+	err := json.NewDecoder(r.Body).Decode(&dto)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+
+	output, err := chooserUseCase.ChooserCreateMovieList(dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.ResponseWriter, r *http.Request) {
+	chooserId := r.URL.Query().Get("id")
+
+	input := usecases.InputFindAllChooserMovieListsDto{
+		ChooserId: chooserId,
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+
+	allChooserMovieLists, err := chooserUseCase.FindAllChooserMovieLists(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(allChooserMovieLists)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

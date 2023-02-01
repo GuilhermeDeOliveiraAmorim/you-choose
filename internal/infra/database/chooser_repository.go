@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -138,4 +139,43 @@ func (chooserRepository *ChooserRepository) CreateChooserMovieList(chooser *enti
 	}
 
 	return nil
+}
+
+func (chooserRepository *ChooserRepository) ChooserCreateMovieList(chooser *entity.Chooser, movieList *entity.MovieList) error {
+	stmt, err := chooserRepository.Db.Prepare("INSERT INTO choosers_movie_lists (chooser_id, movie_list_id, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5)")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(chooser.ID, movieList.ID, movieList.CreatedAt, movieList.UpdatedAt, movieList.DeletedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (chooserRepository *ChooserRepository) FindAllChooserMovieLists(id string) ([]entity.MovieList, error) {
+	var chooser entity.Chooser
+	var movieList []entity.MovieList
+
+	rows, err := chooserRepository.Db.Query("SELECT chooser_id, movie_list_id, created_at, updated_at, deleted_at FROM choosers_movie_lists WHERE chooser_id = $1", id)
+	if err != nil {
+		return movieList, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture); err != nil {
+			return movieList, err
+		}
+	}
+
+	fmt.Println(rows)
+
+	if err = rows.Err(); err != nil {
+		return movieList, err
+	}
+
+	return movieList, nil
 }

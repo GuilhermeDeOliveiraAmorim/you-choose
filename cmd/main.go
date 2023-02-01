@@ -26,7 +26,8 @@ func main() {
 	webserver.AddHandler("/choosers/update", newWebChooserHandler.Update)
 	webserver.AddHandler("/choosers/all", newWebChooserHandler.FindAll)
 	webserver.AddHandler("/choosers/isdeleted", newWebChooserHandler.IsDeleted)
-	webserver.AddHandler("/choosers/create/movielist", newWebChooserHandler.CreateChooserMovieList)
+	webserver.AddHandler("/choosers/create/movielist", newWebChooserHandler.ChooserCreateMovieList)
+	webserver.AddHandler("/choosers/find/all/movielists", newWebChooserHandler.FindAllChooserMovieLists)
 
 	webserver.AddHandler("/movielists/add", newWebMovieListHandler.Create)
 	webserver.AddHandler("/movielists/all", newWebMovieListHandler.FindAll)
