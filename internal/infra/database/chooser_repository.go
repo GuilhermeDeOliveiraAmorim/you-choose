@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -170,8 +169,6 @@ func (chooserRepository *ChooserRepository) FindAllChooserMovieLists(id string) 
 			return movieList, err
 		}
 	}
-
-	fmt.Println(rows)
 
 	if err = rows.Err(); err != nil {
 		return movieList, err

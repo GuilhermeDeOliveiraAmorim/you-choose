@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -96,10 +95,7 @@ func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddCh
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(movieList.ID, chooser.ID)
-
 	isChooserInMovieList := movieListUseCase.VeryfingChooserInMovieList(chooser, movieList)
-	fmt.Println(isChooserInMovieList)
 	if isChooserInMovieList {
 		return output, errors.New(err.Error())
 	}
@@ -130,7 +126,6 @@ func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddCh
 func (movieListUseCase *MovieListUseCase) VeryfingChooserInMovieList(chooserToFind entity.Chooser, movieList entity.MovieList) bool {
 	for _, chooser := range movieList.Choosers {
 		if chooser.ID == chooserToFind.ID {
-			fmt.Println(chooser.ID + "==" + chooserToFind.ID)
 			return true
 		}
 	}
