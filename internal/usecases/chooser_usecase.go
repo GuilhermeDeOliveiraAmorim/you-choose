@@ -170,8 +170,8 @@ func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) 
 	return output, nil
 }
 
-func (chooserUseCase *ChooserUseCase) CreateChooserMovieList(input InputCreateChooserMovieListDto) (OutputCreateChooserMovieListDto, error) {
-	output := OutputCreateChooserMovieListDto{}
+func (chooserUseCase *ChooserUseCase) CreateChooserAndMovieList(input InputCreateChooserAndMovieListDto) (OutputCreateChooserAndMovieListDto, error) {
+	output := OutputCreateChooserAndMovieListDto{}
 
 	chooser, err := entity.NewChooser(input.Chooser.FirstName, input.Chooser.LastName, input.Chooser.UserName, input.Chooser.Picture)
 	if err != nil {

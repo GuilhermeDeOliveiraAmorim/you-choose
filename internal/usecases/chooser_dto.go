@@ -72,7 +72,7 @@ type InputMovieList struct {
 	Picture     string `json:"picture"`
 }
 
-type InputCreateChooserMovieListDto struct {
+type InputCreateChooserAndMovieListDto struct {
 	Chooser   InputChooser   `json:"chooser"`
 	MovieList InputMovieList `json:"movie_list"`
 }
@@ -91,7 +91,7 @@ type OutputMovieList struct {
 	Choosers    []OutputChooser `json:"choosers"`
 }
 
-type OutputCreateChooserMovieListDto struct {
+type OutputCreateChooserAndMovieListDto struct {
 	MovieList OutputMovieList `json:"movie_list"`
 }
 

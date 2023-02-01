@@ -126,7 +126,7 @@ func (chooserRepository *ChooserRepository) IsDeleted(id string) error {
 	return nil
 }
 
-func (chooserRepository *ChooserRepository) CreateChooserMovieList(chooser *entity.Chooser, movieList *entity.MovieList) error {
+func (chooserRepository *ChooserRepository) CreateChooserAndMovieList(chooser *entity.Chooser, movieList *entity.MovieList) error {
 	stmt, err := chooserRepository.Db.Prepare("INSERT INTO choosers_movie_lists (chooser_id, movie_list_id, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5)")
 
 	if err != nil {

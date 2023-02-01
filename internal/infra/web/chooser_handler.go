@@ -151,8 +151,8 @@ func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *htt
 	}
 }
 
-func (chooserHandler *WebChooserHandler) CreateChooserMovieList(w http.ResponseWriter, r *http.Request) {
-	var dto usecases.InputCreateChooserMovieListDto
+func (chooserHandler *WebChooserHandler) CreateChooserAndMovieList(w http.ResponseWriter, r *http.Request) {
+	var dto usecases.InputCreateChooserAndMovieListDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
 	if err != nil {
@@ -162,7 +162,7 @@ func (chooserHandler *WebChooserHandler) CreateChooserMovieList(w http.ResponseW
 
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
 
-	output, err := chooserUseCase.CreateChooserMovieList(dto)
+	output, err := chooserUseCase.CreateChooserAndMovieList(dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
