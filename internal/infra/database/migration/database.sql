@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS movie_lists (
 CREATE TABLE IF NOT EXISTS choosers_movie_lists (
     chooser_id text,
     movie_list_id text,
+    is_deleted boolean,
     created_at text,
     updated_at text,
     deleted_at text
@@ -33,10 +34,10 @@ CREATE TABLE IF NOT EXISTS actors (
     actor_id text,
     name text,
     picture text,
+    is_deleted boolean,
     created_at text,
     updated_at text,
-    deleted_at text,
-    is_deleted boolean
+    deleted_at text
 );
 
 CREATE TABLE IF NOT EXISTS movies (
@@ -47,8 +48,8 @@ CREATE TABLE IF NOT EXISTS movies (
     votes int,
     you_choose_rating float,
     poster text,
+    is_deleted boolean,
     created_at text,
     updated_at text,
-    deleted_at text,
-    is_deleted boolean
+    deleted_at text
 );

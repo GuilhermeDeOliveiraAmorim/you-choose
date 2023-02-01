@@ -95,11 +95,6 @@ func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddCh
 		return output, errors.New(err.Error())
 	}
 
-	isChooserInMovieList := movieListUseCase.VeryfingChooserInMovieList(chooser, movieList)
-	if isChooserInMovieList {
-		return output, errors.New(err.Error())
-	}
-
 	timeNow := time.Now().Local().String()
 
 	err = movieListUseCase.MovieListRepository.AddChooserToMovieList(&movieList, &chooser, timeNow, timeNow, timeNow)
@@ -121,14 +116,4 @@ func (movieListUseCase *MovieListUseCase) AddChooserToMovieList(input InputAddCh
 	}
 
 	return output, nil
-}
-
-func (movieListUseCase *MovieListUseCase) VeryfingChooserInMovieList(chooserToFind entity.Chooser, movieList entity.MovieList) bool {
-	for _, chooser := range movieList.Choosers {
-		if chooser.ID == chooserToFind.ID {
-			return true
-		}
-	}
-
-	return false
 }
