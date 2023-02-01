@@ -28,3 +28,27 @@ CREATE TABLE IF NOT EXISTS choosers_movie_lists (
     updated_at text,
     deleted_at text
 );
+
+CREATE TABLE IF NOT EXISTS actors (
+    actor_id text,
+    name text,
+    picture text,
+    created_at text,
+    updated_at text,
+    deleted_at text,
+    is_deleted boolean
+);
+
+CREATE TABLE IF NOT EXISTS movies (
+    movie_id text,
+    title text,
+    synopsis text,
+    imdb_rating text,
+    votes int,
+    you_choose_rating float,
+    poster text,
+    created_at text,
+    updated_at text,
+    deleted_at text,
+    is_deleted boolean
+);

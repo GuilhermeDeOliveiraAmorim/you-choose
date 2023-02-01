@@ -20,7 +20,7 @@ func main() {
 	newWebChooserHandler := NewWebChooserHandlerGen(db)
 	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
 
-	webserver.AddHandler("/choosers/add", newWebChooserHandler.Create)
+	webserver.AddHandler("/choosers/create", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/find", newWebChooserHandler.Find)
 	webserver.AddHandler("/choosers/delete", newWebChooserHandler.Delete)
 	webserver.AddHandler("/choosers/update", newWebChooserHandler.Update)
