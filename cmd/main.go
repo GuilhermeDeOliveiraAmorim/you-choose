@@ -19,6 +19,7 @@ func main() {
 	webserver := webserver.NewWebServer(":8080")
 	newWebChooserHandler := NewWebChooserHandlerGen(db)
 	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
+	newWebMovieHandler := NewWebMovieHandler(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/delete/chooser", newWebChooserHandler.Delete)
@@ -27,12 +28,15 @@ func main() {
 	webserver.AddHandler("/choosers/find/chooser", newWebChooserHandler.Find)
 	webserver.AddHandler("/choosers/find/all/choosers", newWebChooserHandler.FindAll)
 	webserver.AddHandler("/choosers/find/all/movielists", newWebChooserHandler.FindAllChooserMovieLists)
-	webserver.AddHandler("/choosers/create/movielist", newWebChooserHandler.ChooserCreateMovieList)
+	webserver.AddHandler("/choosers/chooser/create/movielist", newWebChooserHandler.ChooserCreateMovieList)
 
 	webserver.AddHandler("/movielists/add", newWebMovieListHandler.Create)
 	webserver.AddHandler("/movielists/all", newWebMovieListHandler.FindAll)
 	webserver.AddHandler("/movielists/find", newWebMovieListHandler.Find)
 	webserver.AddHandler("/movielists/add/chooser", newWebMovieListHandler.AddChooserToMovieList)
+
+	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
+	webserver.AddHandler("/movies/find/movies", newWebMovieHandler.FindAll)
 
 	webserver.Start()
 }

@@ -20,10 +20,9 @@ func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface, movi
 }
 
 func (chooserUseCase *ChooserUseCase) Create(input InputCreateChooserDto) (OutputCreateChooserDto, error) {
-	chooser, err := entity.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture)
-
 	output := OutputCreateChooserDto{}
 
+	chooser, err := entity.NewChooser(input.FirstName, input.LastName, input.UserName, input.Picture)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

@@ -43,3 +43,15 @@ func NewWebMovieListHandlerGen(db *sql.DB) *web.WebMovieListHandler{
 	webMovieListHandler := web.NewMovieListHandler(movieListRepository, chooserRepository)
 	return webMovieListHandler
 }
+
+func NewCreateMovieUseCaseGen(db *sql.DB) *usecases.MovieUseCase {
+	movieRepository := database.NewMovieRepository(db)
+	MovieUseCase := usecases.NewMovieUseCase(movieRepository)
+	return MovieUseCase
+}
+
+func NewWebMovieHandlerGen(db *sql.DB) *web.WebMovieHandler{
+	movieRepository := database.NewMovieRepository(db)
+	webMovieHandler := web.NewMovieHandler(movieRepository)
+	return webMovieHandler
+}
