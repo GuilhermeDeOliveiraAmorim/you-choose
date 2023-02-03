@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -20,14 +19,14 @@ func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface) *MovieUseC
 func (movieUseCase *MovieUseCase) Create(input InputCreateMovieDto) (OutputCreateMovieDto, error) {
 	output := OutputCreateMovieDto{}
 
-	fmt.Println(input)
-
 	movie, err := entity.NewMovie(input.Title, input.Synopsis, input.ImdbRating, input.Poster)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(movie)
+	if err := movieUseCase.MovieRepository.Create(movie); err != nil {
+		return output, errors.New(err.Error())
+	}
 
 	output.Movie.ID = movie.ID
 	output.Movie.Title = movie.Title
@@ -40,12 +39,6 @@ func (movieUseCase *MovieUseCase) Create(input InputCreateMovieDto) (OutputCreat
 	output.Movie.CreatedAt = movie.CreatedAt
 	output.Movie.UpdatedAt = movie.UpdatedAt
 	output.Movie.DeletedAt = movie.DeletedAt
-
-	fmt.Println(output)
-
-	if err := movieUseCase.MovieRepository.Create(movie); err != nil {
-		return output, errors.New(err.Error())
-	}
 
 	// movies, err := movieUseCase.MovieRepository.FindAll()
 	// if err != nil {

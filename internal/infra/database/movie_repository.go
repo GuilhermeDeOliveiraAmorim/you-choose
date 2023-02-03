@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -22,8 +21,6 @@ func (movieRepository *MovieRepository) Create(movie *entity.Movie) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(stmt)
 
 	_, err = stmt.Exec(movie.ID, movie.Title, movie.Synopsis, movie.ImdbRating, movie.Votes, movie.YouChooseRating, movie.Poster, movie.IsDeleted, movie.CreatedAt, movie.UpdatedAt, movie.DeletedAt)
 	if err != nil {

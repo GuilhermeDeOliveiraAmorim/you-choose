@@ -21,8 +21,8 @@ func NewMovieHandler(chooserRepository entity.MovieRepositoryInterface) *WebMovi
 
 func (movieHandler *WebMovieHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var dto usecases.InputCreateMovieDto
-	err := json.NewDecoder(r.Body).Decode(&dto)
 
+	err := json.NewDecoder(r.Body).Decode(&dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

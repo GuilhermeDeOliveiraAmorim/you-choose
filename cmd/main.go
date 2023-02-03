@@ -19,7 +19,7 @@ func main() {
 	webserver := webserver.NewWebServer(":8080")
 	newWebChooserHandler := NewWebChooserHandlerGen(db)
 	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
-	newWebMovieHandler := NewWebMovieHandler(db)
+	newWebMovieHandler := NewWebMovieHandlerGen(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/delete/chooser", newWebChooserHandler.Delete)
