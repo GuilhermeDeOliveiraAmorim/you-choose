@@ -15,14 +15,14 @@ type Movie struct {
 	Votes           int32
 	YouChooseRating float32
 	Poster          string
+	IsDeleted       bool
+	CreatedAt       string
+	UpdatedAt       string
+	DeletedAt       string
 	Directors       []*Director
 	Actors          []*Actor
 	Writers         []*Writer
 	Genres          []*Genre
-	CreatedAt       string
-	UpdatedAt       string
-	DeletedAt       string
-	IsDeleted       bool
 }
 
 func (m *Movie) AddVote() {
@@ -45,10 +45,10 @@ func NewMovie(title string, synopsis string, imdbRating string, poster string) (
 		Votes:           0,
 		YouChooseRating: 0.0,
 		Poster:          poster,
+		IsDeleted:       false,
 		CreatedAt:       dateNow.Local().String(),
 		UpdatedAt:       dateNow.Local().String(),
 		DeletedAt:       dateNow.Local().String(),
-		IsDeleted:       false,
 	}
 
 	isValid, err := movie.Validate()
@@ -116,8 +116,8 @@ func (movie *Movie) Validate() (bool, error) {
 
 	inputs["title"] = movie.Title
 	inputs["synopsis"] = movie.Synopsis
-	inputs["poster"] = movie.Poster
 	inputs["imdbRating"] = movie.ImdbRating
+	inputs["poster"] = movie.Poster
 
 	for key, value := range inputs {
 		if value == "" {

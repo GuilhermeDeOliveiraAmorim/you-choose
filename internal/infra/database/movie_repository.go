@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -16,13 +17,15 @@ func NewMovieRepository(db *sql.DB) *MovieRepository {
 	}
 }
 
-func (c *MovieRepository) Create(movie *entity.Movie) error {
-	stmt, err := c.Db.Prepare("INSERT INTO movies (movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)")
+func (movieRepository *MovieRepository) Create(movie *entity.Movie) error {
+	stmt, err := movieRepository.Db.Prepare("INSERT INTO movies (movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, poster, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(movie.ID, movie.Title, movie.Synopsis, movie.ImdbRating, movie.Votes, movie.YouChooseRating, movie.CreatedAt, movie.UpdatedAt, movie.DeletedAt)
+	fmt.Println(stmt)
+
+	_, err = stmt.Exec(movie.ID, movie.Title, movie.Synopsis, movie.ImdbRating, movie.Votes, movie.YouChooseRating, movie.Poster, movie.IsDeleted, movie.CreatedAt, movie.UpdatedAt, movie.DeletedAt)
 	if err != nil {
 		return err
 	}
@@ -30,8 +33,8 @@ func (c *MovieRepository) Create(movie *entity.Movie) error {
 	return nil
 }
 
-func (c *MovieRepository) FindAll() ([]entity.Movie, error) {
-	rows, err := c.Db.Query("SELECT movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, is_deleted, created_at, updated_at, deleted_at FROM movies")
+func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
+	rows, err := movieRepository.Db.Query("SELECT movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, is_deleted, created_at, updated_at, deleted_at FROM movies")
 	if err != nil {
 		return nil, err
 	}

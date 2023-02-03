@@ -8,10 +8,10 @@ type MovieDto struct {
 	Votes           int32   `json:"votes"`
 	YouChooseRating float32 `json:"you_choose_rating"`
 	Poster          string  `json:"poster"`
+	IsDeleted       bool    `json:"is_deleted"`
 	CreatedAt       string  `json:"created_at"`
 	UpdatedAt       string  `json:"updated_at"`
 	DeletedAt       string  `json:"deleted_at"`
-	IsDeleted       bool    `json:"is_deleted"`
 }
 
 type InputCreateMovieDto struct {

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
@@ -19,25 +20,14 @@ func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface) *MovieUseC
 func (movieUseCase *MovieUseCase) Create(input InputCreateMovieDto) (OutputCreateMovieDto, error) {
 	output := OutputCreateMovieDto{}
 
+	fmt.Println(input)
+
 	movie, err := entity.NewMovie(input.Title, input.Synopsis, input.ImdbRating, input.Poster)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	if err := movieUseCase.MovieRepository.Create(movie); err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	movies, err := movieUseCase.MovieRepository.FindAll()
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	for _, existingMovie := range movies {
-		if input.Title == existingMovie.Title {
-			return output, errors.New("movie already exists")
-		}
-	}
+	fmt.Println(movie)
 
 	output.Movie.ID = movie.ID
 	output.Movie.Title = movie.Title
@@ -46,10 +36,27 @@ func (movieUseCase *MovieUseCase) Create(input InputCreateMovieDto) (OutputCreat
 	output.Movie.Votes = movie.Votes
 	output.Movie.YouChooseRating = movie.YouChooseRating
 	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
 	output.Movie.CreatedAt = movie.CreatedAt
 	output.Movie.UpdatedAt = movie.UpdatedAt
 	output.Movie.DeletedAt = movie.DeletedAt
-	output.Movie.IsDeleted = movie.IsDeleted
+
+	fmt.Println(output)
+
+	if err := movieUseCase.MovieRepository.Create(movie); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	// movies, err := movieUseCase.MovieRepository.FindAll()
+	// if err != nil {
+	// 	return output, errors.New(err.Error())
+	// }
+
+	// for _, existingMovie := range movies {
+	// 	if input.Title == existingMovie.Title {
+	// 		return output, errors.New("movie already exists")
+	// 	}
+	// }
 
 	return output, nil
 }
