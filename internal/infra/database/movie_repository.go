@@ -31,7 +31,7 @@ func (movieRepository *MovieRepository) Create(movie *entity.Movie) error {
 }
 
 func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
-	rows, err := movieRepository.Db.Query("SELECT movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, is_deleted, created_at, updated_at, deleted_at FROM movies")
+	rows, err := movieRepository.Db.Query("SELECT movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, poster, is_deleted, created_at, updated_at, deleted_at FROM movies")
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
 	for rows.Next() {
 		var movie entity.Movie
 
-		if err := rows.Scan(&movie.ID, &movie.Title, &movie.Synopsis, &movie.ImdbRating, &movie.Votes, &movie.YouChooseRating, &movie.IsDeleted, &movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt); err != nil {
+		if err := rows.Scan(&movie.ID, &movie.Title, &movie.Synopsis, &movie.ImdbRating, &movie.Votes, &movie.YouChooseRating, &movie.Poster, &movie.IsDeleted, &movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt); err != nil {
 			return movies, err
 		}
 
@@ -53,4 +53,8 @@ func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
 	}
 
 	return movies, nil
+}
+
+func (movieRepository *MovieRepository) CreateMovieWithImdbId(movie *entity.Movie) error {
+	return nil
 }

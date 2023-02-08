@@ -28,3 +28,11 @@ type OutputCreateMovieDto struct {
 type OutputFindAllMoviesDto struct {
 	Movies []MovieDto `json:"movies"`
 }
+
+type InputCreateMovieWithImdbIdDto struct {
+	ImdbId string `json:"imdb_id"`
+}
+
+type OutputCreateMovieWithImdbIdDto struct {
+	Movie MovieDto `json:"movie"`
+}
