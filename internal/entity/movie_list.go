@@ -14,21 +14,22 @@ type MovieList struct {
 	Picture     string
 	Choosers    []*Chooser
 	Movies      []*Movie
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   time.Time
+	CreatedAt   string
+	UpdatedAt   string
+	DeletedAt   string
 	IsDeleted   bool
 }
 
 func NewMovieList(title string, description string, picture string) (*MovieList, error) {
+	dateNow := time.Now()
 	movieList := &MovieList{
 		ID:          uuid.New().String(),
 		Title:       title,
 		Description: description,
 		Picture:     picture,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-		DeletedAt:   time.Now(),
+		CreatedAt:   dateNow.Local().String(),
+		UpdatedAt:   dateNow.Local().String(),
+		DeletedAt:   dateNow.Local().String(),
 		IsDeleted:   false,
 	}
 

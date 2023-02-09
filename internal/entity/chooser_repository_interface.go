@@ -10,4 +10,5 @@ type ChooserRepositoryInterface interface {
 	CreateChooserAndMovieList(chooser *Chooser, movieList *MovieList) error
 	ChooserCreateMovieList(chooser *Chooser, movieList *MovieList) error
 	FindAllChooserMovieLists(id string) ([]MovieList, error)
+	ChooserAddMovieToMovieList(movieList MovieList, movies []*Movie) error
 }

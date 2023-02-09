@@ -10,12 +10,14 @@ import (
 type ChooserUseCase struct {
 	ChooserRepository   entity.ChooserRepositoryInterface
 	MovieListRepository entity.MovieListRepositoryInterface
+	MovieRepository     entity.MovieRepositoryInterface
 }
 
-func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface) *ChooserUseCase {
+func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *ChooserUseCase {
 	return &ChooserUseCase{
 		ChooserRepository:   chooserRepository,
 		MovieListRepository: movieListRepository,
+		MovieRepository:     movieRepository,
 	}
 }
 
@@ -285,6 +287,37 @@ func (chooserUseCase *ChooserUseCase) FindAllChooserMovieLists(input InputFindAl
 
 	output.Chooser = outputChooser
 	output.MovieLists = outputMovieLists
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) ChooserAddMovieToMovieList(input InputChooserAddMovieToMovieListDto) (OutputChooserAddMovieToMovieListDto, error) {
+	output := OutputChooserAddMovieToMovieListDto{}
+
+	movieList, err := chooserUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movies, err := chooserUseCase.MovieRepository.FindAll()
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	for _, movieId := range input.MoviesIds {
+		for _, movie := range movies {
+			if movieId.MovieId == movie.ID {
+				movieList.AddMovie(&movie)
+			}
+		}
+	}
+
+	err = chooserUseCase.ChooserRepository.ChooserAddMovieToMovieList(movieList, movieList.Movies)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.MovieList = movieList
 
 	return output, nil
 }

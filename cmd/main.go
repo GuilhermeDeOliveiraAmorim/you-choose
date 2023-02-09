@@ -29,6 +29,7 @@ func main() {
 	webserver.AddHandler("/choosers/find/all/choosers", newWebChooserHandler.FindAll)
 	webserver.AddHandler("/choosers/find/all/movielists", newWebChooserHandler.FindAllChooserMovieLists)
 	webserver.AddHandler("/choosers/chooser/create/movielist", newWebChooserHandler.ChooserCreateMovieList)
+	webserver.AddHandler("/choosers/chooser/add/movie/movielist", newWebChooserHandler.ChooserAddMovieToMovieList)
 
 	webserver.AddHandler("/movielists/add", newWebMovieListHandler.Create)
 	webserver.AddHandler("/movielists/all", newWebMovieListHandler.FindAll)

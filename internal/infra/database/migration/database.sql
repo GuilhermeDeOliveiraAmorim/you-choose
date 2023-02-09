@@ -53,3 +53,12 @@ CREATE TABLE IF NOT EXISTS movies (
     updated_at text,
     deleted_at text
 );
+
+CREATE TABLE IF NOT EXISTS movies_movie_lists (
+    movie_id text,
+    movie_list_id text,
+    is_deleted boolean,
+    created_at text,
+    updated_at text,
+    deleted_at text
+);

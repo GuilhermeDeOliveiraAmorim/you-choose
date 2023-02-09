@@ -12,12 +12,14 @@ import (
 type WebChooserHandler struct {
 	ChooserRepository   entity.ChooserRepositoryInterface
 	MovieListRepository entity.MovieListRepositoryInterface
+	MovieRepository     entity.MovieRepositoryInterface
 }
 
-func NewChooserHandler(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface) *WebChooserHandler {
+func NewChooserHandler(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *WebChooserHandler {
 	return &WebChooserHandler{
 		ChooserRepository:   chooserRepository,
 		MovieListRepository: movieListRepository,
+		MovieRepository:     movieRepository,
 	}
 }
 
@@ -30,7 +32,7 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	output, err := chooserUseCase.Create(dto)
 	if err != nil {
@@ -46,7 +48,7 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	choosers, err := chooserUseCase.FindAll()
 	if err != nil {
@@ -68,7 +70,7 @@ func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Req
 		ID: chooserId,
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	chooser, err := chooserUseCase.Find(input)
 	if err != nil {
@@ -90,7 +92,7 @@ func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.R
 		ID: chooserId,
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	chooser, err := chooserUseCase.Delete(input)
 	if err != nil {
@@ -114,7 +116,7 @@ func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	chooser, err := chooserUseCase.Update(input)
 	if err != nil {
@@ -136,7 +138,7 @@ func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *htt
 		ID: chooserId,
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	chooser, err := chooserUseCase.IsDeleted(input)
 	if err != nil {
@@ -160,7 +162,7 @@ func (chooserHandler *WebChooserHandler) CreateChooserAndMovieList(w http.Respon
 		return
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	output, err := chooserUseCase.CreateChooserAndMovieList(dto)
 	if err != nil {
@@ -184,7 +186,7 @@ func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseW
 		return
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	output, err := chooserUseCase.ChooserCreateMovieList(dto)
 	if err != nil {
@@ -206,7 +208,7 @@ func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.Respons
 		ChooserId: chooserId,
 	}
 
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository)
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	allChooserMovieLists, err := chooserUseCase.FindAllChooserMovieLists(input)
 	if err != nil {
@@ -215,6 +217,30 @@ func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.Respons
 	}
 
 	err = json.NewEncoder(w).Encode(allChooserMovieLists)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (chooserHandler *WebChooserHandler) ChooserAddMovieToMovieList(w http.ResponseWriter, r *http.Request) {
+	var dto usecases.InputChooserAddMovieToMovieListDto
+	err := json.NewDecoder(r.Body).Decode(&dto)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
+
+	output, err := chooserUseCase.ChooserAddMovieToMovieList(dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

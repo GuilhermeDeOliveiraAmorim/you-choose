@@ -19,14 +19,16 @@ import (
 func NewCreateChooserUseCaseGen(db *sql.DB) *usecases.ChooserUseCase {
 	chooserRepository := database.NewChooserRepository(db)
 	movieListRepository := database.NewMovieListRepository(db)
-	chooserUseCase := usecases.NewChooserUseCase(chooserRepository, movieListRepository)
+	movieRepository := database.NewMovieRepository(db)
+	chooserUseCase := usecases.NewChooserUseCase(chooserRepository, movieListRepository, movieRepository)
 	return chooserUseCase
 }
 
 func NewWebChooserHandlerGen(db *sql.DB) *web.WebChooserHandler{
 	chooserRepository := database.NewChooserRepository(db)
 	movieListRepository := database.NewMovieListRepository(db)
-	webChooserHandler := web.NewChooserHandler(chooserRepository, movieListRepository)
+	movieRepository := database.NewMovieRepository(db)
+	webChooserHandler := web.NewChooserHandler(chooserRepository, movieListRepository, movieRepository)
 	return webChooserHandler
 }
 
