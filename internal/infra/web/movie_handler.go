@@ -58,3 +58,25 @@ func (movieHandler *WebMovieHandler) FindAll(w http.ResponseWriter, r *http.Requ
 		return
 	}
 }
+
+func (movieHandler *WebMovieHandler) Find(w http.ResponseWriter, r *http.Request) {
+	movieId := r.URL.Query().Get("movie_id")
+
+	input := usecases.InputFindMovieDto{
+		ID: movieId,
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository)
+
+	movie, err := movieUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

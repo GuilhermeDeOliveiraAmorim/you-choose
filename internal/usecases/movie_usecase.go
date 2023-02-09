@@ -40,17 +40,6 @@ func (movieUseCase *MovieUseCase) Create(input InputCreateMovieDto) (OutputCreat
 	output.Movie.UpdatedAt = movie.UpdatedAt
 	output.Movie.DeletedAt = movie.DeletedAt
 
-	// movies, err := movieUseCase.MovieRepository.FindAll()
-	// if err != nil {
-	// 	return output, errors.New(err.Error())
-	// }
-
-	// for _, existingMovie := range movies {
-	// 	if input.Title == existingMovie.Title {
-	// 		return output, errors.New("movie already exists")
-	// 	}
-	// }
-
 	return output, nil
 }
 
@@ -83,4 +72,32 @@ func (movieUseCase *MovieUseCase) FindAll() (OutputFindAllMoviesDto, error) {
 	output.Movies = moviesOutput
 
 	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) Find(input InputFindMovieDto) (OutpuFindMovieDto, error) {
+	output := OutpuFindMovieDto{}
+
+	movies, err := movieUseCase.FindAll()
+	if err != nil {
+		return output, err
+	}
+
+	for _, movie := range movies.Movies {
+		if input.ID == movie.ID {
+			output.ID = movie.ID
+			output.Title = movie.Title
+			output.Synopsis = movie.Synopsis
+			output.ImdbRating = movie.ImdbRating
+			output.Votes = movie.Votes
+			output.YouChooseRating = movie.YouChooseRating
+			output.Poster = movie.Poster
+			output.IsDeleted = movie.IsDeleted
+			output.CreatedAt = movie.CreatedAt
+			output.UpdatedAt = movie.UpdatedAt
+			output.DeletedAt = movie.DeletedAt
+			return output, nil
+		}
+	}
+
+	return output, errors.New(err.Error())
 }

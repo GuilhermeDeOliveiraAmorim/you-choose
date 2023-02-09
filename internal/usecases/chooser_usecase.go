@@ -72,10 +72,9 @@ func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error)
 }
 
 func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, error) {
-	choosers, err := chooserUseCase.ChooserRepository.FindAll()
-
 	output := OutputFindChooserDto{}
 
+	choosers, err := chooserUseCase.ChooserRepository.FindAll()
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

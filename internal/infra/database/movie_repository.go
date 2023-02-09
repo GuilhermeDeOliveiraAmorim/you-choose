@@ -58,3 +58,35 @@ func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
 func (movieRepository *MovieRepository) CreateMovieWithImdbId(movie *entity.Movie) error {
 	return nil
 }
+
+func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
+	var movie entity.Movie
+
+	rows, err := movieRepository.Db.Query("SELECT * FROM movies WHERE id = $1", id)
+	if err != nil {
+		return movie, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&movie.ID,
+			&movie.Title,
+			&movie.Synopsis,
+			&movie.ImdbRating,
+			&movie.Votes,
+			&movie.YouChooseRating,
+			&movie.Poster,
+			&movie.IsDeleted,
+			&movie.CreatedAt,
+			&movie.UpdatedAt,
+			&movie.DeletedAt); err != nil {
+			return movie, err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return movie, err
+	}
+
+	return movie, nil
+}
