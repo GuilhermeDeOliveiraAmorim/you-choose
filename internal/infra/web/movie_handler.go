@@ -20,6 +20,13 @@ func NewMovieHandler(chooserRepository entity.MovieRepositoryInterface) *WebMovi
 }
 
 func (movieHandler *WebMovieHandler) Create(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	var dto usecases.InputCreateMovieDto
 
 	err := json.NewDecoder(r.Body).Decode(&dto)
@@ -44,6 +51,13 @@ func (movieHandler *WebMovieHandler) Create(w http.ResponseWriter, r *http.Reque
 }
 
 func (movieHandler *WebMovieHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository)
 
 	movies, err := movieUseCase.FindAll()
@@ -60,6 +74,13 @@ func (movieHandler *WebMovieHandler) FindAll(w http.ResponseWriter, r *http.Requ
 }
 
 func (movieHandler *WebMovieHandler) Find(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	movieId := r.URL.Query().Get("movie_id")
 
 	input := usecases.InputFindMovieDto{

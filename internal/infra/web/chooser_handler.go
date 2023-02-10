@@ -24,6 +24,13 @@ func NewChooserHandler(chooserRepository entity.ChooserRepositoryInterface, movi
 }
 
 func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	var dto usecases.InputCreateChooserDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
@@ -48,6 +55,13 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	choosers, err := chooserUseCase.FindAll()
@@ -64,6 +78,13 @@ func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.
 }
 
 func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputFindChooserDto{
@@ -86,6 +107,13 @@ func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Req
 }
 
 func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputDeleteChooserDto{
@@ -108,6 +136,13 @@ func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPut
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	var input usecases.InputUpdateChooserDto
 
 	err := json.NewDecoder(r.Body).Decode(&input)
@@ -132,6 +167,13 @@ func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputIsDeletedChooserDto{
@@ -154,6 +196,13 @@ func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *htt
 }
 
 func (chooserHandler *WebChooserHandler) CreateChooserAndMovieList(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	var dto usecases.InputCreateChooserAndMovieListDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
@@ -178,6 +227,13 @@ func (chooserHandler *WebChooserHandler) CreateChooserAndMovieList(w http.Respon
 }
 
 func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	var dto usecases.InputChooserCreateMovieListDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
@@ -202,6 +258,13 @@ func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseW
 }
 
 func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputFindAllChooserMovieListsDto{
@@ -224,6 +287,13 @@ func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.Respons
 }
 
 func (chooserHandler *WebChooserHandler) ChooserAddMovieToMovieList(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
 	var dto usecases.InputChooserAddMovieToMovieListDto
 	err := json.NewDecoder(r.Body).Decode(&dto)
 
