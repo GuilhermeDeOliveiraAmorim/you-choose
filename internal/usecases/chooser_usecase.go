@@ -312,12 +312,44 @@ func (chooserUseCase *ChooserUseCase) ChooserAddMovieToMovieList(input InputChoo
 		}
 	}
 
+	var outputMovies []MovieDto
+	var outputChoosers []ChooserDto
+
+	for _, movie := range movieList.Movies {
+		outputMovies = append(outputMovies, MovieDto{
+			ID:              movie.ID,
+			Title:           movie.Title,
+			Synopsis:        movie.Synopsis,
+			ImdbRating:      movie.ImdbRating,
+			YouChooseRating: movie.YouChooseRating,
+			Votes:           movie.Votes,
+			Poster:          movie.Poster,
+			IsDeleted:       movie.IsDeleted,
+			CreatedAt:       movie.CreatedAt,
+			UpdatedAt:       movie.UpdatedAt,
+			DeletedAt:       movie.DeletedAt,
+		})
+	}
+
+	for _, chooser := range movieList.Choosers {
+		outputChoosers = append(outputChoosers, ChooserDto{
+			ID:        chooser.ID,
+			FirstName: chooser.FirstName,
+			LastName:  chooser.LastName,
+			UserName:  chooser.UserName,
+			Picture:   chooser.Picture,
+		})
+	}
+
 	err = chooserUseCase.ChooserRepository.ChooserAddMovieToMovieList(movieList, movieList.Movies)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	output.MovieList = movieList
+	output.MovieList = MovieListDto{
+		Movies:   outputMovies,
+		Choosers: outputChoosers,
+	}
 
 	return output, nil
 }

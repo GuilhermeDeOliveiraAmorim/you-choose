@@ -2,6 +2,13 @@ package usecases
 
 import actor "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 
+type ActorDto struct {
+	ID        string `json:"actior_id"`
+	Name      string `json:"name"`
+	Picture   string `json:"picture"`
+	IsDeleted bool   `json:"is_deleted"`
+}
+
 type InputCreateActorDto struct {
 	Name    string `json:"name"`
 	Picture string `json:"picture"`

@@ -1,6 +1,16 @@
 package usecases
 
-import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
+type ChooserDto struct {
+	ID        string `json:"chooser_id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	UserName  string `json:"username"`
+	Picture   string `json:"picture"`
+	IsDeleted bool   `json:"is_deleted"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	DeletedAt string `json:"deleted_at"`
+}
 
 type InputCreateChooserDto struct {
 	FirstName string `json:"first_name"`
@@ -129,7 +139,7 @@ type InputChooserAddMovieToMovieListDto struct {
 }
 
 type OutputChooserAddMovieToMovieListDto struct {
-	MovieList entity.MovieList `json:"movie_list"`
+	MovieList MovieListDto `json:"movie_list"`
 }
 
 // {

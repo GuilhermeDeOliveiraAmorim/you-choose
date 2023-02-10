@@ -1,17 +1,19 @@
 package usecases
 
 type MovieListDto struct {
-	ID              string `json:"movie_list_id"`
-	Title           string `json:"title"`
-	Synopsis        string `json:"synopsis"`
-	ImdbRating      string `json:"imdb_rating"`
-	Votes           int    `json:"votes"`
-	YouChooseRating int    `json:"you_choose_rating"`
-	Poster          string `json:"poster"`
-	IsDeleted       bool   `json:"is_deleted"`
-	CreatedAt       string `json:"created_at"`
-	UpdatedAt       string `json:"updated_at"`
-	DeletedAt       string `json:"deleted_at"`
+	ID              string       `json:"movie_list_id"`
+	Title           string       `json:"title"`
+	Synopsis        string       `json:"synopsis"`
+	ImdbRating      string       `json:"imdb_rating"`
+	Votes           int          `json:"votes"`
+	YouChooseRating int          `json:"you_choose_rating"`
+	Poster          string       `json:"poster"`
+	IsDeleted       bool         `json:"is_deleted"`
+	CreatedAt       string       `json:"created_at"`
+	UpdatedAt       string       `json:"updated_at"`
+	DeletedAt       string       `json:"deleted_at"`
+	Choosers        []ChooserDto `json:"choosers"`
+	Movies          []MovieDto   `json:"movies"`
 }
 
 type InputAddChooserToMovieListDto struct {
