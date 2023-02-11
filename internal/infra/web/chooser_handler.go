@@ -195,37 +195,6 @@ func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *htt
 	}
 }
 
-func (chooserHandler *WebChooserHandler) CreateChooserAndMovieList(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodPost
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	var dto usecases.InputCreateChooserAndMovieListDto
-	err := json.NewDecoder(r.Body).Decode(&dto)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
-
-	output, err := chooserUseCase.CreateChooserAndMovieList(dto)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(output)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodPost
 	requestMethod := r.Method

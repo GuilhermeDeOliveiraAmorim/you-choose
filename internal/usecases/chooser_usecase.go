@@ -101,6 +101,10 @@ func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (Outpu
 		return output, errors.New(err.Error())
 	}
 
+	if chooser.IsDeleted {
+		return output, errors.New("chooser previously deleted")
+	}
+
 	chooser.IsDeleted = true
 	chooser.DeletedAt = time.Now().Local().String()
 
@@ -128,8 +132,8 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 	chooser.UserName = input.UserName
 	chooser.Picture = input.Picture
 
-	isValidChooser, err := chooser.Validate()
-	if !isValidChooser {
+	isValid, err := chooser.Validate()
+	if !isValid {
 		return output, errors.New(err.Error())
 	}
 
@@ -157,48 +161,11 @@ func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) 
 		return output, errors.New(err.Error())
 	}
 
-	output = OutputIsDeletedChooserDto{
-		IsDeleted: false,
-	}
+	output.IsDeleted = false
 
 	if chooser.IsDeleted {
-		output = OutputIsDeletedChooserDto{
-			IsDeleted: true,
-		}
+		output.IsDeleted = true
 	}
-
-	return output, nil
-}
-
-func (chooserUseCase *ChooserUseCase) CreateChooserAndMovieList(input InputCreateChooserAndMovieListDto) (OutputCreateChooserAndMovieListDto, error) {
-	output := OutputCreateChooserAndMovieListDto{}
-
-	chooser, err := entity.NewChooser(input.Chooser.FirstName, input.Chooser.LastName, input.Chooser.UserName, input.Chooser.Picture)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	movieList, err := entity.NewMovieList(input.MovieList.Title, input.MovieList.Description, input.MovieList.Picture)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	outputChooser := OutputChooser{
-		ChooserId: chooser.ID,
-		UserName:  chooser.UserName,
-		Picture:   chooser.Picture,
-	}
-
-	outputMovieList := OutputMovieList{
-		ID:          movieList.ID,
-		Title:       movieList.Title,
-		Description: movieList.Description,
-		Picture:     movieList.Picture,
-	}
-
-	outputMovieList.Choosers = append(outputMovieList.Choosers, outputChooser)
-
-	output.MovieList = outputMovieList
 
 	return output, nil
 }

@@ -84,11 +84,6 @@ type InputMovieList struct {
 	Picture     string `json:"picture"`
 }
 
-type InputCreateChooserAndMovieListDto struct {
-	Chooser   InputChooser   `json:"chooser"`
-	MovieList InputMovieList `json:"movie_list"`
-}
-
 type OutputChooser struct {
 	ChooserId string `json:"chooser_id"`
 	UserName  string `json:"username"`
@@ -101,10 +96,6 @@ type OutputMovieList struct {
 	Description string          `json:"description"`
 	Picture     string          `json:"picture"`
 	Choosers    []OutputChooser `json:"choosers"`
-}
-
-type OutputCreateChooserAndMovieListDto struct {
-	MovieList OutputMovieList `json:"movie_list"`
 }
 
 type InputChooserCreateMovieListDto struct {
