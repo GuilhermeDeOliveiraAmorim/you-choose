@@ -23,10 +23,10 @@ func NewActor(name string, picture string) (*Actor, error) {
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
+		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
 		DeletedAt: dateNow.Local().String(),
-		IsDeleted: false,
 	}
 
 	isValid, err := actor.Validate()

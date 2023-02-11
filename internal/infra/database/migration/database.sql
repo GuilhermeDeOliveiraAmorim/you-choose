@@ -62,3 +62,13 @@ CREATE TABLE IF NOT EXISTS movies_movie_lists (
     updated_at text,
     deleted_at text
 );
+
+CREATE TABLE IF NOT EXISTS actors (
+    actor_id text,
+    name text,
+    picture text,
+    is_deleted boolean,
+    created_at text,
+    updated_at text,
+    deleted_at text
+);

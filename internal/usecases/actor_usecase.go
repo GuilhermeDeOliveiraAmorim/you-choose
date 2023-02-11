@@ -9,39 +9,68 @@ import (
 
 type ActorUseCase struct {
 	ActorRepository entity.ActorRepositoryInterface
+	MovieRepository entity.MovieRepositoryInterface
 }
 
-func NewActorUseCase(ActorRepository entity.ActorRepositoryInterface) *ActorUseCase {
+func NewActorUseCase(actorRepository entity.ActorRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *ActorUseCase {
 	return &ActorUseCase{
-		ActorRepository: ActorRepository,
+		ActorRepository: actorRepository,
+		MovieRepository: movieRepository,
 	}
 }
 
-func (a *ActorUseCase) Create(input InputCreateActorDto) (OutputCreateActorDto, error) {
-	actor, err := entity.NewActor(input.Name, input.Picture)
-
+func (actorUseCase *ActorUseCase) Create(input InputCreateActorDto) (OutputCreateActorDto, error) {
 	output := OutputCreateActorDto{}
 
+	actor, err := entity.NewActor(input.Name, input.Picture)
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
-	a.ActorRepository.Create(actor)
+	if err := actorUseCase.ActorRepository.Create(actor); err != nil {
+		return output, errors.New(err.Error())
+	}
 
-	output.ID = actor.ID
-	output.Name = actor.Name
-	output.Picture = actor.Picture
+	output.Actor.ID = actor.ID
+	output.Actor.Name = actor.Name
+	output.Actor.Picture = actor.Picture
+	output.Actor.IsDeleted = actor.IsDeleted
+	output.Actor.CreatedAt = actor.CreatedAt
+	output.Actor.UpdatedAt = actor.UpdatedAt
+	output.Actor.DeletedAt = actor.DeletedAt
 
 	return output, nil
 }
 
-func (a *ActorUseCase) Delete(input InputDeleteActorDto) (OutputDeleteActorDto, error) {
-	actor, err := a.ActorRepository.Find(input.ID)
+func (actorUseCase *ActorUseCase) Find(input InputFindActorDto) (OutputFindActorDto, error) {
+	output := OutputFindActorDto{}
 
+	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Actor.ID = actor.ID
+	output.Actor.Name = actor.Name
+	output.Actor.Picture = actor.Picture
+	output.Actor.IsDeleted = actor.IsDeleted
+	output.Actor.CreatedAt = actor.CreatedAt
+	output.Actor.UpdatedAt = actor.UpdatedAt
+	output.Actor.DeletedAt = actor.DeletedAt
+
+	return output, nil
+}
+
+func (actorUseCase *ActorUseCase) Delete(input InputDeleteActorDto) (OutputDeleteActorDto, error) {
 	output := OutputDeleteActorDto{}
 
+	actor, err := actorUseCase.ActorRepository.Find(input.ID)
 	if err != nil {
-		return output, errors.New("actor not found")
+		return output, errors.New(err.Error())
+	}
+
+	if actor.IsDeleted {
+		return output, errors.New("actor previously deleted")
 	}
 
 	actor.IsDeleted = true
@@ -49,27 +78,122 @@ func (a *ActorUseCase) Delete(input InputDeleteActorDto) (OutputDeleteActorDto, 
 
 	output.IsDeleted = actor.IsDeleted
 
-	return output, err
+	return output, errors.New(err.Error())
 }
 
-func (a *ActorUseCase) Find(input InputFindActorDto) (OutputFindActorDto, error) {
-	actors, err := a.ActorRepository.FindAll()
+func (actorUseCase *ActorUseCase) Update(input InputUpdateActorDto) (OutputUpdateActorDto, error) {
+	timeNow := time.Now().Local().String()
+	output := OutputUpdateActorDto{}
 
-	output := OutputFindActorDto{}
-
+	actor, err := actorUseCase.ActorRepository.Find(input.ID)
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
-	actorIdToFind := input.ID
+	actor.Name = input.Name
+	actor.Picture = input.Picture
 
-	for position, registeredActor := range actors {
-		if registeredActor.ID == actorIdToFind {
-			return OutputFindActorDto{
-				Actor: *actors[position],
-			}, nil
-		}
+	isValid, err := actor.Validate()
+	if !isValid {
+		return output, errors.New(err.Error())
 	}
 
-	return output, err
+	actor.UpdatedAt = timeNow
+
+	err = actorUseCase.ActorRepository.Update(&actor)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Actor.ID = actor.ID
+	output.Actor.Name = actor.Name
+	output.Actor.Picture = actor.Picture
+	output.Actor.IsDeleted = actor.IsDeleted
+	output.Actor.CreatedAt = actor.CreatedAt
+	output.Actor.UpdatedAt = actor.UpdatedAt
+	output.Actor.DeletedAt = actor.DeletedAt
+
+	return output, nil
+}
+
+func (actorUseCase *ActorUseCase) IsDeleted(input InputIsDeletedActorDto) (OutputIsDeletedActorDto, error) {
+	output := OutputIsDeletedActorDto{}
+
+	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.IsDeleted = false
+
+	if actor.IsDeleted {
+		output.IsDeleted = true
+	}
+
+	return output, nil
+}
+
+func (actorUseCase *ActorUseCase) FindAll() (OutputFindAllActorDto, error) {
+	output := OutputFindAllActorDto{}
+
+	actors, err := actorUseCase.ActorRepository.FindAll()
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	for _, actor := range actors {
+		output.Actors = append(output.Actors, ActorDto{
+			ID:        actor.ID,
+			Name:      actor.Name,
+			Picture:   actor.Picture,
+			IsDeleted: actor.IsDeleted,
+			CreatedAt: actor.CreatedAt,
+			UpdatedAt: actor.UpdatedAt,
+			DeletedAt: actor.DeletedAt,
+		})
+	}
+
+	return output, nil
+}
+
+func (actorUseCase *ActorUseCase) FindAllActorMovies(input InputFindAllActorMoviesDto) (OutputFindAllActorMoviesDto, error) {
+	output := OutputFindAllActorMoviesDto{}
+
+	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Actor = ActorDto{
+		ID:        actor.ID,
+		Name:      actor.Name,
+		Picture:   actor.Picture,
+		IsDeleted: actor.IsDeleted,
+		CreatedAt: actor.CreatedAt,
+		UpdatedAt: actor.UpdatedAt,
+		DeletedAt: actor.DeletedAt,
+	}
+
+	movies, err := actorUseCase.ActorRepository.FindAllActorMovies(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	for _, movie := range movies {
+		output.Movies = append(output.Movies, MovieDto{
+			ID:              movie.ID,
+			Title:           movie.Title,
+			Synopsis:        movie.Synopsis,
+			ImdbRating:      movie.ImdbRating,
+			Votes:           movie.Votes,
+			YouChooseRating: movie.YouChooseRating,
+			Poster:          movie.Poster,
+			CreatedAt:       movie.CreatedAt,
+			UpdatedAt:       movie.UpdatedAt,
+			DeletedAt:       movie.DeletedAt,
+			IsDeleted:       movie.IsDeleted,
+		})
+	}
+
+	return output, nil
 }
