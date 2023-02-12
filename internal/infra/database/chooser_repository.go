@@ -30,6 +30,55 @@ func (c *ChooserRepository) Create(chooser *entity.Chooser) error {
 	return nil
 }
 
+func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, error) {
+	var chooser entity.Chooser
+
+	rows, err := chooserRepository.Db.Query("SELECT * FROM choosers WHERE id = $1", id)
+	if err != nil {
+		return chooser, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
+			return chooser, err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return chooser, err
+	}
+
+	return chooser, nil
+}
+
+func (chooserRepository *ChooserRepository) Update(chooser *entity.Chooser) error {
+	stmt, err := chooserRepository.Db.Prepare("UPDATE choosers SET first_name = $1, last_name = $2, username = $3, picture = $4, updated_at = $5 WHERE id = $6")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture, chooser.UpdatedAt, chooser.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (chooserRepository *ChooserRepository) Delete(chooser *entity.Chooser) error {
+	stmt, err := chooserRepository.Db.Prepare("UPDATE choosers SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(chooser.IsDeleted, chooser.DeletedAt, chooser.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
 	rows, err := c.Db.Query("SELECT id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
 	if err != nil {
@@ -53,55 +102,6 @@ func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
 	}
 
 	return choosers, nil
-}
-
-func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, error) {
-	var chooser entity.Chooser
-
-	rows, err := chooserRepository.Db.Query("SELECT * FROM choosers WHERE id = $1", id)
-	if err != nil {
-		return chooser, err
-	}
-
-	for rows.Next() {
-		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
-			return chooser, err
-		}
-	}
-
-	if err = rows.Err(); err != nil {
-		return chooser, err
-	}
-
-	return chooser, nil
-}
-
-func (chooserRepository *ChooserRepository) Delete(chooser *entity.Chooser) error {
-	stmt, err := chooserRepository.Db.Prepare("UPDATE choosers SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
-	if err != nil {
-		return err
-	}
-
-	_, err = stmt.Exec(chooser.IsDeleted, chooser.DeletedAt, chooser.ID)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (chooserRepository *ChooserRepository) Update(chooser *entity.Chooser) error {
-	stmt, err := chooserRepository.Db.Prepare("UPDATE choosers SET first_name = $1, last_name = $2, username = $3, picture = $4, updated_at = $5 WHERE id = $6")
-	if err != nil {
-		return err
-	}
-
-	_, err = stmt.Exec(chooser.FirstName, chooser.LastName, chooser.UserName, chooser.Picture, chooser.UpdatedAt, chooser.ID)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (chooserRepository *ChooserRepository) IsDeleted(id string) error {
