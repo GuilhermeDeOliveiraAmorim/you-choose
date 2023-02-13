@@ -55,10 +55,6 @@ func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
 	return movies, nil
 }
 
-func (movieRepository *MovieRepository) CreateMovieWithImdbId(movie *entity.Movie) error {
-	return nil
-}
-
 func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 	var movie entity.Movie
 
@@ -89,4 +85,27 @@ func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 	}
 
 	return movie, nil
+}
+
+func (movieRepository *MovieRepository) AddActorsToMovie(movie entity.Movie, actors []*entity.Actor) error {
+	for _, actor := range movie.Actors {
+		stmt, err := movieRepository.Db.Prepare("INSERT INTO actors_movies (movie_id, actor_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&movie.ID, &actor.ID, false, &movie.UpdatedAt, &movie.UpdatedAt, &movie.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) FindMovieActors(id string) ([]entity.Actor, error) {
+	var actors []entity.Actor
+
+	return actors, nil
 }
