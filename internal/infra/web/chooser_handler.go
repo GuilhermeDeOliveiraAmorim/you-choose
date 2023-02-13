@@ -32,8 +32,8 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 	}
 
 	var dto usecases.InputCreateChooserDto
-	err := json.NewDecoder(r.Body).Decode(&dto)
 
+	err := json.NewDecoder(r.Body).Decode(&dto)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

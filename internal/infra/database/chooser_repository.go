@@ -16,8 +16,8 @@ func NewChooserRepository(db *sql.DB) *ChooserRepository {
 	}
 }
 
-func (c *ChooserRepository) Create(chooser *entity.Chooser) error {
-	stmt, err := c.Db.Prepare("INSERT INTO choosers (id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)")
+func (chooserRepository *ChooserRepository) Create(chooser *entity.Chooser) error {
+	stmt, err := chooserRepository.Db.Prepare("INSERT INTO choosers (id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)")
 	if err != nil {
 		return err
 	}
