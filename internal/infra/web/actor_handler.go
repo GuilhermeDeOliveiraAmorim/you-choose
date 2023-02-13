@@ -17,6 +17,7 @@ type WebActorHandler struct {
 func NewActorHandler(actorRepository entity.ActorRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *WebActorHandler {
 	return &WebActorHandler{
 		ActorRepository: actorRepository,
+		MovieRepository: movieRepository,
 	}
 }
 
