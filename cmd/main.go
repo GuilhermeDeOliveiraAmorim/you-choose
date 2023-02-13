@@ -20,6 +20,7 @@ func main() {
 	newWebChooserHandler := NewWebChooserHandlerGen(db)
 	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
 	newWebMovieHandler := NewWebMovieHandlerGen(db)
+	newWebActorHandler := NewWebActorHandler(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/delete/chooser", newWebChooserHandler.Delete)
@@ -39,6 +40,8 @@ func main() {
 	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
 	webserver.AddHandler("/movies/find/all/movies", newWebMovieHandler.FindAll)
 	webserver.AddHandler("/movies/find/movie", newWebMovieHandler.Find)
+
+	webserver.AddHandler("/actors/create/actor", newWebActorHandler.Create)
 
 	webserver.Start()
 }
