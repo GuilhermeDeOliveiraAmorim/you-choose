@@ -11,10 +11,10 @@ type Actor struct {
 	ID        string
 	Name      string
 	Picture   string
+	IsDeleted bool
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
-	IsDeleted bool
 }
 
 func NewActor(name string, picture string) (*Actor, error) {

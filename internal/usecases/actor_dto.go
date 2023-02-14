@@ -1,7 +1,7 @@
 package usecases
 
 type ActorDto struct {
-	ID        string `json:"actior_id"`
+	ID        string `json:"actor_id"`
 	Name      string `json:"name"`
 	Picture   string `json:"picture"`
 	IsDeleted bool   `json:"is_deleted"`

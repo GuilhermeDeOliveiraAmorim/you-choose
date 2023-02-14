@@ -71,6 +71,5 @@ func NewWebActorHandlerGen(db *sql.DB) *web.WebActorHandler{
 	actorRepository := database.NewActorRepository(db)
 	movieRepository := database.NewMovieRepository(db)
 	webActorHandler := web.NewActorHandler(actorRepository, movieRepository)
-
 	return webActorHandler
 }

@@ -33,7 +33,7 @@ func (actorRepository *ActorRepository) Create(actor *entity.Actor) error {
 func (actorRepository *ActorRepository) Find(id string) (entity.Actor, error) {
 	var actor entity.Actor
 
-	rows, err := actorRepository.Db.Query("SELECT * FROM actors WHERE id = $1", id)
+	rows, err := actorRepository.Db.Query("SELECT * FROM actors WHERE actor_id = $1", id)
 	if err != nil {
 		return actor, err
 	}

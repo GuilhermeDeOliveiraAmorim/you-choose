@@ -58,7 +58,7 @@ func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
 func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 	var movie entity.Movie
 
-	rows, err := movieRepository.Db.Query("SELECT * FROM movies WHERE id = $1", id)
+	rows, err := movieRepository.Db.Query("SELECT * FROM movies WHERE movie_id = $1", id)
 	if err != nil {
 		return movie, err
 	}
