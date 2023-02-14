@@ -57,7 +57,7 @@ type OutpuFindMovieDto struct {
 }
 
 type ActorId struct {
-	MovieId string `json:"movie_id"`
+	MovieId string `json:"actor_id"`
 }
 
 type InputAddActorsToMovieDto struct {

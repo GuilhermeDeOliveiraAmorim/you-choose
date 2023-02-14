@@ -87,8 +87,8 @@ func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 	return movie, nil
 }
 
-func (movieRepository *MovieRepository) AddActorsToMovie(movie entity.Movie, actors []*entity.Actor) error {
-	for _, actor := range movie.Actors {
+func (movieRepository *MovieRepository) AddActorsToMovie(movie entity.Movie, actors []entity.Actor) error {
+	for _, actor := range actors {
 		stmt, err := movieRepository.Db.Prepare("INSERT INTO actors_movies (movie_id, actor_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
 		if err != nil {
 			return err
@@ -104,8 +104,27 @@ func (movieRepository *MovieRepository) AddActorsToMovie(movie entity.Movie, act
 	return nil
 }
 
-func (movieRepository *MovieRepository) FindMovieActors(id string) ([]entity.Actor, error) {
-	var actors []entity.Actor
+func (movieRepository *MovieRepository) FindMovieActors(id string) ([]string, error) {
+	var actorsIds []string
 
-	return actors, nil
+	rows, err := movieRepository.Db.Query("SELECT actor_id FROM actors_movies WHERE movie_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var actorId string
+
+		if err := rows.Scan(&actorId); err != nil {
+			return actorsIds, err
+		}
+
+		actorsIds = append(actorsIds, actorId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return actorsIds, err
+	}
+
+	return actorsIds, nil
 }

@@ -134,3 +134,32 @@ func (movieHandler *WebMovieHandler) AddActorsToMovie(w http.ResponseWriter, r *
 		return
 	}
 }
+
+func (movieHandler *WebMovieHandler) FindMovieActors(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieId := r.URL.Query().Get("movie_id")
+
+	input := usecases.InputFindMovieActorsDto{
+		MovieId: movieId,
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository)
+
+	output, err := movieUseCase.FindMovieActors(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

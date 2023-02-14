@@ -40,6 +40,8 @@ func main() {
 	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
 	webserver.AddHandler("/movies/find/all/movies", newWebMovieHandler.FindAll)
 	webserver.AddHandler("/movies/find/movie", newWebMovieHandler.Find)
+	webserver.AddHandler("/movies/add/actors/movie", newWebMovieHandler.AddActorsToMovie)
+	webserver.AddHandler("/movies/find/movie/actors", newWebMovieHandler.FindMovieActors)
 
 	webserver.AddHandler("/actors/create/actor", newWebActorHandler.Create)
 	webserver.AddHandler("/actors/find/actor", newWebActorHandler.Find)

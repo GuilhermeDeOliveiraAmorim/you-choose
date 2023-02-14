@@ -120,17 +120,24 @@ func (movieUseCase *MovieUseCase) AddActorsToMovie(input InputAddActorsToMovieDt
 		return output, errors.New(err.Error())
 	}
 
+	var actorsFounded []entity.Actor
+
 	for _, actorId := range input.ActorsIds {
 		for _, actor := range actors {
 			if actorId.MovieId == actor.ID {
-				movie.AddActor(&actor)
+				actorsFounded = append(actorsFounded, actor)
 			}
 		}
 	}
 
+	err = movieUseCase.MovieRepository.AddActorsToMovie(movie, actorsFounded)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
 	var outputActors []ActorDto
 
-	for _, actor := range movie.Actors {
+	for _, actor := range actorsFounded {
 		outputActors = append(outputActors, ActorDto{
 			ID:        actor.ID,
 			Name:      actor.Name,
@@ -140,11 +147,6 @@ func (movieUseCase *MovieUseCase) AddActorsToMovie(input InputAddActorsToMovieDt
 			UpdatedAt: actor.UpdatedAt,
 			DeletedAt: actor.DeletedAt,
 		})
-	}
-
-	err = movieUseCase.MovieRepository.AddActorsToMovie(movie, movie.Actors)
-	if err != nil {
-		return output, errors.New(err.Error())
 	}
 
 	output.Movie.ID = movie.ID
@@ -171,14 +173,19 @@ func (movieUseCase *MovieUseCase) FindMovieActors(input InputFindMovieActorsDto)
 		return output, errors.New(err.Error())
 	}
 
-	actors, err := movieUseCase.MovieRepository.FindMovieActors(input.MovieId)
+	actorsIds, err := movieUseCase.MovieRepository.FindMovieActors(input.MovieId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
 	var outputActors []ActorDto
 
-	for _, actor := range actors {
+	for _, actorId := range actorsIds {
+		actor, err := movieUseCase.ActorRepository.Find(actorId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
 		outputActors = append(outputActors, ActorDto{
 			ID:        actor.ID,
 			Name:      actor.Name,
