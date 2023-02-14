@@ -170,3 +170,45 @@ func (movieRepository *MovieRepository) FindMovieWriters(id string) ([]string, e
 
 	return writersIds, nil
 }
+
+func (movieRepository *MovieRepository) AddDirectorsToMovie(movie entity.Movie, directors []entity.Director) error {
+	for _, director := range directors {
+		stmt, err := movieRepository.Db.Prepare("INSERT INTO directors_movies (movie_id, director_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&movie.ID, &director.ID, false, &movie.UpdatedAt, &movie.UpdatedAt, &movie.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) FindMovieDirectors(id string) ([]string, error) {
+	var directorsIds []string
+
+	rows, err := movieRepository.Db.Query("SELECT director_id FROM directors_movies WHERE movie_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var directorId string
+
+		if err := rows.Scan(&directorId); err != nil {
+			return directorsIds, err
+		}
+
+		directorsIds = append(directorsIds, directorId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return directorsIds, err
+	}
+
+	return directorsIds, nil
+}

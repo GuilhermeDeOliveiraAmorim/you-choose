@@ -39,6 +39,11 @@ var SetWriterRepositoryDependency = wire.NewSet(
 	wire.Bind(new(*entity.WriterRepositoryInterface), new(*database.WriterRepository)),
 )
 
+var SetDirectorRepositoryDependency = wire.NewSet(
+	database.NewDirectorRepository,
+	wire.Bind(new(*entity.DirectorRepositoryInterface), new(*database.DirectorRepository)),
+)
+
 func NewCreateChooserUseCase(db *sql.DB) *usecases.ChooserUseCase {
 	wire.Build(
 		SetChooserRepositoryDependency,
@@ -107,4 +112,18 @@ func NewWebWriterHandler(db *sql.DB) *web.WebWriterHandler {
 		SetWriterRepositoryDependency,
 	)
 	return &web.WebWriterHandler{}
+}
+
+func NewCreateDirectorUseCase(db *sql.DB) *usecases.DirectorUseCase {
+	wire.Build(
+		SetDirectorRepositoryDependency,
+	)
+	return &usecases.DirectorUseCase{}
+}
+
+func NewWebDirectorHandler(db *sql.DB) *web.WebDirectorHandler {
+	wire.Build(
+		SetDirectorRepositoryDependency,
+	)
+	return &web.WebDirectorHandler{}
 }

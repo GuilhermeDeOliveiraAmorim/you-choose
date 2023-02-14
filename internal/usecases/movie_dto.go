@@ -1,19 +1,20 @@
 package usecases
 
 type MovieDto struct {
-	ID              string      `json:"movie_id"`
-	Title           string      `json:"title"`
-	Synopsis        string      `json:"synopsis"`
-	ImdbRating      string      `json:"imdb_rating"`
-	Votes           int32       `json:"votes"`
-	YouChooseRating float32     `json:"you_choose_rating"`
-	Poster          string      `json:"poster"`
-	IsDeleted       bool        `json:"is_deleted"`
-	CreatedAt       string      `json:"created_at"`
-	UpdatedAt       string      `json:"updated_at"`
-	DeletedAt       string      `json:"deleted_at"`
-	Actors          []ActorDto  `json:"actors"`
-	Writers         []WriterDto `json:"writers"`
+	ID              string        `json:"movie_id"`
+	Title           string        `json:"title"`
+	Synopsis        string        `json:"synopsis"`
+	ImdbRating      string        `json:"imdb_rating"`
+	Votes           int32         `json:"votes"`
+	YouChooseRating float32       `json:"you_choose_rating"`
+	Poster          string        `json:"poster"`
+	IsDeleted       bool          `json:"is_deleted"`
+	CreatedAt       string        `json:"created_at"`
+	UpdatedAt       string        `json:"updated_at"`
+	DeletedAt       string        `json:"deleted_at"`
+	Actors          []ActorDto    `json:"actors"`
+	Writers         []WriterDto   `json:"writers"`
+	Directors       []DirectorDto `json:"directors"`
 }
 
 type InputCreateMovieDto struct {
@@ -96,5 +97,26 @@ type InputFindMovieWritersDto struct {
 }
 
 type OutputFindMovieWritersDto struct {
+	Movie MovieDto `json:"movie"`
+}
+
+type DirectorId struct {
+	DirectorId string `json:"director_id"`
+}
+
+type InputAddDirectorsToMovieDto struct {
+	MovieId      string       `json:"movie_id"`
+	DirectorsIds []DirectorId `json:"directors_ids"`
+}
+
+type OutputAddDirectorsToMovieDto struct {
+	Movie MovieDto `json:"movie"`
+}
+
+type InputFindMovieDirectorsDto struct {
+	MovieId string `json:"movie_id"`
+}
+
+type OutputFindMovieDirectorsDto struct {
 	Movie MovieDto `json:"movie"`
 }
