@@ -17,6 +17,7 @@ type WebWriterHandler struct {
 func NewWriterHandler(writerRepository entity.WriterRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *WebWriterHandler {
 	return &WebWriterHandler{
 		WriterRepository: writerRepository,
+		MovieRepository:  movieRepository,
 	}
 }
 

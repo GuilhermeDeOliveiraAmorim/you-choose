@@ -128,3 +128,45 @@ func (movieRepository *MovieRepository) FindMovieActors(id string) ([]string, er
 
 	return actorsIds, nil
 }
+
+func (movieRepository *MovieRepository) AddWritersToMovie(movie entity.Movie, writers []entity.Writer) error {
+	for _, writer := range writers {
+		stmt, err := movieRepository.Db.Prepare("INSERT INTO writers_movies (movie_id, writer_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&movie.ID, &writer.ID, false, &movie.UpdatedAt, &movie.UpdatedAt, &movie.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) FindMovieWriters(id string) ([]string, error) {
+	var writersIds []string
+
+	rows, err := movieRepository.Db.Query("SELECT writer_id FROM writers_movies WHERE movie_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var writerId string
+
+		if err := rows.Scan(&writerId); err != nil {
+			return writersIds, err
+		}
+
+		writersIds = append(writersIds, writerId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return writersIds, err
+	}
+
+	return writersIds, nil
+}

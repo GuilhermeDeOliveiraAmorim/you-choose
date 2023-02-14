@@ -34,6 +34,11 @@ var SetActorRepositoryDependency = wire.NewSet(
 	wire.Bind(new(*entity.ActorRepositoryInterface), new(*database.ActorRepository)),
 )
 
+var SetWriterRepositoryDependency = wire.NewSet(
+	database.NewWriterRepository,
+	wire.Bind(new(*entity.WriterRepositoryInterface), new(*database.WriterRepository)),
+)
+
 func NewCreateChooserUseCase(db *sql.DB) *usecases.ChooserUseCase {
 	wire.Build(
 		SetChooserRepositoryDependency,
@@ -88,4 +93,18 @@ func NewWebActorHandler(db *sql.DB) *web.WebActorHandler {
 		SetActorRepositoryDependency,
 	)
 	return &web.WebActorHandler{}
+}
+
+func NewCreateWriterUseCase(db *sql.DB) *usecases.WriterUseCase {
+	wire.Build(
+		SetWriterRepositoryDependency,
+	)
+	return &usecases.WriterUseCase{}
+}
+
+func NewWebWriterHandler(db *sql.DB) *web.WebWriterHandler {
+	wire.Build(
+		SetWriterRepositoryDependency,
+	)
+	return &web.WebWriterHandler{}
 }

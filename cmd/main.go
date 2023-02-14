@@ -21,6 +21,7 @@ func main() {
 	newWebMovieListHandler := NewWebMovieListHandlerGen(db)
 	newWebMovieHandler := NewWebMovieHandlerGen(db)
 	newWebActorHandler := NewWebActorHandlerGen(db)
+	newWebWriterHandler := NewWebWriterHandlerGen(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/delete/chooser", newWebChooserHandler.Delete)
@@ -38,14 +39,22 @@ func main() {
 	webserver.AddHandler("/movielists/add/chooser", newWebMovieListHandler.AddChooserToMovieList)
 
 	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
-	webserver.AddHandler("/movies/find/all/movies", newWebMovieHandler.FindAll)
 	webserver.AddHandler("/movies/find/movie", newWebMovieHandler.Find)
+	webserver.AddHandler("/movies/find/all/movies", newWebMovieHandler.FindAll)
+
+	webserver.AddHandler("/movies/add/writers/movie", newWebMovieHandler.AddWritersToMovie)
+	webserver.AddHandler("/movies/find/movie/writers", newWebMovieHandler.FindMovieWriters)
+
 	webserver.AddHandler("/movies/add/actors/movie", newWebMovieHandler.AddActorsToMovie)
 	webserver.AddHandler("/movies/find/movie/actors", newWebMovieHandler.FindMovieActors)
 
 	webserver.AddHandler("/actors/create/actor", newWebActorHandler.Create)
 	webserver.AddHandler("/actors/find/actor", newWebActorHandler.Find)
 	webserver.AddHandler("/actors/find/all/actors", newWebActorHandler.FindAll)
+
+	webserver.AddHandler("/writers/create/writer", newWebWriterHandler.Create)
+	webserver.AddHandler("/writers/find/writer", newWebWriterHandler.Find)
+	webserver.AddHandler("/writers/find/all/writers", newWebWriterHandler.FindAll)
 
 	webserver.Start()
 }

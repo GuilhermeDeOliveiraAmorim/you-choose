@@ -8,14 +8,16 @@ import (
 )
 
 type MovieUseCase struct {
-	MovieRepository entity.MovieRepositoryInterface
-	ActorRepository entity.ActorRepositoryInterface
+	MovieRepository  entity.MovieRepositoryInterface
+	ActorRepository  entity.ActorRepositoryInterface
+	WriterRepository entity.WriterRepositoryInterface
 }
 
-func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface, actorRepository entity.ActorRepositoryInterface) *MovieUseCase {
+func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface, actorRepository entity.ActorRepositoryInterface, writerRepository entity.WriterRepositoryInterface) *MovieUseCase {
 	return &MovieUseCase{
-		MovieRepository: movieRepository,
-		ActorRepository: actorRepository,
+		MovieRepository:  movieRepository,
+		ActorRepository:  actorRepository,
+		WriterRepository: writerRepository,
 	}
 }
 
@@ -227,6 +229,132 @@ func (movieUseCase *MovieUseCase) FindMovieActors(input InputFindMovieActorsDto)
 	output.Movie.UpdatedAt = movie.UpdatedAt
 	output.Movie.DeletedAt = movie.DeletedAt
 	output.Movie.Actors = outputActors
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) AddWritersToMovie(input InputAddWritersToMovieDto) (OutputAddWritersToMovieDto, error) {
+	dateNow := time.Now().Local().String()
+
+	output := OutputAddWritersToMovieDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	writersIds, err := movieUseCase.MovieRepository.FindMovieWriters(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var writersMovie []entity.Writer
+
+	for _, writerId := range writersIds {
+		writer, err := movieUseCase.WriterRepository.Find(writerId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		writersMovie = append(writersMovie, writer)
+	}
+
+	var writersAdded []entity.Writer
+
+	for _, writerId := range input.WritersIds {
+		writer, err := movieUseCase.WriterRepository.Find(writerId.WriterId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		writersAdded = append(writersAdded, writer)
+	}
+
+	for _, writerMovie := range writersMovie {
+		for position, writerAdded := range writersAdded {
+			if writerMovie.ID == writerAdded.ID {
+				writersAdded = append(writersAdded[:position], writersAdded[position+1:]...)
+			}
+		}
+	}
+
+	err = movieUseCase.MovieRepository.AddWritersToMovie(movie, writersAdded)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputWriters []WriterDto
+
+	for _, writer := range writersAdded {
+		outputWriters = append(outputWriters, WriterDto{
+			ID:        writer.ID,
+			Name:      writer.Name,
+			Picture:   writer.Picture,
+			IsDeleted: writer.IsDeleted,
+			CreatedAt: writer.CreatedAt,
+			UpdatedAt: writer.UpdatedAt,
+			DeletedAt: writer.DeletedAt,
+		})
+	}
+
+	output.Movie.ID = movie.ID
+	output.Movie.Title = movie.Title
+	output.Movie.Synopsis = movie.Synopsis
+	output.Movie.ImdbRating = movie.ImdbRating
+	output.Movie.Votes = movie.Votes
+	output.Movie.YouChooseRating = movie.YouChooseRating
+	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
+	output.Movie.CreatedAt = movie.CreatedAt
+	output.Movie.UpdatedAt = dateNow
+	output.Movie.DeletedAt = movie.DeletedAt
+	output.Movie.Writers = outputWriters
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) FindMovieWriters(input InputFindMovieWritersDto) (OutputFindMovieWritersDto, error) {
+	output := OutputFindMovieWritersDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	writersIds, err := movieUseCase.MovieRepository.FindMovieWriters(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputWriters []WriterDto
+
+	for _, writerId := range writersIds {
+		writer, err := movieUseCase.WriterRepository.Find(writerId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputWriters = append(outputWriters, WriterDto{
+			ID:        writer.ID,
+			Name:      writer.Name,
+			Picture:   writer.Picture,
+			IsDeleted: writer.IsDeleted,
+			CreatedAt: writer.CreatedAt,
+			UpdatedAt: writer.UpdatedAt,
+			DeletedAt: writer.DeletedAt,
+		})
+	}
+
+	output.Movie.ID = movie.ID
+	output.Movie.Title = movie.Title
+	output.Movie.Synopsis = movie.Synopsis
+	output.Movie.ImdbRating = movie.ImdbRating
+	output.Movie.Votes = movie.Votes
+	output.Movie.YouChooseRating = movie.YouChooseRating
+	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
+	output.Movie.CreatedAt = movie.CreatedAt
+	output.Movie.UpdatedAt = movie.UpdatedAt
+	output.Movie.DeletedAt = movie.DeletedAt
+	output.Movie.Writers = outputWriters
 
 	return output, nil
 }

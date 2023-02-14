@@ -33,7 +33,7 @@ func (writerRepository *WriterRepository) Create(writer *entity.Writer) error {
 func (writerRepository *WriterRepository) Find(id string) (entity.Writer, error) {
 	var writer entity.Writer
 
-	rows, err := writerRepository.Db.Query("SELECT * FROM writers WHERE id = $1", id)
+	rows, err := writerRepository.Db.Query("SELECT * FROM writers WHERE writer_id = $1", id)
 	if err != nil {
 		return writer, err
 	}

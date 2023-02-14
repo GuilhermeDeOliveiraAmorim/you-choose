@@ -11,10 +11,10 @@ type Writer struct {
 	ID        string
 	Name      string
 	Picture   string
+	IsDeleted bool
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
-	IsDeleted bool
 }
 
 func NewWriter(name string, picture string) (*Writer, error) {
@@ -23,10 +23,10 @@ func NewWriter(name string, picture string) (*Writer, error) {
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
+		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
 		DeletedAt: dateNow.Local().String(),
-		IsDeleted: false,
 	}
 
 	isValid, err := writer.Validate()

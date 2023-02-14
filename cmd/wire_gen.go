@@ -49,14 +49,16 @@ func NewWebMovieListHandlerGen(db *sql.DB) *web.WebMovieListHandler{
 func NewCreateMovieUseCaseGen(db *sql.DB) *usecases.MovieUseCase {
 	movieRepository := database.NewMovieRepository(db)
 	actorRepository := database.NewActorRepository(db)
-	MovieUseCase := usecases.NewMovieUseCase(movieRepository, actorRepository)
+	writerRepository := database.NewWriterRepository(db)
+	MovieUseCase := usecases.NewMovieUseCase(movieRepository, actorRepository, writerRepository)
 	return MovieUseCase
 }
 
 func NewWebMovieHandlerGen(db *sql.DB) *web.WebMovieHandler{
 	movieRepository := database.NewMovieRepository(db)
 	actorRepository := database.NewActorRepository(db)
-	webMovieHandler := web.NewMovieHandler(movieRepository, actorRepository)
+	writerRepository := database.NewWriterRepository(db)
+	webMovieHandler := web.NewMovieHandler(movieRepository, actorRepository, writerRepository)
 	return webMovieHandler
 }
 
@@ -72,4 +74,18 @@ func NewWebActorHandlerGen(db *sql.DB) *web.WebActorHandler{
 	movieRepository := database.NewMovieRepository(db)
 	webActorHandler := web.NewActorHandler(actorRepository, movieRepository)
 	return webActorHandler
+}
+
+func NewCreateWriterUseCaseGen(db *sql.DB) *usecases.WriterUseCase {
+    writerRepository := database.NewWriterRepository(db)
+    movieRepository := database.NewMovieRepository(db)
+    WriterUseCase := usecases.NewWriterUseCase(writerRepository, movieRepository)
+    return WriterUseCase
+}
+
+func NewWebWriterHandlerGen(db *sql.DB) *web.WebWriterHandler{
+    writerRepository := database.NewWriterRepository(db)
+    movieRepository := database.NewMovieRepository(db)
+    webWriterHandler := web.NewWriterHandler(writerRepository, movieRepository)
+    return webWriterHandler
 }
