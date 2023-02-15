@@ -85,7 +85,7 @@ func (h *WebMovieListHandler) Find(w http.ResponseWriter, r *http.Request) {
 	movieListId := r.URL.Query().Get("id")
 
 	input := usecases.InputFindMovieListDto{
-		ID: movieListId,
+		MovieListId: movieListId,
 	}
 
 	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository, h.ChooserRepository)
@@ -103,31 +103,31 @@ func (h *WebMovieListHandler) Find(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *WebMovieListHandler) AddChooserToMovieList(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodPost
+func (movielistHandler *WebMovieListHandler) Update(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPut
 	requestMethod := r.Method
 	if handlerMethod != requestMethod {
 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
 		return
 	}
 
-	chooserId := r.URL.Query().Get("chooser_id")
-	movieListId := r.URL.Query().Get("movie_list_id")
+	var input usecases.InputUpdateMovieListDto
 
-	input := usecases.InputAddChooserToMovieListDto{
-		ChooserId:   chooserId,
-		MovieListId: movieListId,
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(h.MovieListRepository, h.ChooserRepository)
+	movielistUseCase := *usecases.NewMovieListUseCase(movielistHandler.MovieListRepository, movielistHandler.ChooserRepository)
 
-	chooserInMovieList, err := movieListUseCase.AddChooserToMovieList(input)
+	movielist, err := movielistUseCase.Update(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(chooserInMovieList)
+	err = json.NewEncoder(w).Encode(movielist)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

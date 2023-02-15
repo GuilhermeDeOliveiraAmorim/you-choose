@@ -15,11 +15,11 @@ type Chooser struct {
 	LastName   string
 	UserName   string
 	Picture    string
+	IsDeleted  bool
 	CreatedAt  string
 	UpdatedAt  string
 	DeletedAt  string
 	MovieLists []*MovieList
-	IsDeleted  bool
 }
 
 func NewChooser(firstName string, lastName string, userName string, picture string) (*Chooser, error) {
@@ -30,10 +30,10 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 		LastName:  lastName,
 		UserName:  userName,
 		Picture:   picture,
+		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
 		DeletedAt: dateNow.Local().String(),
-		IsDeleted: false,
 	}
 
 	isValid, err := chooser.Validate()

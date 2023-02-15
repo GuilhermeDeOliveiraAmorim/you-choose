@@ -45,7 +45,7 @@ func (actorUseCase *ActorUseCase) Create(input InputCreateActorDto) (OutputCreat
 func (actorUseCase *ActorUseCase) Find(input InputFindActorDto) (OutputFindActorDto, error) {
 	output := OutputFindActorDto{}
 
-	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -64,7 +64,7 @@ func (actorUseCase *ActorUseCase) Find(input InputFindActorDto) (OutputFindActor
 func (actorUseCase *ActorUseCase) Delete(input InputDeleteActorDto) (OutputDeleteActorDto, error) {
 	output := OutputDeleteActorDto{}
 
-	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -85,7 +85,7 @@ func (actorUseCase *ActorUseCase) Update(input InputUpdateActorDto) (OutputUpdat
 	timeNow := time.Now().Local().String()
 	output := OutputUpdateActorDto{}
 
-	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -119,7 +119,7 @@ func (actorUseCase *ActorUseCase) Update(input InputUpdateActorDto) (OutputUpdat
 func (actorUseCase *ActorUseCase) IsDeleted(input InputIsDeletedActorDto) (OutputIsDeletedActorDto, error) {
 	output := OutputIsDeletedActorDto{}
 
-	actor, err := actorUseCase.ActorRepository.Find(input.ID)
+	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

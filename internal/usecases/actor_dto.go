@@ -20,7 +20,7 @@ type OutputCreateActorDto struct {
 }
 
 type InputDeleteActorDto struct {
-	ID string `json:"actor_id"`
+	ActorId string `json:"actor_id"`
 }
 
 type OutputDeleteActorDto struct {
@@ -28,7 +28,7 @@ type OutputDeleteActorDto struct {
 }
 
 type InputFindActorDto struct {
-	ID string `json:"actor_id"`
+	ActorId string `json:"actor_id"`
 }
 
 type OutputFindActorDto struct {
@@ -36,7 +36,7 @@ type OutputFindActorDto struct {
 }
 
 type InputUpdateActorDto struct {
-	ID      string `json:"actor_id"`
+	ActorId string `json:"actor_id"`
 	Name    string `json:"name"`
 	Picture string `json:"picture"`
 }
@@ -46,7 +46,7 @@ type OutputUpdateActorDto struct {
 }
 
 type InputIsDeletedActorDto struct {
-	ID string `json:"actor_id"`
+	ActorId string `json:"actor_id"`
 }
 
 type OutputIsDeletedActorDto struct {
@@ -58,7 +58,7 @@ type OutputFindAllActorDto struct {
 }
 
 type InputFindAllActorMoviesDto struct {
-	ID string `json:"actor_id"`
+	ActorId string `json:"actor_id"`
 }
 
 type OutputFindAllActorMoviesDto struct {

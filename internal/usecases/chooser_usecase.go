@@ -51,28 +51,6 @@ func (chooserUseCase *ChooserUseCase) Create(input InputCreateChooserDto) (Outpu
 	return output, nil
 }
 
-func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
-	choosers, err := chooserUseCase.ChooserRepository.FindAll()
-
-	output := OutputFindAllChooserDto{}
-
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	choosersOutput := []OutputFindChooserDto{}
-
-	for _, chooser := range choosers {
-		choosersOutput = append(choosersOutput, OutputFindChooserDto{chooser.ID, chooser.UserName, chooser.Picture})
-	}
-
-	output = OutputFindAllChooserDto{
-		Choosers: choosersOutput,
-	}
-
-	return output, nil
-}
-
 func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, error) {
 	output := OutputFindChooserDto{}
 
@@ -91,31 +69,6 @@ func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFin
 	}
 
 	return output, errors.New(err.Error())
-}
-
-func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (OutputDeleteChooserDto, error) {
-	output := OutputDeleteChooserDto{}
-
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	if chooser.IsDeleted {
-		return output, errors.New("chooser previously deleted")
-	}
-
-	chooser.IsDeleted = true
-	chooser.DeletedAt = time.Now().Local().String()
-
-	err = chooserUseCase.ChooserRepository.Delete(&chooser)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	output.IsDeleted = true
-
-	return output, nil
 }
 
 func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (OutputUpdateChooserDto, error) {
@@ -153,6 +106,31 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 	return output, nil
 }
 
+func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (OutputDeleteChooserDto, error) {
+	output := OutputDeleteChooserDto{}
+
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if chooser.IsDeleted {
+		return output, errors.New("chooser previously deleted")
+	}
+
+	chooser.IsDeleted = true
+	chooser.DeletedAt = time.Now().Local().String()
+
+	err = chooserUseCase.ChooserRepository.Delete(&chooser)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.IsDeleted = true
+
+	return output, nil
+}
+
 func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) (OutputIsDeletedChooserDto, error) {
 	output := OutputIsDeletedChooserDto{}
 
@@ -170,152 +148,23 @@ func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) 
 	return output, nil
 }
 
-func (chooserUseCase *ChooserUseCase) ChooserCreateMovieList(input InputChooserCreateMovieListDto) (OutputChooserCreateMovieListDto, error) {
-	output := OutputChooserCreateMovieListDto{}
+func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
+	choosers, err := chooserUseCase.ChooserRepository.FindAll()
 
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
+	output := OutputFindAllChooserDto{}
+
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	movieList, err := entity.NewMovieList(input.MovieList.Title, input.MovieList.Description, input.MovieList.Picture)
-	if err != nil {
-		return output, errors.New(err.Error())
+	choosersOutput := []OutputFindChooserDto{}
+
+	for _, chooser := range choosers {
+		choosersOutput = append(choosersOutput, OutputFindChooserDto{chooser.ID, chooser.UserName, chooser.Picture})
 	}
 
-	if err := chooserUseCase.MovieListRepository.Create(movieList); err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	timeNow := time.Now().Local().String()
-
-	err = chooserUseCase.MovieListRepository.AddChooserToMovieList(movieList, &chooser, timeNow, timeNow, timeNow)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	outputChooser := OutputChooser{
-		ChooserId: chooser.ID,
-		UserName:  chooser.UserName,
-		Picture:   chooser.Picture,
-	}
-
-	output.ID = movieList.ID
-	output.Title = movieList.Title
-	output.Description = movieList.Description
-	output.Picture = movieList.Picture
-	output.Chooser = outputChooser
-
-	return output, nil
-}
-
-func (chooserUseCase *ChooserUseCase) FindAllChooserMovieLists(input InputFindAllChooserMovieListsDto) (OutputFindAllChooserMovieListsDto, error) {
-	output := OutputFindAllChooserMovieListsDto{}
-
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	movieLists, err := chooserUseCase.ChooserRepository.FindAllChooserMovieLists(chooser.ID)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	outputChooser := OutputChooser{
-		ChooserId: chooser.ID,
-		UserName:  chooser.UserName,
-		Picture:   chooser.Picture,
-	}
-
-	outputMovieLists := []OutputMovieList{}
-	outputChoosers := []OutputChooser{}
-
-	for _, movieList := range movieLists {
-		outputMovieLists = append(outputMovieLists, OutputMovieList{
-			ID:          movieList.ID,
-			Title:       movieList.Title,
-			Description: movieList.Description,
-			Picture:     movieList.Picture,
-		})
-
-		for _, chooserMovieList := range movieList.Choosers {
-			chooserInList := OutputChooser{
-				ChooserId: chooserMovieList.ID,
-				UserName:  chooserMovieList.UserName,
-				Picture:   chooserMovieList.Picture,
-			}
-			outputChoosers = append(outputChoosers, chooserInList)
-		}
-		outputMovieLists = append(outputMovieLists, OutputMovieList{
-			Choosers: outputChoosers,
-		})
-	}
-
-	output.Chooser = outputChooser
-	output.MovieLists = outputMovieLists
-
-	return output, nil
-}
-
-func (chooserUseCase *ChooserUseCase) ChooserAddMovieToMovieList(input InputChooserAddMovieToMovieListDto) (OutputChooserAddMovieToMovieListDto, error) {
-	output := OutputChooserAddMovieToMovieListDto{}
-
-	movieList, err := chooserUseCase.MovieListRepository.Find(input.MovieListId)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	movies, err := chooserUseCase.MovieRepository.FindAll()
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	for _, movieId := range input.MoviesIds {
-		for _, movie := range movies {
-			if movieId.MovieId == movie.ID {
-				movieList.AddMovie(&movie)
-			}
-		}
-	}
-
-	var outputMovies []MovieDto
-	var outputChoosers []ChooserDto
-
-	for _, movie := range movieList.Movies {
-		outputMovies = append(outputMovies, MovieDto{
-			ID:              movie.ID,
-			Title:           movie.Title,
-			Synopsis:        movie.Synopsis,
-			ImdbRating:      movie.ImdbRating,
-			YouChooseRating: movie.YouChooseRating,
-			Votes:           movie.Votes,
-			Poster:          movie.Poster,
-			IsDeleted:       movie.IsDeleted,
-			CreatedAt:       movie.CreatedAt,
-			UpdatedAt:       movie.UpdatedAt,
-			DeletedAt:       movie.DeletedAt,
-		})
-	}
-
-	for _, chooser := range movieList.Choosers {
-		outputChoosers = append(outputChoosers, ChooserDto{
-			ID:        chooser.ID,
-			FirstName: chooser.FirstName,
-			LastName:  chooser.LastName,
-			UserName:  chooser.UserName,
-			Picture:   chooser.Picture,
-		})
-	}
-
-	err = chooserUseCase.ChooserRepository.ChooserAddMovieToMovieList(movieList, movieList.Movies)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	output.MovieList = MovieListDto{
-		Movies:   outputMovies,
-		Choosers: outputChoosers,
+	output = OutputFindAllChooserDto{
+		Choosers: choosersOutput,
 	}
 
 	return output, nil

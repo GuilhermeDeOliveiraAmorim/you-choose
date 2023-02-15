@@ -12,12 +12,12 @@ type MovieList struct {
 	Title       string
 	Description string
 	Picture     string
-	Choosers    []*Chooser
-	Movies      []*Movie
+	IsDeleted   bool
 	CreatedAt   string
 	UpdatedAt   string
 	DeletedAt   string
-	IsDeleted   bool
+	Choosers    []*Chooser
+	Movies      []*Movie
 }
 
 func NewMovieList(title string, description string, picture string) (*MovieList, error) {
@@ -27,10 +27,10 @@ func NewMovieList(title string, description string, picture string) (*MovieList,
 		Title:       title,
 		Description: description,
 		Picture:     picture,
+		IsDeleted:   false,
 		CreatedAt:   dateNow.Local().String(),
 		UpdatedAt:   dateNow.Local().String(),
 		DeletedAt:   dateNow.Local().String(),
-		IsDeleted:   false,
 	}
 
 	isValidMovieList, err := movieList.Validate()

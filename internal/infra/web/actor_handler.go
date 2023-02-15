@@ -86,7 +86,7 @@ func (actorHandler *WebActorHandler) Find(w http.ResponseWriter, r *http.Request
 	actorId := r.URL.Query().Get("actor_id")
 
 	input := usecases.InputFindActorDto{
-		ID: actorId,
+		ActorId: actorId,
 	}
 
 	actorUseCase := *usecases.NewActorUseCase(actorHandler.ActorRepository, actorHandler.MovieRepository)

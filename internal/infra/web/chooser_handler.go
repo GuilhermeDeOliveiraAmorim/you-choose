@@ -54,29 +54,6 @@ func (chooserHandler *WebChooserHandler) Create(w http.ResponseWriter, r *http.R
 	}
 }
 
-func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodGet
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
-
-	choosers, err := chooserUseCase.FindAll()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(choosers)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodGet
 	requestMethod := r.Method
@@ -94,35 +71,6 @@ func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Req
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
 	chooser, err := chooserUseCase.Find(input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(chooser)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodPatch
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	chooserId := r.URL.Query().Get("chooser_id")
-
-	input := usecases.InputDeleteChooserDto{
-		ID: chooserId,
-	}
-
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
-
-	chooser, err := chooserUseCase.Delete(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -166,6 +114,35 @@ func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.R
 	}
 }
 
+func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	chooserId := r.URL.Query().Get("chooser_id")
+
+	input := usecases.InputDeleteChooserDto{
+		ID: chooserId,
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
+
+	chooser, err := chooserUseCase.Delete(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(chooser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodGet
 	requestMethod := r.Method
@@ -195,38 +172,7 @@ func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *htt
 	}
 }
 
-func (chooserHandler *WebChooserHandler) ChooserCreateMovieList(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodPost
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	var dto usecases.InputChooserCreateMovieListDto
-	err := json.NewDecoder(r.Body).Decode(&dto)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
-
-	output, err := chooserUseCase.ChooserCreateMovieList(dto)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(output)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.ResponseWriter, r *http.Request) {
+func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodGet
 	requestMethod := r.Method
 	if handlerMethod != requestMethod {
@@ -234,52 +180,15 @@ func (chooserHandler *WebChooserHandler) FindAllChooserMovieLists(w http.Respons
 		return
 	}
 
-	chooserId := r.URL.Query().Get("chooser_id")
-
-	input := usecases.InputFindAllChooserMovieListsDto{
-		ChooserId: chooserId,
-	}
-
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
 
-	allChooserMovieLists, err := chooserUseCase.FindAllChooserMovieLists(input)
+	choosers, err := chooserUseCase.FindAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(allChooserMovieLists)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (chooserHandler *WebChooserHandler) ChooserAddMovieToMovieList(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodPost
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	var dto usecases.InputChooserAddMovieToMovieListDto
-	err := json.NewDecoder(r.Body).Decode(&dto)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
-
-	output, err := chooserUseCase.ChooserAddMovieToMovieList(dto)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(output)
+	err = json.NewEncoder(w).Encode(choosers)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

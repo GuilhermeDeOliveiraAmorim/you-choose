@@ -2,8 +2,11 @@ package entity
 
 type MovieRepositoryInterface interface {
 	Create(movie *Movie) error
-	FindAll() ([]Movie, error)
 	Find(id string) (Movie, error)
+	Update(movie *Movie) error
+	Delete(movie *Movie) error
+	IsDeleted(id string) error
+	FindAll() ([]Movie, error)
 	AddActorsToMovie(movie Movie, actors []Actor) error
 	FindMovieActors(id string) ([]string, error)
 	AddWritersToMovie(movie Movie, writers []Writer) error
