@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -13,14 +12,16 @@ type MovieUseCase struct {
 	ActorRepository    entity.ActorRepositoryInterface
 	WriterRepository   entity.WriterRepositoryInterface
 	DirectorRepository entity.DirectorRepositoryInterface
+	GenreRepository    entity.GenreRepositoryInterface
 }
 
-func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface, actorRepository entity.ActorRepositoryInterface, writerRepository entity.WriterRepositoryInterface, directorRepository entity.DirectorRepositoryInterface) *MovieUseCase {
+func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface, actorRepository entity.ActorRepositoryInterface, writerRepository entity.WriterRepositoryInterface, directorRepository entity.DirectorRepositoryInterface, genreRepository entity.GenreRepositoryInterface) *MovieUseCase {
 	return &MovieUseCase{
 		MovieRepository:    movieRepository,
 		ActorRepository:    actorRepository,
 		WriterRepository:   writerRepository,
 		DirectorRepository: directorRepository,
+		GenreRepository:    genreRepository,
 	}
 }
 
@@ -90,17 +91,17 @@ func (movieUseCase *MovieUseCase) Find(input InputFindMovieDto) (OutpuFindMovieD
 		return output, err
 	}
 
-	output.ID = movie.ID
-	output.Title = movie.Title
-	output.Synopsis = movie.Synopsis
-	output.ImdbRating = movie.ImdbRating
-	output.Votes = movie.Votes
-	output.YouChooseRating = movie.YouChooseRating
-	output.Poster = movie.Poster
-	output.IsDeleted = movie.IsDeleted
-	output.CreatedAt = movie.CreatedAt
-	output.UpdatedAt = movie.UpdatedAt
-	output.DeletedAt = movie.DeletedAt
+	output.Movie.ID = movie.ID
+	output.Movie.Title = movie.Title
+	output.Movie.Synopsis = movie.Synopsis
+	output.Movie.ImdbRating = movie.ImdbRating
+	output.Movie.Votes = movie.Votes
+	output.Movie.YouChooseRating = movie.YouChooseRating
+	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
+	output.Movie.CreatedAt = movie.CreatedAt
+	output.Movie.UpdatedAt = movie.UpdatedAt
+	output.Movie.DeletedAt = movie.DeletedAt
 
 	actorsIds, err := movieUseCase.MovieRepository.FindMovieActors(input.MovieId)
 	if err != nil {
@@ -174,13 +175,36 @@ func (movieUseCase *MovieUseCase) Find(input InputFindMovieDto) (OutpuFindMovieD
 		})
 	}
 
-	output.Actors = outputActors
-	output.Writers = outputWriters
-	output.Directors = outputDirectors
+	genresIds, err := movieUseCase.MovieRepository.FindMovieGenres(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
 
-	fmt.Println(output)
+	var outputGenres []GenreDto
 
-	return output, errors.New(err.Error())
+	for _, genreId := range genresIds {
+		genre, err := movieUseCase.GenreRepository.Find(genreId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputGenres = append(outputGenres, GenreDto{
+			ID:        genre.ID,
+			Name:      genre.Name,
+			Picture:   genre.Picture,
+			IsDeleted: genre.IsDeleted,
+			CreatedAt: genre.CreatedAt,
+			UpdatedAt: genre.UpdatedAt,
+			DeletedAt: genre.DeletedAt,
+		})
+	}
+
+	output.Movie.Actors = outputActors
+	output.Movie.Writers = outputWriters
+	output.Movie.Directors = outputDirectors
+	output.Movie.Genres = outputGenres
+
+	return output, nil
 }
 
 func (movieUseCase *MovieUseCase) AddActorsToMovie(input InputAddActorsToMovieDto) (OutputAddActorsToMovieDto, error) {
@@ -557,6 +581,132 @@ func (movieUseCase *MovieUseCase) FindMovieDirectors(input InputFindMovieDirecto
 	output.Movie.UpdatedAt = movie.UpdatedAt
 	output.Movie.DeletedAt = movie.DeletedAt
 	output.Movie.Directors = outputDirectors
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) AddGenresToMovie(input InputAddGenresToMovieDto) (OutputAddGenresToMovieDto, error) {
+	dateNow := time.Now().Local().String()
+
+	output := OutputAddGenresToMovieDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	genresIds, err := movieUseCase.MovieRepository.FindMovieGenres(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var genresMovie []entity.Genre
+
+	for _, genreId := range genresIds {
+		genre, err := movieUseCase.GenreRepository.Find(genreId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		genresMovie = append(genresMovie, genre)
+	}
+
+	var genresAdded []entity.Genre
+
+	for _, genreId := range input.GenresIds {
+		genre, err := movieUseCase.GenreRepository.Find(genreId.GenreId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		genresAdded = append(genresAdded, genre)
+	}
+
+	for _, genreMovie := range genresMovie {
+		for position, genreAdded := range genresAdded {
+			if genreMovie.ID == genreAdded.ID {
+				genresAdded = append(genresAdded[:position], genresAdded[position+1:]...)
+			}
+		}
+	}
+
+	err = movieUseCase.MovieRepository.AddGenresToMovie(movie, genresAdded)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputGenres []GenreDto
+
+	for _, genre := range genresAdded {
+		outputGenres = append(outputGenres, GenreDto{
+			ID:        genre.ID,
+			Name:      genre.Name,
+			Picture:   genre.Picture,
+			IsDeleted: genre.IsDeleted,
+			CreatedAt: genre.CreatedAt,
+			UpdatedAt: genre.UpdatedAt,
+			DeletedAt: genre.DeletedAt,
+		})
+	}
+
+	output.Movie.ID = movie.ID
+	output.Movie.Title = movie.Title
+	output.Movie.Synopsis = movie.Synopsis
+	output.Movie.ImdbRating = movie.ImdbRating
+	output.Movie.Votes = movie.Votes
+	output.Movie.YouChooseRating = movie.YouChooseRating
+	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
+	output.Movie.CreatedAt = movie.CreatedAt
+	output.Movie.UpdatedAt = dateNow
+	output.Movie.DeletedAt = movie.DeletedAt
+	output.Movie.Genres = outputGenres
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) FindMovieGenres(input InputFindMovieGenresDto) (OutputFindMovieGenresDto, error) {
+	output := OutputFindMovieGenresDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	genresIds, err := movieUseCase.MovieRepository.FindMovieGenres(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputGenres []GenreDto
+
+	for _, genreId := range genresIds {
+		genre, err := movieUseCase.GenreRepository.Find(genreId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputGenres = append(outputGenres, GenreDto{
+			ID:        genre.ID,
+			Name:      genre.Name,
+			Picture:   genre.Picture,
+			IsDeleted: genre.IsDeleted,
+			CreatedAt: genre.CreatedAt,
+			UpdatedAt: genre.UpdatedAt,
+			DeletedAt: genre.DeletedAt,
+		})
+	}
+
+	output.Movie.ID = movie.ID
+	output.Movie.Title = movie.Title
+	output.Movie.Synopsis = movie.Synopsis
+	output.Movie.ImdbRating = movie.ImdbRating
+	output.Movie.Votes = movie.Votes
+	output.Movie.YouChooseRating = movie.YouChooseRating
+	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
+	output.Movie.CreatedAt = movie.CreatedAt
+	output.Movie.UpdatedAt = movie.UpdatedAt
+	output.Movie.DeletedAt = movie.DeletedAt
+	output.Movie.Genres = outputGenres
 
 	return output, nil
 }

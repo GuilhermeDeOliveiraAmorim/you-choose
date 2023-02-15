@@ -212,3 +212,45 @@ func (movieRepository *MovieRepository) FindMovieDirectors(id string) ([]string,
 
 	return directorsIds, nil
 }
+
+func (movieRepository *MovieRepository) AddGenresToMovie(movie entity.Movie, genres []entity.Genre) error {
+	for _, genre := range genres {
+		stmt, err := movieRepository.Db.Prepare("INSERT INTO genres_movies (movie_id, genre_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&movie.ID, &genre.ID, false, &movie.UpdatedAt, &movie.UpdatedAt, &movie.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) FindMovieGenres(id string) ([]string, error) {
+	var genresIds []string
+
+	rows, err := movieRepository.Db.Query("SELECT genre_id FROM genres_movies WHERE movie_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var genreId string
+
+		if err := rows.Scan(&genreId); err != nil {
+			return genresIds, err
+		}
+
+		genresIds = append(genresIds, genreId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return genresIds, err
+	}
+
+	return genresIds, nil
+}

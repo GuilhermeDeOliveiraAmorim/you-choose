@@ -44,6 +44,11 @@ var SetDirectorRepositoryDependency = wire.NewSet(
 	wire.Bind(new(*entity.DirectorRepositoryInterface), new(*database.DirectorRepository)),
 )
 
+var SetGenreRepositoryDependency = wire.NewSet(
+	database.NewGenreRepository,
+	wire.Bind(new(*entity.GenreRepositoryInterface), new(*database.GenreRepository)),
+)
+
 func NewCreateChooserUseCase(db *sql.DB) *usecases.ChooserUseCase {
 	wire.Build(
 		SetChooserRepositoryDependency,
@@ -126,4 +131,18 @@ func NewWebDirectorHandler(db *sql.DB) *web.WebDirectorHandler {
 		SetDirectorRepositoryDependency,
 	)
 	return &web.WebDirectorHandler{}
+}
+
+func NewCreateGenreUseCase(db *sql.DB) *usecases.GenreUseCase {
+	wire.Build(
+		SetGenreRepositoryDependency,
+	)
+	return &usecases.GenreUseCase{}
+}
+
+func NewWebGenreHandler(db *sql.DB) *web.WebGenreHandler {
+	wire.Build(
+		SetGenreRepositoryDependency,
+	)
+	return &web.WebGenreHandler{}
 }

@@ -23,6 +23,7 @@ func main() {
 	newWebActorHandler := NewWebActorHandlerGen(db)
 	newWebWriterHandler := NewWebWriterHandlerGen(db)
 	newWebDirectorHandler := NewWebDirectorHandlerGen(db)
+	newWebGenreHandler := NewWebGenreHandlerGen(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/delete/chooser", newWebChooserHandler.Delete)
@@ -52,6 +53,9 @@ func main() {
 	webserver.AddHandler("/movies/add/movie/directors", newWebMovieHandler.AddDirectorsToMovie)
 	webserver.AddHandler("/movies/find/movie/directors", newWebMovieHandler.FindMovieDirectors)
 
+	webserver.AddHandler("/movies/add/movie/genres", newWebMovieHandler.AddGenresToMovie)
+	webserver.AddHandler("/movies/find/movie/genres", newWebMovieHandler.FindMovieGenres)
+
 	webserver.AddHandler("/actors/create/actor", newWebActorHandler.Create)
 	webserver.AddHandler("/actors/find/actor", newWebActorHandler.Find)
 	webserver.AddHandler("/actors/find/all/actors", newWebActorHandler.FindAll)
@@ -63,6 +67,10 @@ func main() {
 	webserver.AddHandler("/directors/create/director", newWebDirectorHandler.Create)
 	webserver.AddHandler("/directors/find/director", newWebDirectorHandler.Find)
 	webserver.AddHandler("/directors/find/all/directors", newWebDirectorHandler.FindAll)
+
+	webserver.AddHandler("/genres/create/genre", newWebGenreHandler.Create)
+	webserver.AddHandler("/genres/find/genre", newWebGenreHandler.Find)
+	webserver.AddHandler("/genres/find/all/genres", newWebGenreHandler.FindAll)
 
 	webserver.Start()
 }

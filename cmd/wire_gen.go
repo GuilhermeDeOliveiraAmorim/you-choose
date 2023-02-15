@@ -51,7 +51,8 @@ func NewCreateMovieUseCaseGen(db *sql.DB) *usecases.MovieUseCase {
 	actorRepository := database.NewActorRepository(db)
 	writerRepository := database.NewWriterRepository(db)
 	directorRepository := database.NewDirectorRepository(db)
-	MovieUseCase := usecases.NewMovieUseCase(movieRepository, actorRepository, writerRepository, directorRepository)
+	genreRepository := database.NewGenreRepository(db)
+	MovieUseCase := usecases.NewMovieUseCase(movieRepository, actorRepository, writerRepository, directorRepository, genreRepository)
 	return MovieUseCase
 }
 
@@ -60,7 +61,8 @@ func NewWebMovieHandlerGen(db *sql.DB) *web.WebMovieHandler{
 	actorRepository := database.NewActorRepository(db)
 	writerRepository := database.NewWriterRepository(db)
 	directorRepository := database.NewDirectorRepository(db)
-	webMovieHandler := web.NewMovieHandler(movieRepository, actorRepository, writerRepository, directorRepository)
+	genreRepository := database.NewGenreRepository(db)
+	webMovieHandler := web.NewMovieHandler(movieRepository, actorRepository, writerRepository, directorRepository, genreRepository)
 	return webMovieHandler
 }
 
@@ -104,4 +106,18 @@ func NewWebDirectorHandlerGen(db *sql.DB) *web.WebDirectorHandler{
     movieRepository := database.NewMovieRepository(db)
     webDirectorHandler := web.NewDirectorHandler(directorRepository, movieRepository)
     return webDirectorHandler
+}
+
+func NewCreateGenreUseCaseGen(db *sql.DB) *usecases.GenreUseCase {
+    genreRepository := database.NewGenreRepository(db)
+    movieRepository := database.NewMovieRepository(db)
+    GenreUseCase := usecases.NewGenreUseCase(genreRepository, movieRepository)
+    return GenreUseCase
+}
+
+func NewWebGenreHandlerGen(db *sql.DB) *web.WebGenreHandler{
+    genreRepository := database.NewGenreRepository(db)
+    movieRepository := database.NewMovieRepository(db)
+    webGenreHandler := web.NewGenreHandler(genreRepository, movieRepository)
+    return webGenreHandler
 }

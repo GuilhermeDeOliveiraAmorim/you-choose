@@ -10,4 +10,6 @@ type MovieRepositoryInterface interface {
 	FindMovieWriters(id string) ([]string, error)
 	AddDirectorsToMovie(movie Movie, directors []Director) error
 	FindMovieDirectors(id string) ([]string, error)
+	AddGenresToMovie(movie Movie, genres []Genre) error
+	FindMovieGenres(id string) ([]string, error)
 }
