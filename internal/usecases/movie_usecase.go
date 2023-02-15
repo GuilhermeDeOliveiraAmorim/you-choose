@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -84,27 +85,100 @@ func (movieUseCase *MovieUseCase) FindAll() (OutputFindAllMoviesDto, error) {
 func (movieUseCase *MovieUseCase) Find(input InputFindMovieDto) (OutpuFindMovieDto, error) {
 	output := OutpuFindMovieDto{}
 
-	movies, err := movieUseCase.FindAll()
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
 	if err != nil {
 		return output, err
 	}
 
-	for _, movie := range movies.Movies {
-		if input.ID == movie.ID {
-			output.ID = movie.ID
-			output.Title = movie.Title
-			output.Synopsis = movie.Synopsis
-			output.ImdbRating = movie.ImdbRating
-			output.Votes = movie.Votes
-			output.YouChooseRating = movie.YouChooseRating
-			output.Poster = movie.Poster
-			output.IsDeleted = movie.IsDeleted
-			output.CreatedAt = movie.CreatedAt
-			output.UpdatedAt = movie.UpdatedAt
-			output.DeletedAt = movie.DeletedAt
-			return output, nil
-		}
+	output.ID = movie.ID
+	output.Title = movie.Title
+	output.Synopsis = movie.Synopsis
+	output.ImdbRating = movie.ImdbRating
+	output.Votes = movie.Votes
+	output.YouChooseRating = movie.YouChooseRating
+	output.Poster = movie.Poster
+	output.IsDeleted = movie.IsDeleted
+	output.CreatedAt = movie.CreatedAt
+	output.UpdatedAt = movie.UpdatedAt
+	output.DeletedAt = movie.DeletedAt
+
+	actorsIds, err := movieUseCase.MovieRepository.FindMovieActors(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
 	}
+
+	var outputActors []ActorDto
+
+	for _, actorId := range actorsIds {
+		actor, err := movieUseCase.ActorRepository.Find(actorId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputActors = append(outputActors, ActorDto{
+			ID:        actor.ID,
+			Name:      actor.Name,
+			Picture:   actor.Picture,
+			IsDeleted: actor.IsDeleted,
+			CreatedAt: actor.CreatedAt,
+			UpdatedAt: actor.UpdatedAt,
+			DeletedAt: actor.DeletedAt,
+		})
+	}
+
+	writersIds, err := movieUseCase.MovieRepository.FindMovieWriters(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputWriters []WriterDto
+
+	for _, writerId := range writersIds {
+		writer, err := movieUseCase.WriterRepository.Find(writerId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputWriters = append(outputWriters, WriterDto{
+			ID:        writer.ID,
+			Name:      writer.Name,
+			Picture:   writer.Picture,
+			IsDeleted: writer.IsDeleted,
+			CreatedAt: writer.CreatedAt,
+			UpdatedAt: writer.UpdatedAt,
+			DeletedAt: writer.DeletedAt,
+		})
+	}
+
+	directorsIds, err := movieUseCase.MovieRepository.FindMovieDirectors(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputDirectors []DirectorDto
+
+	for _, directorId := range directorsIds {
+		director, err := movieUseCase.DirectorRepository.Find(directorId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputDirectors = append(outputDirectors, DirectorDto{
+			ID:        director.ID,
+			Name:      director.Name,
+			Picture:   director.Picture,
+			IsDeleted: director.IsDeleted,
+			CreatedAt: director.CreatedAt,
+			UpdatedAt: director.UpdatedAt,
+			DeletedAt: director.DeletedAt,
+		})
+	}
+
+	output.Actors = outputActors
+	output.Writers = outputWriters
+	output.Directors = outputDirectors
+
+	fmt.Println(output)
 
 	return output, errors.New(err.Error())
 }

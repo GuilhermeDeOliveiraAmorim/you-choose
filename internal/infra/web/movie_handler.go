@@ -90,12 +90,12 @@ func (movieHandler *WebMovieHandler) Find(w http.ResponseWriter, r *http.Request
 	movieId := r.URL.Query().Get("movie_id")
 
 	input := usecases.InputFindMovieDto{
-		ID: movieId,
+		MovieId: movieId,
 	}
 
 	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository)
 
-	movie, err := movieUseCase.MovieRepository.Find(input.ID)
+	movie, err := movieUseCase.Find(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
