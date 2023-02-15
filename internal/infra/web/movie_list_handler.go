@@ -59,7 +59,7 @@ func (h *WebMovieListHandler) Find(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	movieListId := r.URL.Query().Get("id")
+	movieListId := r.URL.Query().Get("movie_list_id")
 
 	input := usecases.InputFindMovieListDto{
 		MovieListId: movieListId,

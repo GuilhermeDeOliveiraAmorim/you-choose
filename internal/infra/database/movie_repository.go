@@ -30,31 +30,6 @@ func (movieRepository *MovieRepository) Create(movie *entity.Movie) error {
 	return nil
 }
 
-func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
-	rows, err := movieRepository.Db.Query("SELECT movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, poster, is_deleted, created_at, updated_at, deleted_at FROM movies")
-	if err != nil {
-		return nil, err
-	}
-
-	var movies []entity.Movie
-
-	for rows.Next() {
-		var movie entity.Movie
-
-		if err := rows.Scan(&movie.ID, &movie.Title, &movie.Synopsis, &movie.ImdbRating, &movie.Votes, &movie.YouChooseRating, &movie.Poster, &movie.IsDeleted, &movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt); err != nil {
-			return movies, err
-		}
-
-		movies = append(movies, movie)
-	}
-
-	if err = rows.Err(); err != nil {
-		return movies, err
-	}
-
-	return movies, nil
-}
-
 func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 	var movie entity.Movie
 
@@ -85,6 +60,91 @@ func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 	}
 
 	return movie, nil
+}
+
+func (movieRepository *MovieRepository) Update(movie *entity.Movie) error {
+	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET title = $1, synopsis = $2, imdb_rating = $3, votes = $4, you_choose_rating = $5, poster = $6, is_deleted = $7, created_at = $8, updated_at = $9, deleted_at = $10 WHERE id = $11")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(movie.Title, movie.Synopsis, movie.ImdbRating, movie.Votes, movie.YouChooseRating, movie.Poster, movie.IsDeleted, movie.CreatedAt, movie.UpdatedAt, movie.DeletedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) Delete(movie *entity.Movie) error {
+	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(movie.IsDeleted, movie.DeletedAt, movie.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) IsDeleted(id string) error {
+	var movie entity.Movie
+
+	rows, err := movieRepository.Db.Query("SELECT * FROM movies WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&movie.ID,
+			&movie.Title,
+			&movie.Synopsis,
+			&movie.ImdbRating,
+			&movie.Votes,
+			&movie.YouChooseRating,
+			&movie.Poster,
+			&movie.IsDeleted,
+			&movie.CreatedAt,
+			&movie.UpdatedAt,
+			&movie.DeletedAt); err != nil {
+			return err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (movieRepository *MovieRepository) FindAll() ([]entity.Movie, error) {
+	rows, err := movieRepository.Db.Query("SELECT movie_id, title, synopsis, imdb_rating, votes, you_choose_rating, poster, is_deleted, created_at, updated_at, deleted_at FROM movies")
+	if err != nil {
+		return nil, err
+	}
+
+	var movies []entity.Movie
+
+	for rows.Next() {
+		var movie entity.Movie
+
+		if err := rows.Scan(&movie.ID, &movie.Title, &movie.Synopsis, &movie.ImdbRating, &movie.Votes, &movie.YouChooseRating, &movie.Poster, &movie.IsDeleted, &movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt); err != nil {
+			return movies, err
+		}
+
+		movies = append(movies, movie)
+	}
+
+	if err = rows.Err(); err != nil {
+		return movies, err
+	}
+
+	return movies, nil
 }
 
 func (movieRepository *MovieRepository) AddActorsToMovie(movie entity.Movie, actors []entity.Actor) error {
