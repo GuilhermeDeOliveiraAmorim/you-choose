@@ -45,7 +45,7 @@ func (writerUseCase *WriterUseCase) Create(input InputCreateWriterDto) (OutputCr
 func (writerUseCase *WriterUseCase) Find(input InputFindWriterDto) (OutputFindWriterDto, error) {
 	output := OutputFindWriterDto{}
 
-	writer, err := writerUseCase.WriterRepository.Find(input.ID)
+	writer, err := writerUseCase.WriterRepository.Find(input.WriterId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -64,7 +64,7 @@ func (writerUseCase *WriterUseCase) Find(input InputFindWriterDto) (OutputFindWr
 func (writerUseCase *WriterUseCase) Delete(input InputDeleteWriterDto) (OutputDeleteWriterDto, error) {
 	output := OutputDeleteWriterDto{}
 
-	writer, err := writerUseCase.WriterRepository.Find(input.ID)
+	writer, err := writerUseCase.WriterRepository.Find(input.WriterId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -85,7 +85,7 @@ func (writerUseCase *WriterUseCase) Update(input InputUpdateWriterDto) (OutputUp
 	timeNow := time.Now().Local().String()
 	output := OutputUpdateWriterDto{}
 
-	writer, err := writerUseCase.WriterRepository.Find(input.ID)
+	writer, err := writerUseCase.WriterRepository.Find(input.WriterId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -119,7 +119,7 @@ func (writerUseCase *WriterUseCase) Update(input InputUpdateWriterDto) (OutputUp
 func (writerUseCase *WriterUseCase) IsDeleted(input InputIsDeletedWriterDto) (OutputIsDeletedWriterDto, error) {
 	output := OutputIsDeletedWriterDto{}
 
-	writer, err := writerUseCase.WriterRepository.Find(input.ID)
+	writer, err := writerUseCase.WriterRepository.Find(input.WriterId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

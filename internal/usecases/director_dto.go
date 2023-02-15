@@ -20,7 +20,7 @@ type OutputCreateDirectorDto struct {
 }
 
 type InputDeleteDirectorDto struct {
-	ID string `json:"director_id"`
+	DirectorId string `json:"director_id"`
 }
 
 type OutputDeleteDirectorDto struct {
@@ -28,7 +28,7 @@ type OutputDeleteDirectorDto struct {
 }
 
 type InputFindDirectorDto struct {
-	ID string `json:"director_id"`
+	DirectorId string `json:"director_id"`
 }
 
 type OutputFindDirectorDto struct {
@@ -36,9 +36,9 @@ type OutputFindDirectorDto struct {
 }
 
 type InputUpdateDirectorDto struct {
-	ID      string `json:"director_id"`
-	Name    string `json:"name"`
-	Picture string `json:"picture"`
+	DirectorId string `json:"director_id"`
+	Name       string `json:"name"`
+	Picture    string `json:"picture"`
 }
 
 type OutputUpdateDirectorDto struct {
@@ -46,7 +46,7 @@ type OutputUpdateDirectorDto struct {
 }
 
 type InputIsDeletedDirectorDto struct {
-	ID string `json:"director_id"`
+	DirectorId string `json:"director_id"`
 }
 
 type OutputIsDeletedDirectorDto struct {
@@ -58,7 +58,7 @@ type OutputFindAllDirectorDto struct {
 }
 
 type InputFindAllDirectorMoviesDto struct {
-	ID string `json:"director_id"`
+	DirectorId string `json:"director_id"`
 }
 
 type OutputFindAllDirectorMoviesDto struct {

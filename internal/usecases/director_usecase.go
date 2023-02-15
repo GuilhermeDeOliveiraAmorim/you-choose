@@ -45,7 +45,7 @@ func (directorUseCase *DirectorUseCase) Create(input InputCreateDirectorDto) (Ou
 func (directorUseCase *DirectorUseCase) Find(input InputFindDirectorDto) (OutputFindDirectorDto, error) {
 	output := OutputFindDirectorDto{}
 
-	director, err := directorUseCase.DirectorRepository.Find(input.ID)
+	director, err := directorUseCase.DirectorRepository.Find(input.DirectorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -64,7 +64,7 @@ func (directorUseCase *DirectorUseCase) Find(input InputFindDirectorDto) (Output
 func (directorUseCase *DirectorUseCase) Delete(input InputDeleteDirectorDto) (OutputDeleteDirectorDto, error) {
 	output := OutputDeleteDirectorDto{}
 
-	director, err := directorUseCase.DirectorRepository.Find(input.ID)
+	director, err := directorUseCase.DirectorRepository.Find(input.DirectorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -85,7 +85,7 @@ func (directorUseCase *DirectorUseCase) Update(input InputUpdateDirectorDto) (Ou
 	timeNow := time.Now().Local().String()
 	output := OutputUpdateDirectorDto{}
 
-	director, err := directorUseCase.DirectorRepository.Find(input.ID)
+	director, err := directorUseCase.DirectorRepository.Find(input.DirectorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -119,7 +119,7 @@ func (directorUseCase *DirectorUseCase) Update(input InputUpdateDirectorDto) (Ou
 func (directorUseCase *DirectorUseCase) IsDeleted(input InputIsDeletedDirectorDto) (OutputIsDeletedDirectorDto, error) {
 	output := OutputIsDeletedDirectorDto{}
 
-	director, err := directorUseCase.DirectorRepository.Find(input.ID)
+	director, err := directorUseCase.DirectorRepository.Find(input.DirectorId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

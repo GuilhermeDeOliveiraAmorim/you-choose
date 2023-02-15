@@ -52,6 +52,124 @@ func (directorHandler *WebDirectorHandler) Create(w http.ResponseWriter, r *http
 	}
 }
 
+func (directorHandler *WebDirectorHandler) Find(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	directorId := r.URL.Query().Get("director_id")
+
+	input := usecases.InputFindDirectorDto{
+		DirectorId: directorId,
+	}
+
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+
+	director, err := directorUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(director)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (directorHandler *WebDirectorHandler) Update(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPut
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	var input usecases.InputUpdateDirectorDto
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+
+	director, err := directorUseCase.Update(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(director)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (directorHandler *WebDirectorHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	directorId := r.URL.Query().Get("director_id")
+
+	input := usecases.InputDeleteDirectorDto{
+		DirectorId: directorId,
+	}
+
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+
+	director, err := directorUseCase.Delete(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(director)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (directorHandler *WebDirectorHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	directorId := r.URL.Query().Get("director_id")
+
+	input := usecases.InputIsDeletedDirectorDto{
+		DirectorId: directorId,
+	}
+
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+
+	director, err := directorUseCase.IsDeleted(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(director)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (directorHandler *WebDirectorHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodGet
 	requestMethod := r.Method
@@ -69,35 +187,6 @@ func (directorHandler *WebDirectorHandler) FindAll(w http.ResponseWriter, r *htt
 	}
 
 	err = json.NewEncoder(w).Encode(directors)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (directorHandler *WebDirectorHandler) Find(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodGet
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	directorId := r.URL.Query().Get("director_id")
-
-	input := usecases.InputFindDirectorDto{
-		ID: directorId,
-	}
-
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
-
-	director, err := directorUseCase.Find(input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(director)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

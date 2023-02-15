@@ -29,6 +29,34 @@ type OutputCreateMovieDto struct {
 	Movie MovieDto `json:"movie"`
 }
 
+type InputDeleteMovieDto struct {
+	MovieId string `json:"movie_id"`
+}
+
+type OutputDeleteMovieDto struct {
+	IsDeleted bool `json:"is_deleted"`
+}
+
+type InputIsDeletedMovieDto struct {
+	MovieId string `json:"movie_id"`
+}
+
+type OutputIsDeletedMovieDto struct {
+	IsDeleted bool `json:"is_movie_deleted"`
+}
+
+type InputUpdateMovieDto struct {
+	MovieId    string `json:"movie_id"`
+	Title      string `json:"title"`
+	Synopsis   string `json:"synopsis"`
+	ImdbRating string `json:"imdb_rating"`
+	Poster     string `json:"poster"`
+}
+
+type OutputUpdateMovieDto struct {
+	Movie MovieDto `json:"movie"`
+}
+
 type OutputFindAllMoviesDto struct {
 	Movies []MovieDto `json:"movies"`
 }

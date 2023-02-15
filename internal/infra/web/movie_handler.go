@@ -58,29 +58,6 @@ func (movieHandler *WebMovieHandler) Create(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (movieHandler *WebMovieHandler) FindAll(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodGet
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository)
-
-	movies, err := movieUseCase.MovieRepository.FindAll()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(movies)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 func (movieHandler *WebMovieHandler) Find(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodGet
 	requestMethod := r.Method
@@ -105,6 +82,118 @@ func (movieHandler *WebMovieHandler) Find(w http.ResponseWriter, r *http.Request
 	}
 
 	err = json.NewEncoder(w).Encode(movie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (movieHandler *WebMovieHandler) Update(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPut
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	var input usecases.InputUpdateMovieDto
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository)
+
+	movie, err := movieUseCase.Update(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (movieHandler *WebMovieHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieId := r.URL.Query().Get("movie_id")
+
+	input := usecases.InputDeleteMovieDto{
+		MovieId: movieId,
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository)
+
+	movie, err := movieUseCase.Delete(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (movieHandler *WebMovieHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieId := r.URL.Query().Get("movie_id")
+
+	input := usecases.InputIsDeletedMovieDto{
+		MovieId: movieId,
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository)
+
+	movie, err := movieUseCase.IsDeleted(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (movieHandler *WebMovieHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository)
+
+	movies, err := movieUseCase.MovieRepository.FindAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movies)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

@@ -52,6 +52,124 @@ func (genreHandler *WebGenreHandler) Create(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+func (genreHandler *WebGenreHandler) Find(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	genreId := r.URL.Query().Get("genre_id")
+
+	input := usecases.InputFindGenreDto{
+		GenreId: genreId,
+	}
+
+	genreUseCase := *usecases.NewGenreUseCase(genreHandler.GenreRepository, genreHandler.MovieRepository)
+
+	genre, err := genreUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(genre)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (genreHandler *WebGenreHandler) Update(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPut
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	var input usecases.InputUpdateGenreDto
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	genreUseCase := *usecases.NewGenreUseCase(genreHandler.GenreRepository, genreHandler.MovieRepository)
+
+	genre, err := genreUseCase.Update(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(genre)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (genreHandler *WebGenreHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	genreId := r.URL.Query().Get("genre_id")
+
+	input := usecases.InputDeleteGenreDto{
+		GenreId: genreId,
+	}
+
+	genreUseCase := *usecases.NewGenreUseCase(genreHandler.GenreRepository, genreHandler.MovieRepository)
+
+	genre, err := genreUseCase.Delete(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(genre)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (genreHandler *WebGenreHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	genreId := r.URL.Query().Get("genre_id")
+
+	input := usecases.InputIsDeletedGenreDto{
+		GenreId: genreId,
+	}
+
+	genreUseCase := *usecases.NewGenreUseCase(genreHandler.GenreRepository, genreHandler.MovieRepository)
+
+	genre, err := genreUseCase.IsDeleted(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(genre)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (genreHandler *WebGenreHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodGet
 	requestMethod := r.Method
@@ -69,35 +187,6 @@ func (genreHandler *WebGenreHandler) FindAll(w http.ResponseWriter, r *http.Requ
 	}
 
 	err = json.NewEncoder(w).Encode(genres)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func (genreHandler *WebGenreHandler) Find(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodGet
-	requestMethod := r.Method
-	if handlerMethod != requestMethod {
-		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-		return
-	}
-
-	genreId := r.URL.Query().Get("genre_id")
-
-	input := usecases.InputFindGenreDto{
-		ID: genreId,
-	}
-
-	genreUseCase := *usecases.NewGenreUseCase(genreHandler.GenreRepository, genreHandler.MovieRepository)
-
-	genre, err := genreUseCase.Find(input)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(genre)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

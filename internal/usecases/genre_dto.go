@@ -20,7 +20,7 @@ type OutputCreateGenreDto struct {
 }
 
 type InputDeleteGenreDto struct {
-	ID string `json:"genre_id"`
+	GenreId string `json:"genre_id"`
 }
 
 type OutputDeleteGenreDto struct {
@@ -28,7 +28,7 @@ type OutputDeleteGenreDto struct {
 }
 
 type InputFindGenreDto struct {
-	ID string `json:"genre_id"`
+	GenreId string `json:"genre_id"`
 }
 
 type OutputFindGenreDto struct {
@@ -36,7 +36,7 @@ type OutputFindGenreDto struct {
 }
 
 type InputUpdateGenreDto struct {
-	ID      string `json:"genre_id"`
+	GenreId string `json:"genre_id"`
 	Name    string `json:"name"`
 	Picture string `json:"picture"`
 }
@@ -46,7 +46,7 @@ type OutputUpdateGenreDto struct {
 }
 
 type InputIsDeletedGenreDto struct {
-	ID string `json:"genre_id"`
+	GenreId string `json:"genre_id"`
 }
 
 type OutputIsDeletedGenreDto struct {
@@ -58,7 +58,7 @@ type OutputFindAllGenreDto struct {
 }
 
 type InputFindAllGenreMoviesDto struct {
-	ID string `json:"genre_id"`
+	GenreId string `json:"genre_id"`
 }
 
 type OutputFindAllGenreMoviesDto struct {

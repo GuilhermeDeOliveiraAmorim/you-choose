@@ -45,7 +45,7 @@ func (actorUseCase *GenreUseCase) Create(input InputCreateGenreDto) (OutputCreat
 func (actorUseCase *GenreUseCase) Find(input InputFindGenreDto) (OutputFindGenreDto, error) {
 	output := OutputFindGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.ID)
+	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -64,7 +64,7 @@ func (actorUseCase *GenreUseCase) Find(input InputFindGenreDto) (OutputFindGenre
 func (actorUseCase *GenreUseCase) Delete(input InputDeleteGenreDto) (OutputDeleteGenreDto, error) {
 	output := OutputDeleteGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.ID)
+	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -85,7 +85,7 @@ func (actorUseCase *GenreUseCase) Update(input InputUpdateGenreDto) (OutputUpdat
 	timeNow := time.Now().Local().String()
 	output := OutputUpdateGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.ID)
+	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -119,7 +119,7 @@ func (actorUseCase *GenreUseCase) Update(input InputUpdateGenreDto) (OutputUpdat
 func (actorUseCase *GenreUseCase) IsDeleted(input InputIsDeletedGenreDto) (OutputIsDeletedGenreDto, error) {
 	output := OutputIsDeletedGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.ID)
+	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

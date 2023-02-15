@@ -20,7 +20,7 @@ type OutputCreateWriterDto struct {
 }
 
 type InputDeleteWriterDto struct {
-	ID string `json:"writer_id"`
+	WriterId string `json:"writer_id"`
 }
 
 type OutputDeleteWriterDto struct {
@@ -28,7 +28,7 @@ type OutputDeleteWriterDto struct {
 }
 
 type InputFindWriterDto struct {
-	ID string `json:"writer_id"`
+	WriterId string `json:"writer_id"`
 }
 
 type OutputFindWriterDto struct {
@@ -36,9 +36,9 @@ type OutputFindWriterDto struct {
 }
 
 type InputUpdateWriterDto struct {
-	ID      string `json:"writer_id"`
-	Name    string `json:"name"`
-	Picture string `json:"picture"`
+	WriterId string `json:"writer_id"`
+	Name     string `json:"name"`
+	Picture  string `json:"picture"`
 }
 
 type OutputUpdateWriterDto struct {
@@ -46,7 +46,7 @@ type OutputUpdateWriterDto struct {
 }
 
 type InputIsDeletedWriterDto struct {
-	ID string `json:"writer_id"`
+	WriterId string `json:"writer_id"`
 }
 
 type OutputIsDeletedWriterDto struct {
@@ -58,7 +58,7 @@ type OutputFindAllWriterDto struct {
 }
 
 type InputFindAllWriterMoviesDto struct {
-	ID string `json:"writer_id"`
+	WriterId string `json:"writer_id"`
 }
 
 type OutputFindAllWriterMoviesDto struct {

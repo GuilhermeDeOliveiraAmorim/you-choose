@@ -52,37 +52,6 @@ func (movieUseCase *MovieUseCase) Create(input InputCreateMovieDto) (OutputCreat
 	return output, nil
 }
 
-func (movieUseCase *MovieUseCase) FindAll() (OutputFindAllMoviesDto, error) {
-	output := OutputFindAllMoviesDto{}
-
-	movies, err := movieUseCase.MovieRepository.FindAll()
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	moviesOutput := []MovieDto{}
-
-	for _, movie := range movies {
-		moviesOutput = append(moviesOutput, MovieDto{
-			ID:              movie.ID,
-			Title:           movie.Title,
-			Synopsis:        movie.Synopsis,
-			ImdbRating:      movie.ImdbRating,
-			Votes:           movie.Votes,
-			YouChooseRating: movie.YouChooseRating,
-			Poster:          movie.Poster,
-			CreatedAt:       movie.CreatedAt,
-			UpdatedAt:       movie.UpdatedAt,
-			DeletedAt:       movie.DeletedAt,
-			IsDeleted:       movie.IsDeleted,
-		})
-	}
-
-	output.Movies = moviesOutput
-
-	return output, nil
-}
-
 func (movieUseCase *MovieUseCase) Find(input InputFindMovieDto) (OutpuFindMovieDto, error) {
 	output := OutpuFindMovieDto{}
 
@@ -203,6 +172,115 @@ func (movieUseCase *MovieUseCase) Find(input InputFindMovieDto) (OutpuFindMovieD
 	output.Movie.Writers = outputWriters
 	output.Movie.Directors = outputDirectors
 	output.Movie.Genres = outputGenres
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) Delete(input InputDeleteMovieDto) (OutputDeleteMovieDto, error) {
+	output := OutputDeleteMovieDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if movie.IsDeleted {
+		return output, errors.New("movie previously deleted")
+	}
+
+	movie.IsDeleted = true
+	movie.DeletedAt = time.Now().Local().String()
+
+	output.IsDeleted = movie.IsDeleted
+
+	return output, errors.New(err.Error())
+}
+
+func (movieUseCase *MovieUseCase) Update(input InputUpdateMovieDto) (OutputUpdateMovieDto, error) {
+	timeNow := time.Now().Local().String()
+	output := OutputUpdateMovieDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movie.Title = input.Title
+	movie.Synopsis = input.Synopsis
+	movie.ImdbRating = input.ImdbRating
+	movie.Poster = input.Poster
+
+	isValid, err := movie.Validate()
+	if !isValid {
+		return output, errors.New(err.Error())
+	}
+
+	movie.UpdatedAt = timeNow
+
+	err = movieUseCase.MovieRepository.Update(&movie)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Movie.ID = movie.ID
+	output.Movie.Title = movie.Title
+	output.Movie.Synopsis = movie.Synopsis
+	output.Movie.ImdbRating = movie.ImdbRating
+	output.Movie.Votes = movie.Votes
+	output.Movie.YouChooseRating = movie.YouChooseRating
+	output.Movie.Poster = movie.Poster
+	output.Movie.IsDeleted = movie.IsDeleted
+	output.Movie.CreatedAt = movie.CreatedAt
+	output.Movie.UpdatedAt = movie.UpdatedAt
+	output.Movie.DeletedAt = movie.DeletedAt
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) IsDeleted(input InputIsDeletedMovieDto) (OutputIsDeletedMovieDto, error) {
+	output := OutputIsDeletedMovieDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.IsDeleted = false
+
+	if movie.IsDeleted {
+		output.IsDeleted = true
+	}
+
+	return output, nil
+}
+
+func (movieUseCase *MovieUseCase) FindAll() (OutputFindAllMoviesDto, error) {
+	output := OutputFindAllMoviesDto{}
+
+	movies, err := movieUseCase.MovieRepository.FindAll()
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	moviesOutput := []MovieDto{}
+
+	for _, movie := range movies {
+		moviesOutput = append(moviesOutput, MovieDto{
+			ID:              movie.ID,
+			Title:           movie.Title,
+			Synopsis:        movie.Synopsis,
+			ImdbRating:      movie.ImdbRating,
+			Votes:           movie.Votes,
+			YouChooseRating: movie.YouChooseRating,
+			Poster:          movie.Poster,
+			CreatedAt:       movie.CreatedAt,
+			UpdatedAt:       movie.UpdatedAt,
+			DeletedAt:       movie.DeletedAt,
+			IsDeleted:       movie.IsDeleted,
+		})
+	}
+
+	output.Movies = moviesOutput
 
 	return output, nil
 }
