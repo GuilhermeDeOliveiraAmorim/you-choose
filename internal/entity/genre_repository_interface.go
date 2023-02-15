@@ -1,9 +1,10 @@
 package entity
 
 type GenreRepositoryInterface interface {
-	Create(a *Genre) (*Genre, error)
-	Update(a *Genre) (*Genre, error)
-	Find(id string) (*Genre, error)
-	Delete(id string) (*Genre, error)
-	FindAll() ([]*Genre, error)
+	Create(genre *Genre) error
+	Find(id string) (Genre, error)
+	Update(genre *Genre) error
+	Delete(genre *Genre) error
+	IsDeleted(id string) error
+	FindAll() ([]Genre, error)
 }

@@ -11,10 +11,10 @@ type Genre struct {
 	ID        string
 	Name      string
 	Picture   string
+	IsDeleted bool
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
-	IsDeleted bool
 }
 
 func NewGenre(name string, picture string) (*Genre, error) {
@@ -23,10 +23,10 @@ func NewGenre(name string, picture string) (*Genre, error) {
 		ID:        uuid.New().String(),
 		Name:      name,
 		Picture:   picture,
+		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
 		DeletedAt: dateNow.Local().String(),
-		IsDeleted: false,
 	}
 
 	isValid, err := genre.Validate()
