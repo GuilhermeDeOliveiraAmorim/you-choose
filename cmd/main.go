@@ -32,6 +32,7 @@ func main() {
 	webserver.AddHandler("/choosers/isdeleted/chooser", newWebChooserHandler.IsDeleted)
 	webserver.AddHandler("/choosers/find/all/choosers", newWebChooserHandler.FindAll)
 	webserver.AddHandler("/choosers/add/movies/movielist", newWebChooserHandler.AddMoviesToMovieList)
+	webserver.AddHandler("/choosers/add/choosers/movielist", newWebChooserHandler.AddChoosersToMovieList)
 
 	webserver.AddHandler("/movielists/create/movielist", newWebMovieListHandler.Create)
 	webserver.AddHandler("/movielists/find/movielist", newWebMovieListHandler.Find)
@@ -40,6 +41,7 @@ func main() {
 	webserver.AddHandler("/movielists/isdeleted/movielist", newWebMovieListHandler.IsDeleted)
 	webserver.AddHandler("/movielists/find/all/movielists", newWebMovieListHandler.FindAll)
 	webserver.AddHandler("/movielists/find/movielist/movies", newWebMovieListHandler.FindMovieListMovies)
+	webserver.AddHandler("/movielists/find/movielist/choosers", newWebMovieListHandler.FindMovieListChoosers)
 
 	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
 	webserver.AddHandler("/movies/find/movie", newWebMovieHandler.Find)
