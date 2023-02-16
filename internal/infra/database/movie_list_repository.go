@@ -150,3 +150,28 @@ func (movieListRepository *MovieListRepository) FindMovieListMovies(id string) (
 
 	return moviesIds, nil
 }
+
+func (movieListRepository *MovieListRepository) FindMovieListChoosers(id string) ([]string, error) {
+	var choosersIds []string
+
+	rows, err := movieListRepository.Db.Query("SELECT chooser_id FROM choosers_movie_lists WHERE movie_list_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var chooserId string
+
+		if err := rows.Scan(&chooserId); err != nil {
+			return choosersIds, err
+		}
+
+		choosersIds = append(choosersIds, chooserId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return choosersIds, err
+	}
+
+	return choosersIds, nil
+}

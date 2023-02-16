@@ -253,3 +253,85 @@ func (chooserUseCase *ChooserUseCase) AddMoviesToMovieList(input InputAddMoviesT
 
 	return output, nil
 }
+
+func (chooserUseCase *ChooserUseCase) AddChoosersToMovieList(input InputAddChoosersToMovieListDto) (OutputAddChoosersToMovieListDto, error) {
+	dateNow := time.Now().Local().String()
+
+	output := OutputAddChoosersToMovieListDto{}
+
+	movieList, err := chooserUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	choosersIds, err := chooserUseCase.MovieListRepository.FindMovieListChoosers(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var choosersInMovieList []entity.Chooser
+
+	for _, chooserId := range choosersIds {
+		chooser, err := chooserUseCase.ChooserRepository.Find(chooserId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		choosersInMovieList = append(choosersInMovieList, chooser)
+	}
+
+	var choosersAdded []entity.Chooser
+
+	for _, chooserId := range input.ChoosersIds {
+		chooser, err := chooserUseCase.ChooserRepository.Find(chooserId.ChooserId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		choosersAdded = append(choosersAdded, chooser)
+	}
+
+	for _, chooserInMovieList := range choosersInMovieList {
+		for position, chooserAdded := range choosersAdded {
+			if chooserInMovieList.ID == chooserAdded.ID {
+				choosersAdded = append(choosersAdded[:position], choosersAdded[position+1:]...)
+			}
+		}
+	}
+
+	err = chooserUseCase.ChooserRepository.AddChoosersToMovieList(movieList, choosersAdded)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputChoosers []ChooserDto
+
+	for _, chooserId := range choosersIds {
+		chooser, err := chooserUseCase.ChooserRepository.Find(chooserId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputChoosers = append(outputChoosers, ChooserDto{
+			ID:        chooser.ID,
+			FirstName: chooser.FirstName,
+			LastName:  chooser.LastName,
+			UserName:  chooser.UserName,
+			Picture:   chooser.Picture,
+			IsDeleted: chooser.IsDeleted,
+			CreatedAt: chooser.CreatedAt,
+			UpdatedAt: chooser.UpdatedAt,
+			DeletedAt: chooser.DeletedAt,
+		})
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Description = movieList.Description
+	output.MovieList.Picture = movieList.Picture
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = dateNow
+	output.MovieList.DeletedAt = movieList.DeletedAt
+	output.MovieList.Choosers = outputChoosers
+
+	return output, nil
+}

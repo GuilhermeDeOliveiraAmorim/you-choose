@@ -62,6 +62,7 @@ func (directorUseCase *DirectorUseCase) Find(input InputFindDirectorDto) (Output
 }
 
 func (directorUseCase *DirectorUseCase) Delete(input InputDeleteDirectorDto) (OutputDeleteDirectorDto, error) {
+	timeNow := time.Now().Local().String()
 	output := OutputDeleteDirectorDto{}
 
 	director, err := directorUseCase.DirectorRepository.Find(input.DirectorId)
@@ -74,7 +75,7 @@ func (directorUseCase *DirectorUseCase) Delete(input InputDeleteDirectorDto) (Ou
 	}
 
 	director.IsDeleted = true
-	director.DeletedAt = time.Now().Local().String()
+	director.DeletedAt = timeNow
 
 	output.IsDeleted = director.IsDeleted
 

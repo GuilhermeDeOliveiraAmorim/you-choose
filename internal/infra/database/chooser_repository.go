@@ -141,3 +141,20 @@ func (chooserRepository *ChooserRepository) AddMoviesToMovieList(movieList entit
 
 	return nil
 }
+
+func (chooserRepository *ChooserRepository) AddChoosersToMovieList(movieList entity.MovieList, choosers []entity.Chooser) error {
+	for _, chooser := range choosers {
+		stmt, err := chooserRepository.Db.Prepare("INSERT INTO choosers_movie_lists (chooser_id, movie_list_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&chooser.ID, &movieList.ID, false, &movieList.UpdatedAt, &movieList.UpdatedAt, &movieList.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}

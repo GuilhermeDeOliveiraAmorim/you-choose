@@ -69,3 +69,11 @@ type InputFindMovieListMoviesDto struct {
 type OutputFindMovieListMoviesDto struct {
 	MovieList MovieListDto `json:"movie_list"`
 }
+
+type InputFindMovieListChoosersDto struct {
+	MovieListId string `json:"movie_list_id"`
+}
+
+type OutputFindMovieListChoosersDto struct {
+	MovieList MovieListDto `json:"movie_list"`
+}

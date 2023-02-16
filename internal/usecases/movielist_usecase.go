@@ -215,3 +215,50 @@ func (movieListUseCase *MovieListUseCase) FindMovieListMovies(input InputFindMov
 
 	return output, nil
 }
+
+func (movieListUseCase *MovieListUseCase) FindMovieListChoosers(input InputFindMovieListChoosersDto) (OutputFindMovieListChoosersDto, error) {
+	output := OutputFindMovieListChoosersDto{}
+
+	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	choosersIds, err := movieListUseCase.MovieListRepository.FindMovieListChoosers(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputChoosers []ChooserDto
+
+	for _, chooserId := range choosersIds {
+		chooser, err := movieListUseCase.ChooserRepository.Find(chooserId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputChoosers = append(outputChoosers, ChooserDto{
+			ID:        chooser.ID,
+			FirstName: chooser.FirstName,
+			LastName:  chooser.LastName,
+			UserName:  chooser.UserName,
+			Picture:   chooser.Picture,
+			IsDeleted: chooser.IsDeleted,
+			CreatedAt: chooser.CreatedAt,
+			UpdatedAt: chooser.UpdatedAt,
+			DeletedAt: chooser.DeletedAt,
+		})
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Description = movieList.Description
+	output.MovieList.Picture = movieList.Picture
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = movieList.UpdatedAt
+	output.MovieList.DeletedAt = movieList.DeletedAt
+	output.MovieList.Choosers = outputChoosers
+
+	return output, nil
+}

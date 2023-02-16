@@ -222,3 +222,32 @@ func (movieListHandler *WebMovieListHandler) FindMovieListMovies(w http.Response
 		return
 	}
 }
+
+func (movieListHandler *WebMovieListHandler) FindMovieListChoosers(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieListId := r.URL.Query().Get("movie_list_id")
+
+	input := usecases.InputFindMovieListChoosersDto{
+		MovieListId: movieListId,
+	}
+
+	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+
+	output, err := movieListUseCase.FindMovieListChoosers(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
