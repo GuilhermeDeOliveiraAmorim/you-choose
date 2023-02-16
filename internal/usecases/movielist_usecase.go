@@ -10,12 +10,14 @@ import (
 type MovieListUseCase struct {
 	MovieListRepository entity.MovieListRepositoryInterface
 	ChooserRepository   entity.ChooserRepositoryInterface
+	MovieRepository     entity.MovieRepositoryInterface
 }
 
-func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface, chooserRepository entity.ChooserRepositoryInterface) *MovieListUseCase {
+func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface, chooserRepository entity.ChooserRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *MovieListUseCase {
 	return &MovieListUseCase{
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
+		MovieRepository:     movieRepository,
 	}
 }
 
@@ -161,6 +163,55 @@ func (movieListUseCase *MovieListUseCase) FindAll() (OutputFindAllMovieListDto, 
 			DeletedAt:   movieList.DeletedAt,
 		})
 	}
+
+	return output, nil
+}
+
+func (movieListUseCase *MovieListUseCase) FindMovieListMovies(input InputFindMovieListMoviesDto) (OutputFindMovieListMoviesDto, error) {
+	output := OutputFindMovieListMoviesDto{}
+
+	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	moviesIds, err := movieListUseCase.MovieListRepository.FindMovieListMovies(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputMovies []MovieDto
+
+	for _, movieId := range moviesIds {
+		movie, err := movieListUseCase.MovieRepository.Find(movieId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputMovies = append(outputMovies, MovieDto{
+			ID:              movie.ID,
+			Title:           movie.Title,
+			Synopsis:        movie.Synopsis,
+			ImdbRating:      movie.ImdbRating,
+			Votes:           movie.Votes,
+			YouChooseRating: movie.YouChooseRating,
+			Poster:          movie.Poster,
+			IsDeleted:       movie.IsDeleted,
+			CreatedAt:       movie.CreatedAt,
+			UpdatedAt:       movie.UpdatedAt,
+			DeletedAt:       movie.DeletedAt,
+		})
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Description = movieList.Description
+	output.MovieList.Picture = movieList.Picture
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = movieList.UpdatedAt
+	output.MovieList.DeletedAt = movieList.DeletedAt
+	output.MovieList.Movies = outputMovies
 
 	return output, nil
 }

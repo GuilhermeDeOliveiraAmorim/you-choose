@@ -125,3 +125,28 @@ func (movieListRepository *MovieListRepository) FindAll() ([]entity.MovieList, e
 
 	return movieLists, nil
 }
+
+func (movieListRepository *MovieListRepository) FindMovieListMovies(id string) ([]string, error) {
+	var moviesIds []string
+
+	rows, err := movieListRepository.Db.Query("SELECT movie_id FROM movies_movie_lists WHERE movie_list_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var movieId string
+
+		if err := rows.Scan(&movieId); err != nil {
+			return moviesIds, err
+		}
+
+		moviesIds = append(moviesIds, movieId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return moviesIds, err
+	}
+
+	return moviesIds, nil
+}

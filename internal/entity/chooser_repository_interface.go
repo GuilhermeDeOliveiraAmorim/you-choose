@@ -7,4 +7,7 @@ type ChooserRepositoryInterface interface {
 	Delete(chooser *Chooser) error
 	IsDeleted(id string) error
 	FindAll() ([]Chooser, error)
+	// CreateMovieList(movieList *MovieList) error
+	AddMoviesToMovieList(movieList MovieList, movies []Movie) error
+	// AddChoosersToMovieList(movieList MovieList, choosers []Chooser) error
 }

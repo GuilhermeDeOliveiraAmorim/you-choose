@@ -100,8 +100,8 @@ func (chooserRepository *ChooserRepository) IsDeleted(id string) error {
 	return nil
 }
 
-func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
-	rows, err := c.Db.Query("SELECT id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
+func (chooserRepository *ChooserRepository) FindAll() ([]entity.Chooser, error) {
+	rows, err := chooserRepository.Db.Query("SELECT id, first_name, last_name, username, picture, is_deleted, created_at, updated_at, deleted_at FROM choosers")
 	if err != nil {
 		return nil, err
 	}
@@ -123,4 +123,21 @@ func (c *ChooserRepository) FindAll() ([]entity.Chooser, error) {
 	}
 
 	return choosers, nil
+}
+
+func (chooserRepository *ChooserRepository) AddMoviesToMovieList(movieList entity.MovieList, movies []entity.Movie) error {
+	for _, movie := range movies {
+		stmt, err := chooserRepository.Db.Prepare("INSERT INTO movies_movie_lists (movie_id, movie_list_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&movie.ID, &movieList.ID, false, &movieList.UpdatedAt, &movieList.UpdatedAt, &movieList.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
 }

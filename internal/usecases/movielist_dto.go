@@ -61,3 +61,11 @@ type OutputIsDeletedMovieListDto struct {
 type OutputFindAllMovieListDto struct {
 	MovieLists []MovieListDto `json:"movie_lists"`
 }
+
+type InputFindMovieListMoviesDto struct {
+	MovieListId string `json:"movie_list_id"`
+}
+
+type OutputFindMovieListMoviesDto struct {
+	MovieList MovieListDto `json:"movie_list"`
+}

@@ -194,3 +194,34 @@ func (chooserHandler *WebChooserHandler) FindAll(w http.ResponseWriter, r *http.
 		return
 	}
 }
+
+func (chooserHandler *WebChooserHandler) AddMoviesToMovieList(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	var dto usecases.InputAddMoviesToMovieListDto
+
+	err := json.NewDecoder(r.Body).Decode(&dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
+
+	output, err := chooserUseCase.AddMoviesToMovieList(dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

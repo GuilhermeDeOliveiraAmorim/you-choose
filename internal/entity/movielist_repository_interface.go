@@ -7,4 +7,5 @@ type MovieListRepositoryInterface interface {
 	Delete(movieList *MovieList) error
 	IsDeleted(id string) error
 	FindAll() ([]MovieList, error)
+	FindMovieListMovies(id string) ([]string, error)
 }
