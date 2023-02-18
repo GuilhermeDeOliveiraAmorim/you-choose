@@ -49,6 +49,7 @@ func main() {
 	webserver.AddHandler("/movies/delete/movie", newWebMovieHandler.Delete)
 	webserver.AddHandler("/movies/isdeleted/movie", newWebMovieHandler.IsDeleted)
 	webserver.AddHandler("/movies/find/all/movies", newWebMovieHandler.FindAll)
+	webserver.AddHandler("/movies/add/vote/movie", newWebMovieHandler.AddVoteToMovie)
 
 	webserver.AddHandler("/movies/add/movie/writers", newWebMovieHandler.AddWritersToMovie)
 	webserver.AddHandler("/movies/find/movie/writers", newWebMovieHandler.FindMovieWriters)

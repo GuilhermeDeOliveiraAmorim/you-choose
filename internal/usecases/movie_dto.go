@@ -156,3 +156,12 @@ type InputFindMovieGenresDto struct {
 type OutputFindMovieGenresDto struct {
 	Movie MovieDto `json:"movie"`
 }
+
+type InputAddVoteToMovieDto struct {
+	MovieId string `json:"movie_id"`
+}
+
+type OutputAddVoteToMovieDto struct {
+	Votes           int32   `json:"votes"`
+	YouChooseRating float32 `json:"you_choose_rating"`
+}

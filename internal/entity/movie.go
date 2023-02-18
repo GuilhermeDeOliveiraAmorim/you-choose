@@ -25,14 +25,14 @@ type Movie struct {
 	Genres          []*Genre
 }
 
-func (m *Movie) AddVote() {
-	votes := m.GetVotes()
+func (movie *Movie) AddVote() {
+	votes := movie.GetVotes()
 	votes = votes + 1
-	m.Votes = votes
+	movie.Votes = votes
 }
 
-func (m *Movie) GetVotes() int32 {
-	return m.Votes
+func (movie *Movie) GetVotes() int32 {
+	return movie.Votes
 }
 
 func NewMovie(title string, synopsis string, imdbRating string, poster string) (*Movie, error) {
@@ -59,53 +59,53 @@ func NewMovie(title string, synopsis string, imdbRating string, poster string) (
 	return movie, nil
 }
 
-func (m *Movie) AddDirector(director *Director) {
-	m.Directors = append(m.Directors, director)
+func (movie *Movie) AddDirector(director *Director) {
+	movie.Directors = append(movie.Directors, director)
 }
 
-func (m *Movie) RemoveDirector(director *Director) {
-	for i, d := range m.Directors {
+func (movie *Movie) RemoveDirector(director *Director) {
+	for i, d := range movie.Directors {
 		if d.ID == director.ID {
-			m.Directors = append(m.Directors[:i], m.Directors[i+1:]...)
+			movie.Directors = append(movie.Directors[:i], movie.Directors[i+1:]...)
 			return
 		}
 	}
 }
 
-func (m *Movie) AddActor(actor *Actor) {
-	m.Actors = append(m.Actors, actor)
+func (movie *Movie) AddActor(actor *Actor) {
+	movie.Actors = append(movie.Actors, actor)
 }
 
-func (m *Movie) RemoveActor(actor *Actor) {
-	for i, d := range m.Actors {
+func (movie *Movie) RemoveActor(actor *Actor) {
+	for i, d := range movie.Actors {
 		if d.ID == actor.ID {
-			m.Actors = append(m.Actors[:i], m.Actors[i+1:]...)
+			movie.Actors = append(movie.Actors[:i], movie.Actors[i+1:]...)
 			return
 		}
 	}
 }
 
-func (m *Movie) AddWriter(writer *Writer) {
-	m.Writers = append(m.Writers, writer)
+func (movie *Movie) AddWriter(writer *Writer) {
+	movie.Writers = append(movie.Writers, writer)
 }
 
-func (m *Movie) RemoveWriter(writer *Writer) {
-	for i, d := range m.Writers {
+func (movie *Movie) RemoveWriter(writer *Writer) {
+	for i, d := range movie.Writers {
 		if d.ID == writer.ID {
-			m.Writers = append(m.Writers[:i], m.Writers[i+1:]...)
+			movie.Writers = append(movie.Writers[:i], movie.Writers[i+1:]...)
 			return
 		}
 	}
 }
 
-func (m *Movie) AddGenre(genre *Genre) {
-	m.Genres = append(m.Genres, genre)
+func (movie *Movie) AddGenre(genre *Genre) {
+	movie.Genres = append(movie.Genres, genre)
 }
 
-func (m *Movie) RemoveGenre(genre *Genre) {
-	for i, d := range m.Genres {
+func (movie *Movie) RemoveGenre(genre *Genre) {
+	for i, d := range movie.Genres {
 		if d.ID == genre.ID {
-			m.Genres = append(m.Genres[:i], m.Genres[i+1:]...)
+			movie.Genres = append(movie.Genres[:i], movie.Genres[i+1:]...)
 			return
 		}
 	}

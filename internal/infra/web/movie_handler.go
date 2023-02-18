@@ -439,3 +439,32 @@ func (movieHandler *WebMovieHandler) FindMovieGenres(w http.ResponseWriter, r *h
 		return
 	}
 }
+
+func (movieHandler *WebMovieHandler) AddVoteToMovie(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieId := r.URL.Query().Get("movie_id")
+
+	input := usecases.InputAddVoteToMovieDto{
+		MovieId: movieId,
+	}
+
+	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository)
+
+	output, err := movieUseCase.AddVoteToMovie(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

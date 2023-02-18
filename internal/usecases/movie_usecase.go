@@ -788,3 +788,43 @@ func (movieUseCase *MovieUseCase) FindMovieGenres(input InputFindMovieGenresDto)
 
 	return output, nil
 }
+
+func (movieUseCase *MovieUseCase) AddVoteToMovie(input InputAddVoteToMovieDto) (OutputAddVoteToMovieDto, error) {
+	output := OutputAddVoteToMovieDto{}
+
+	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
+	if err != nil {
+		return output, err
+	}
+
+	movie.AddVote()
+
+	err = movieUseCase.MovieRepository.Update(&movie)
+	if err != nil {
+		return output, err
+	}
+
+	movies, err := movieUseCase.MovieRepository.FindAll()
+	if err != nil {
+		return output, err
+	}
+
+	var totalOfVotes int32
+
+	for _, movie := range movies {
+		totalOfVotes = totalOfVotes + movie.GetVotes()
+	}
+
+	for _, movie := range movies {
+		movie.YouChooseRating = (float32(movie.GetVotes()) / float32(totalOfVotes)) * 100
+		err = movieUseCase.MovieRepository.AddVoteToMovie(&movie)
+		if err != nil {
+			return output, err
+		}
+	}
+
+	output.Votes = movie.Votes
+	output.YouChooseRating = movie.YouChooseRating
+
+	return output, nil
+}

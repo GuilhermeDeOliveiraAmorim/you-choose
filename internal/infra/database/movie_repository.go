@@ -63,12 +63,12 @@ func (movieRepository *MovieRepository) Find(id string) (entity.Movie, error) {
 }
 
 func (movieRepository *MovieRepository) Update(movie *entity.Movie) error {
-	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET title = $1, synopsis = $2, imdb_rating = $3, votes = $4, you_choose_rating = $5, poster = $6, is_deleted = $7, created_at = $8, updated_at = $9, deleted_at = $10 WHERE id = $11")
+	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET title = $1, synopsis = $2, imdb_rating = $3, votes = $4, you_choose_rating = $5, poster = $6, is_deleted = $7, created_at = $8, updated_at = $9, deleted_at = $10 WHERE movie_id = $11")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(movie.Title, movie.Synopsis, movie.ImdbRating, movie.Votes, movie.YouChooseRating, movie.Poster, movie.IsDeleted, movie.CreatedAt, movie.UpdatedAt, movie.DeletedAt)
+	_, err = stmt.Exec(movie.Title, movie.Synopsis, movie.ImdbRating, movie.Votes, movie.YouChooseRating, movie.Poster, movie.IsDeleted, movie.CreatedAt, movie.UpdatedAt, movie.DeletedAt, movie.ID)
 	if err != nil {
 		return err
 	}
@@ -313,4 +313,18 @@ func (movieRepository *MovieRepository) FindMovieGenres(id string) ([]string, er
 	}
 
 	return genresIds, nil
+}
+
+func (movieRepository *MovieRepository) AddVoteToMovie(movie *entity.Movie) error {
+	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET votes = $1, you_choose_rating = $2, updated_at = $3 WHERE movie_id = $4")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(movie.Votes, movie.YouChooseRating, movie.UpdatedAt, movie.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
