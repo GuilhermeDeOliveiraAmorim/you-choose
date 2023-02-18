@@ -26,7 +26,7 @@ type OutputCreateChooserDto struct {
 }
 
 type InputDeleteChooserDto struct {
-	ID string `json:"chooser_id"`
+	ChooserId string `json:"chooser_id"`
 }
 
 type OutputDeleteChooserDto struct {
@@ -34,7 +34,7 @@ type OutputDeleteChooserDto struct {
 }
 
 type InputFindChooserDto struct {
-	ID string `json:"chooser_id"`
+	ChooserId string `json:"chooser_id"`
 }
 
 type OutputFindChooserDto struct {
@@ -48,7 +48,7 @@ type OutputFindAllChooserDto struct {
 }
 
 type InputUpdateChooserDto struct {
-	ID        string `json:"chooser_id"`
+	ChooserId string `json:"chooser_id"`
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	UserName  string `json:"username"`
@@ -64,7 +64,7 @@ type OutputUpdateChooserDto struct {
 }
 
 type InputIsDeletedChooserDto struct {
-	ID string `json:"chooser_id"`
+	ChooserId string `json:"chooser_id"`
 }
 
 type OutputIsDeletedChooserDto struct {
@@ -85,9 +85,9 @@ type InputMovieList struct {
 }
 
 type OutputChooser struct {
-	ChooserId string `json:"chooser_id"`
-	UserName  string `json:"username"`
-	Picture   string `json:"picture"`
+	ID       string `json:"chooser_id"`
+	UserName string `json:"username"`
+	Picture  string `json:"picture"`
 }
 
 type OutputMovieList struct {

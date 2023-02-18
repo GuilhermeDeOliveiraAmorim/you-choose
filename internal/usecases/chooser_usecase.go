@@ -54,19 +54,18 @@ func (chooserUseCase *ChooserUseCase) Create(input InputCreateChooserDto) (Outpu
 func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFindChooserDto, error) {
 	output := OutputFindChooserDto{}
 
-	choosers, err := chooserUseCase.ChooserRepository.FindAll()
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	for _, chooser := range choosers {
-		if input.ID == chooser.ID {
-			output.ID = chooser.ID
-			output.UserName = chooser.UserName
-			output.Picture = chooser.Picture
-			return output, nil
-		}
+	if chooser.ID == "" {
+		return output, errors.New("chooser not found")
 	}
+
+	output.ID = chooser.ID
+	output.UserName = chooser.UserName
+	output.Picture = chooser.Picture
 
 	return output, errors.New(err.Error())
 }
@@ -75,7 +74,7 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 	timeNow := time.Now().Local().String()
 	output := OutputUpdateChooserDto{}
 
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -109,7 +108,7 @@ func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (Outpu
 func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (OutputDeleteChooserDto, error) {
 	output := OutputDeleteChooserDto{}
 
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -134,7 +133,7 @@ func (chooserUseCase *ChooserUseCase) Delete(input InputDeleteChooserDto) (Outpu
 func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) (OutputIsDeletedChooserDto, error) {
 	output := OutputIsDeletedChooserDto{}
 
-	chooser, err := chooserUseCase.ChooserRepository.Find(input.ID)
+	chooser, err := chooserUseCase.ChooserRepository.Find(input.ChooserId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -149,12 +148,15 @@ func (chooserUseCase *ChooserUseCase) IsDeleted(input InputIsDeletedChooserDto) 
 }
 
 func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error) {
-	choosers, err := chooserUseCase.ChooserRepository.FindAll()
-
 	output := OutputFindAllChooserDto{}
 
+	choosers, err := chooserUseCase.ChooserRepository.FindAll()
 	if err != nil {
 		return output, errors.New(err.Error())
+	}
+
+	if len(choosers) == 0 {
+		return output, errors.New("no chooser found")
 	}
 
 	choosersOutput := []OutputFindChooserDto{}

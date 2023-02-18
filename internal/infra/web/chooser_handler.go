@@ -65,7 +65,7 @@ func (chooserHandler *WebChooserHandler) Find(w http.ResponseWriter, r *http.Req
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputFindChooserDto{
-		ID: chooserId,
+		ChooserId: chooserId,
 	}
 
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
@@ -115,7 +115,7 @@ func (chooserHandler *WebChooserHandler) Update(w http.ResponseWriter, r *http.R
 }
 
 func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	handlerMethod := http.MethodPatch
+	handlerMethod := http.MethodDelete
 	requestMethod := r.Method
 	if handlerMethod != requestMethod {
 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
@@ -125,7 +125,7 @@ func (chooserHandler *WebChooserHandler) Delete(w http.ResponseWriter, r *http.R
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputDeleteChooserDto{
-		ID: chooserId,
+		ChooserId: chooserId,
 	}
 
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
@@ -154,7 +154,7 @@ func (chooserHandler *WebChooserHandler) IsDeleted(w http.ResponseWriter, r *htt
 	chooserId := r.URL.Query().Get("chooser_id")
 
 	input := usecases.InputIsDeletedChooserDto{
-		ID: chooserId,
+		ChooserId: chooserId,
 	}
 
 	chooserUseCase := *usecases.NewChooserUseCase(chooserHandler.ChooserRepository, chooserHandler.MovieListRepository, chooserHandler.MovieRepository)
