@@ -24,6 +24,7 @@ func main() {
 	newWebWriterHandler := NewWebWriterHandlerGen(db)
 	newWebDirectorHandler := NewWebDirectorHandlerGen(db)
 	newWebGenreHandler := NewWebGenreHandlerGen(db)
+	newWebTagHandler := NewWebTagHandlerGen(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/find/chooser", newWebChooserHandler.Find)
@@ -33,6 +34,7 @@ func main() {
 	webserver.AddHandler("/choosers/find/all/choosers", newWebChooserHandler.FindAll)
 	webserver.AddHandler("/choosers/add/movies/movielist", newWebChooserHandler.AddMoviesToMovieList)
 	webserver.AddHandler("/choosers/add/choosers/movielist", newWebChooserHandler.AddChoosersToMovieList)
+	webserver.AddHandler("/choosers/add/tags/movielist", newWebChooserHandler.AddTagsToMovieList)
 
 	webserver.AddHandler("/movielists/create/movielist", newWebMovieListHandler.Create)
 	webserver.AddHandler("/movielists/find/movielist", newWebMovieListHandler.Find)
@@ -42,6 +44,7 @@ func main() {
 	webserver.AddHandler("/movielists/find/all/movielists", newWebMovieListHandler.FindAll)
 	webserver.AddHandler("/movielists/find/movielist/movies", newWebMovieListHandler.FindMovieListMovies)
 	webserver.AddHandler("/movielists/find/movielist/choosers", newWebMovieListHandler.FindMovieListChoosers)
+	webserver.AddHandler("/movielists/find/movielist/tags", newWebMovieListHandler.FindMovieListTags)
 
 	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
 	webserver.AddHandler("/movies/find/movie", newWebMovieHandler.Find)
@@ -90,6 +93,13 @@ func main() {
 	webserver.AddHandler("/genres/delete/genre", newWebGenreHandler.Delete)
 	webserver.AddHandler("/genres/isdeleted/genre", newWebGenreHandler.IsDeleted)
 	webserver.AddHandler("/genres/find/all/genres", newWebGenreHandler.FindAll)
+
+	webserver.AddHandler("/tags/create/tag", newWebTagHandler.Create)
+	webserver.AddHandler("/tags/find/tag", newWebTagHandler.Find)
+	webserver.AddHandler("/tags/update/tag", newWebTagHandler.Update)
+	webserver.AddHandler("/tags/delete/tag", newWebTagHandler.Delete)
+	webserver.AddHandler("/tags/isdeleted/tag", newWebTagHandler.IsDeleted)
+	webserver.AddHandler("/tags/find/all/tags", newWebTagHandler.FindAll)
 
 	webserver.Start()
 }

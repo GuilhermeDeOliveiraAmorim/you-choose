@@ -294,3 +294,38 @@ func (chooserHandler *WebChooserHandler) AddChoosersToMovieList(w http.ResponseW
 		return
 	}
 }
+
+func (chooserHandler *WebChooserHandler) AddTagsToMovieList(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	var dto usecases.InputAddTagsToMovieListDto
+
+	err := json.NewDecoder(r.Body).Decode(&dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	chooserUseCase := *usecases.NewChooserUseCase(
+		chooserHandler.ChooserRepository,
+		chooserHandler.MovieListRepository,
+		chooserHandler.MovieRepository,
+		chooserHandler.TagRepository)
+
+	output, err := chooserUseCase.AddTagsToMovieList(dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

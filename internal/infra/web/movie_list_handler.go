@@ -296,3 +296,37 @@ func (movieListHandler *WebMovieListHandler) FindMovieListChoosers(w http.Respon
 		return
 	}
 }
+
+func (movieListHandler *WebMovieListHandler) FindMovieListTags(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	tagListId := r.URL.Query().Get("tag_list_id")
+
+	input := usecases.InputFindMovieListTagsDto{
+		MovieListId: tagListId,
+	}
+
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
+
+	output, err := movieListUseCase.FindMovieListTags(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
