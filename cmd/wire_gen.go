@@ -9,18 +9,17 @@ package main
 import (
 	"database/sql"
 
-	// "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infra/web"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	// "github.com/google/wire"
 )
 
 func NewCreateChooserUseCaseGen(db *sql.DB) *usecases.ChooserUseCase {
 	chooserRepository := database.NewChooserRepository(db)
 	movieListRepository := database.NewMovieListRepository(db)
 	movieRepository := database.NewMovieRepository(db)
-	chooserUseCase := usecases.NewChooserUseCase(chooserRepository, movieListRepository, movieRepository)
+	tagRepository := database.NewTagRepository(db)
+	chooserUseCase := usecases.NewChooserUseCase(chooserRepository, movieListRepository, movieRepository, tagRepository)
 	return chooserUseCase
 }
 
@@ -28,7 +27,8 @@ func NewWebChooserHandlerGen(db *sql.DB) *web.WebChooserHandler{
 	chooserRepository := database.NewChooserRepository(db)
 	movieListRepository := database.NewMovieListRepository(db)
 	movieRepository := database.NewMovieRepository(db)
-	webChooserHandler := web.NewChooserHandler(chooserRepository, movieListRepository, movieRepository)
+	tagRepository := database.NewTagRepository(db)
+	webChooserHandler := web.NewChooserHandler(chooserRepository, movieListRepository, movieRepository, tagRepository)
 	return webChooserHandler
 }
 
@@ -36,7 +36,8 @@ func NewCreateMovieListUseCaseGen(db *sql.DB) *usecases.MovieListUseCase {
 	movieListRepository := database.NewMovieListRepository(db)
 	chooserRepository := database.NewChooserRepository(db)
 	movieRepository := database.NewMovieRepository(db)
-	MovieListUseCase := usecases.NewMovieListUseCase(movieListRepository, chooserRepository, movieRepository)
+	tagRepository := database.NewTagRepository(db)
+	MovieListUseCase := usecases.NewMovieListUseCase(movieListRepository, chooserRepository, movieRepository, tagRepository)
 	return MovieListUseCase
 }
 
@@ -44,7 +45,8 @@ func NewWebMovieListHandlerGen(db *sql.DB) *web.WebMovieListHandler{
 	movieListRepository := database.NewMovieListRepository(db)
 	chooserRepository := database.NewChooserRepository(db)
 	movieRepository := database.NewMovieRepository(db)
-	webMovieListHandler := web.NewMovieListHandler(movieListRepository, chooserRepository, movieRepository)
+	tagRepository := database.NewTagRepository(db)
+	webMovieListHandler := web.NewMovieListHandler(movieListRepository, chooserRepository, movieRepository, tagRepository)
 	return webMovieListHandler
 }
 
@@ -122,4 +124,17 @@ func NewWebGenreHandlerGen(db *sql.DB) *web.WebGenreHandler{
     movieRepository := database.NewMovieRepository(db)
     webGenreHandler := web.NewGenreHandler(genreRepository, movieRepository)
     return webGenreHandler
+}
+func NewCreateTagUseCaseGen(db *sql.DB) *usecases.TagUseCase {
+    tagRepository := database.NewTagRepository(db)
+    movieListRepository := database.NewMovieListRepository(db)
+    TagUseCase := usecases.NewTagUseCase(tagRepository, movieListRepository)
+    return TagUseCase
+}
+
+func NewWebTagHandlerGen(db *sql.DB) *web.WebTagHandler{
+    tagRepository := database.NewTagRepository(db)
+    movieListRepository := database.NewMovieListRepository(db)
+    webTagHandler := web.NewTagHandler(tagRepository, movieListRepository)
+    return webTagHandler
 }

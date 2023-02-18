@@ -49,6 +49,11 @@ var SetGenreRepositoryDependency = wire.NewSet(
 	wire.Bind(new(*entity.GenreRepositoryInterface), new(*database.GenreRepository)),
 )
 
+var SetTagRepositoryDependency = wire.NewSet(
+	database.NewTagRepository,
+	wire.Bind(new(*entity.TagRepositoryInterface), new(*database.TagRepository)),
+)
+
 func NewCreateChooserUseCase(db *sql.DB) *usecases.ChooserUseCase {
 	wire.Build(
 		SetChooserRepositoryDependency,
@@ -145,4 +150,18 @@ func NewWebGenreHandler(db *sql.DB) *web.WebGenreHandler {
 		SetGenreRepositoryDependency,
 	)
 	return &web.WebGenreHandler{}
+}
+
+func NewCreateTagUseCase(db *sql.DB) *usecases.TagUseCase {
+	wire.Build(
+		SetTagRepositoryDependency,
+	)
+	return &usecases.TagUseCase{}
+}
+
+func NewWebTagHandler(db *sql.DB) *web.WebTagHandler {
+	wire.Build(
+		SetTagRepositoryDependency,
+	)
+	return &web.WebTagHandler{}
 }

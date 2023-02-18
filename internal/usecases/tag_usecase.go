@@ -8,14 +8,14 @@ import (
 )
 
 type TagUseCase struct {
-	TagRepository   entity.TagRepositoryInterface
-	MovieRepository entity.MovieRepositoryInterface
+	TagRepository       entity.TagRepositoryInterface
+	MovieListRepository entity.MovieListRepositoryInterface
 }
 
-func NewTagUseCase(tagRepository entity.TagRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *TagUseCase {
+func NewTagUseCase(tagRepository entity.TagRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface) *TagUseCase {
 	return &TagUseCase{
-		TagRepository:   tagRepository,
-		MovieRepository: movieRepository,
+		TagRepository:       tagRepository,
+		MovieListRepository: movieListRepository,
 	}
 }
 

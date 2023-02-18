@@ -158,3 +158,34 @@ func (chooserRepository *ChooserRepository) AddChoosersToMovieList(movieList ent
 
 	return nil
 }
+
+func (chooserRepository *ChooserRepository) AddTagsToMovieList(movieList entity.MovieList, tags []entity.Tag) error {
+	for _, tag := range tags {
+		stmt, err := chooserRepository.Db.Prepare("INSERT INTO tags_movie_lists (tag_id, movie_list_id, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6)")
+		if err != nil {
+			return err
+		}
+
+		_, err = stmt.Exec(&tag.ID, &movieList.ID, false, &movieList.UpdatedAt, &movieList.UpdatedAt, &movieList.UpdatedAt)
+		if err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (chooserRepository *ChooserRepository) CreateMovieList(movieList *entity.MovieList) error {
+	stmt, err := chooserRepository.Db.Prepare("INSERT INTO movie_lists (id, title, description, picture, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(movieList.ID, movieList.Title, movieList.Description, movieList.Picture, movieList.IsDeleted, movieList.CreatedAt, movieList.UpdatedAt, movieList.DeletedAt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

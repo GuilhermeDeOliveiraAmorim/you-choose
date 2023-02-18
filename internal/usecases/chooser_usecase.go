@@ -174,6 +174,30 @@ func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error)
 	return output, nil
 }
 
+func (chooserUseCase *ChooserUseCase) CreateMovieList(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
+	output := OutputCreateMovieListDto{}
+
+	movieList, err := entity.NewMovieList(input.Title, input.Description, input.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if err := chooserUseCase.MovieListRepository.Create(movieList); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Description = movieList.Description
+	output.MovieList.Picture = movieList.Picture
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = movieList.UpdatedAt
+	output.MovieList.DeletedAt = movieList.DeletedAt
+
+	return output, nil
+}
+
 func (chooserUseCase *ChooserUseCase) AddMoviesToMovieList(input InputAddMoviesToMovieListDto) (OutputAddMoviesToMovieListDto, error) {
 	dateNow := time.Now().Local().String()
 

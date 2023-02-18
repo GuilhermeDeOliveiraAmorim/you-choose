@@ -175,3 +175,28 @@ func (movieListRepository *MovieListRepository) FindMovieListChoosers(id string)
 
 	return choosersIds, nil
 }
+
+func (movieListRepository *MovieListRepository) FindMovieListTags(id string) ([]string, error) {
+	var tagsIds []string
+
+	rows, err := movieListRepository.Db.Query("SELECT tag_id FROM tags_movie_lists WHERE movie_list_id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var tagId string
+
+		if err := rows.Scan(&tagId); err != nil {
+			return tagsIds, err
+		}
+
+		tagsIds = append(tagsIds, tagId)
+	}
+
+	if err = rows.Err(); err != nil {
+		return tagsIds, err
+	}
+
+	return tagsIds, nil
+}

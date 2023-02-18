@@ -12,9 +12,14 @@ type WebMovieListHandler struct {
 	MovieListRepository entity.MovieListRepositoryInterface
 	ChooserRepository   entity.ChooserRepositoryInterface
 	MovieRepository     entity.MovieRepositoryInterface
+	TagRepository       entity.TagRepositoryInterface
 }
 
-func NewMovieListHandler(movieListRepository entity.MovieListRepositoryInterface, chooserRepository entity.ChooserRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *WebMovieListHandler {
+func NewMovieListHandler(
+	movieListRepository entity.MovieListRepositoryInterface,
+	chooserRepository entity.ChooserRepositoryInterface,
+	movieRepository entity.MovieRepositoryInterface,
+	tagRepository entity.TagRepositoryInterface) *WebMovieListHandler {
 	return &WebMovieListHandler{
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
@@ -38,7 +43,12 @@ func (movieListHandler *WebMovieListHandler) Create(w http.ResponseWriter, r *ht
 		return
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	output, err := movieListUseCase.Create(dto)
 	if err != nil {
@@ -67,7 +77,12 @@ func (movieListHandler *WebMovieListHandler) Find(w http.ResponseWriter, r *http
 		MovieListId: movieListId,
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	movieList, err := movieListUseCase.Find(input)
 	if err != nil {
@@ -82,7 +97,7 @@ func (movieListHandler *WebMovieListHandler) Find(w http.ResponseWriter, r *http
 	}
 }
 
-func (movielistHandler *WebMovieListHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (movieListHandler *WebMovieListHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodPut
 	requestMethod := r.Method
 	if handlerMethod != requestMethod {
@@ -98,9 +113,14 @@ func (movielistHandler *WebMovieListHandler) Update(w http.ResponseWriter, r *ht
 		return
 	}
 
-	movielistUseCase := *usecases.NewMovieListUseCase(movielistHandler.MovieListRepository, movielistHandler.ChooserRepository, movielistHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
-	movielist, err := movielistUseCase.Update(input)
+	movielist, err := movieListUseCase.Update(input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -127,7 +147,12 @@ func (movieListHandler *WebMovieListHandler) Delete(w http.ResponseWriter, r *ht
 		MovieListId: movieListId,
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	movieList, err := movieListUseCase.Delete(input)
 	if err != nil {
@@ -156,7 +181,12 @@ func (movieListHandler *WebMovieListHandler) IsDeleted(w http.ResponseWriter, r 
 		MovieListId: movieListId,
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	movieList, err := movieListUseCase.IsDeleted(input)
 	if err != nil {
@@ -179,7 +209,12 @@ func (movieListHandler *WebMovieListHandler) FindAll(w http.ResponseWriter, r *h
 		return
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	movieLists, err := movieListUseCase.FindAll()
 	if err != nil {
@@ -208,7 +243,12 @@ func (movieListHandler *WebMovieListHandler) FindMovieListMovies(w http.Response
 		MovieListId: movieListId,
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	output, err := movieListUseCase.FindMovieListMovies(input)
 	if err != nil {
@@ -237,7 +277,12 @@ func (movieListHandler *WebMovieListHandler) FindMovieListChoosers(w http.Respon
 		MovieListId: movieListId,
 	}
 
-	movieListUseCase := *usecases.NewMovieListUseCase(movieListHandler.MovieListRepository, movieListHandler.ChooserRepository, movieListHandler.MovieRepository)
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+	)
 
 	output, err := movieListUseCase.FindMovieListChoosers(input)
 	if err != nil {
