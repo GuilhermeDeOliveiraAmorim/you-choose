@@ -9,4 +9,5 @@ type MovieListRepositoryInterface interface {
 	FindAll() ([]MovieList, error)
 	FindMovieListMovies(id string) ([]string, error)
 	FindMovieListChoosers(id string) ([]string, error)
+	FindMovieListTags(id string) ([]string, error)
 }

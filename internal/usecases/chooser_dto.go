@@ -155,6 +155,19 @@ type OutputAddChoosersToMovieListDto struct {
 	MovieList MovieListDto `json:"movie_list"`
 }
 
+type TagId struct {
+	TagId string `json:"tag_id"`
+}
+
+type InputAddTagsToMovieListDto struct {
+	MovieListId string  `json:"movie_list_id"`
+	TagsIds     []TagId `json:"tags_ids"`
+}
+
+type OutputAddTagsToMovieListDto struct {
+	MovieList MovieListDto `json:"movie_list"`
+}
+
 // {
 // 	chooser: {
 // 		chooser_id,

@@ -11,13 +11,15 @@ type ChooserUseCase struct {
 	ChooserRepository   entity.ChooserRepositoryInterface
 	MovieListRepository entity.MovieListRepositoryInterface
 	MovieRepository     entity.MovieRepositoryInterface
+	TagRepository       entity.TagRepositoryInterface
 }
 
-func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *ChooserUseCase {
+func NewChooserUseCase(chooserRepository entity.ChooserRepositoryInterface, movieListRepository entity.MovieListRepositoryInterface, movieRepository entity.MovieRepositoryInterface, tagRepository entity.TagRepositoryInterface) *ChooserUseCase {
 	return &ChooserUseCase{
 		ChooserRepository:   chooserRepository,
 		MovieListRepository: movieListRepository,
 		MovieRepository:     movieRepository,
+		TagRepository:       tagRepository,
 	}
 }
 
@@ -334,6 +336,86 @@ func (chooserUseCase *ChooserUseCase) AddChoosersToMovieList(input InputAddChoos
 	output.MovieList.UpdatedAt = dateNow
 	output.MovieList.DeletedAt = movieList.DeletedAt
 	output.MovieList.Choosers = outputChoosers
+
+	return output, nil
+}
+
+func (chooserUseCase *ChooserUseCase) AddTagsToMovieList(input InputAddTagsToMovieListDto) (OutputAddTagsToMovieListDto, error) {
+	dateNow := time.Now().Local().String()
+
+	output := OutputAddTagsToMovieListDto{}
+
+	movieList, err := chooserUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	tagsIds, err := chooserUseCase.MovieListRepository.FindMovieListTags(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var tagsInMovieList []entity.Tag
+
+	for _, chooserId := range tagsIds {
+		chooser, err := chooserUseCase.TagRepository.Find(chooserId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		tagsInMovieList = append(tagsInMovieList, chooser)
+	}
+
+	var tagsAdded []entity.Tag
+
+	for _, chooserId := range input.TagsIds {
+		chooser, err := chooserUseCase.TagRepository.Find(chooserId.TagId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+		tagsAdded = append(tagsAdded, chooser)
+	}
+
+	for _, chooserInMovieList := range tagsInMovieList {
+		for position, chooserAdded := range tagsAdded {
+			if chooserInMovieList.ID == chooserAdded.ID {
+				tagsAdded = append(tagsAdded[:position], tagsAdded[position+1:]...)
+			}
+		}
+	}
+
+	err = chooserUseCase.ChooserRepository.AddTagsToMovieList(movieList, tagsAdded)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputTags []TagDto
+
+	for _, tagId := range tagsIds {
+		tag, err := chooserUseCase.TagRepository.Find(tagId)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputTags = append(outputTags, TagDto{
+			ID:        tag.ID,
+			Name:      tag.Name,
+			Picture:   tag.Picture,
+			IsDeleted: tag.IsDeleted,
+			CreatedAt: tag.CreatedAt,
+			UpdatedAt: tag.UpdatedAt,
+			DeletedAt: tag.DeletedAt,
+		})
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Description = movieList.Description
+	output.MovieList.Picture = movieList.Picture
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = dateNow
+	output.MovieList.DeletedAt = movieList.DeletedAt
+	output.MovieList.Tags = outputTags
 
 	return output, nil
 }

@@ -11,6 +11,7 @@ type MovieListDto struct {
 	DeletedAt   string       `json:"deleted_at"`
 	Choosers    []ChooserDto `json:"choosers"`
 	Movies      []MovieDto   `json:"movies"`
+	Tags        []TagDto     `json:"tags"`
 }
 
 type InputCreateMovieListDto struct {
@@ -75,5 +76,13 @@ type InputFindMovieListChoosersDto struct {
 }
 
 type OutputFindMovieListChoosersDto struct {
+	MovieList MovieListDto `json:"movie_list"`
+}
+
+type InputFindMovieListTagsDto struct {
+	MovieListId string `json:"movie_list_id"`
+}
+
+type OutputFindMovieListTagsDto struct {
 	MovieList MovieListDto `json:"movie_list"`
 }
