@@ -8,20 +8,28 @@ import (
 )
 
 type MovieUseCase struct {
-	MovieRepository    entity.MovieRepositoryInterface
-	ActorRepository    entity.ActorRepositoryInterface
-	WriterRepository   entity.WriterRepositoryInterface
-	DirectorRepository entity.DirectorRepositoryInterface
-	GenreRepository    entity.GenreRepositoryInterface
+	MovieRepository     entity.MovieRepositoryInterface
+	ActorRepository     entity.ActorRepositoryInterface
+	WriterRepository    entity.WriterRepositoryInterface
+	DirectorRepository  entity.DirectorRepositoryInterface
+	GenreRepository     entity.GenreRepositoryInterface
+	MovieListRepository entity.MovieListRepositoryInterface
 }
 
-func NewMovieUseCase(movieRepository entity.MovieRepositoryInterface, actorRepository entity.ActorRepositoryInterface, writerRepository entity.WriterRepositoryInterface, directorRepository entity.DirectorRepositoryInterface, genreRepository entity.GenreRepositoryInterface) *MovieUseCase {
+func NewMovieUseCase(
+	movieRepository entity.MovieRepositoryInterface,
+	actorRepository entity.ActorRepositoryInterface,
+	writerRepository entity.WriterRepositoryInterface,
+	directorRepository entity.DirectorRepositoryInterface,
+	genreRepository entity.GenreRepositoryInterface,
+	movieListRepository entity.MovieListRepositoryInterface) *MovieUseCase {
 	return &MovieUseCase{
-		MovieRepository:    movieRepository,
-		ActorRepository:    actorRepository,
-		WriterRepository:   writerRepository,
-		DirectorRepository: directorRepository,
-		GenreRepository:    genreRepository,
+		MovieRepository:     movieRepository,
+		ActorRepository:     actorRepository,
+		WriterRepository:    writerRepository,
+		DirectorRepository:  directorRepository,
+		GenreRepository:     genreRepository,
+		MovieListRepository: movieListRepository,
 	}
 }
 
@@ -804,9 +812,19 @@ func (movieUseCase *MovieUseCase) AddVoteToMovie(input InputAddVoteToMovieDto) (
 		return output, err
 	}
 
-	movies, err := movieUseCase.MovieRepository.FindAll()
+	moviesIds, err := movieUseCase.MovieListRepository.FindMovieListMovies(input.MovieListId)
 	if err != nil {
 		return output, err
+	}
+
+	var movies []entity.Movie
+
+	for _, movieId := range moviesIds {
+		movie, err := movieUseCase.MovieRepository.Find(movieId)
+		if err != nil {
+			return output, err
+		}
+		movies = append(movies, movie)
 	}
 
 	var totalOfVotes int32

@@ -158,7 +158,8 @@ type OutputFindMovieGenresDto struct {
 }
 
 type InputAddVoteToMovieDto struct {
-	MovieId string `json:"movie_id"`
+	MovieId     string `json:"movie_id"`
+	MovieListId string `json:"movie_list_id"`
 }
 
 type OutputAddVoteToMovieDto struct {
