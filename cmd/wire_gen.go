@@ -127,6 +127,7 @@ func NewWebGenreHandlerGen(db *sql.DB) *web.WebGenreHandler{
     webGenreHandler := web.NewGenreHandler(genreRepository, movieRepository)
     return webGenreHandler
 }
+
 func NewCreateTagUseCaseGen(db *sql.DB) *usecases.TagUseCase {
     tagRepository := database.NewTagRepository(db)
     movieListRepository := database.NewMovieListRepository(db)
@@ -139,4 +140,16 @@ func NewWebTagHandlerGen(db *sql.DB) *web.WebTagHandler{
     movieListRepository := database.NewMovieListRepository(db)
     webTagHandler := web.NewTagHandler(tagRepository, movieListRepository)
     return webTagHandler
+}
+
+func NewCreateFileUseCaseGen(db *sql.DB) *usecases.FileUseCase {
+    fileRepository := database.NewFileRepository(db)
+    FileUseCase := usecases.NewFileUseCase(fileRepository)
+    return FileUseCase
+}
+
+func NewWebFileHandlerGen(db *sql.DB) *web.WebFileHandler{
+    fileRepository := database.NewFileRepository(db)
+    webFileHandler := web.NewFileHandler(fileRepository)
+    return webFileHandler
 }

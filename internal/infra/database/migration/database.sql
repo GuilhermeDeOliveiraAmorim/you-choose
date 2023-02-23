@@ -157,3 +157,15 @@ CREATE TABLE IF NOT EXISTS tags_movie_lists (
     updated_at text,
     deleted_at text
 );
+
+CREATE TABLE IF NOT EXISTS files (
+    file_id text,
+    entity_id text,
+    name text,
+    size text,
+    extension text,
+    is_deleted boolean,
+    created_at text,
+    updated_at text,
+    deleted_at text
+);

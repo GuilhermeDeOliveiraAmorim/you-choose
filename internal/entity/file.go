@@ -9,6 +9,7 @@ import (
 
 type File struct {
 	ID        string
+	EntityId  string
 	Name      string
 	Size      string
 	Extension string
@@ -18,10 +19,11 @@ type File struct {
 	DeletedAt string
 }
 
-func NewFile(name string, size string, extension string) (*File, error) {
+func NewFile(name string, entityId string, size string, extension string) (*File, error) {
 	dateNow := time.Now()
 	file := &File{
 		ID:        uuid.New().String(),
+		EntityId:  entityId,
 		Name:      name,
 		Size:      size,
 		Extension: extension,
@@ -42,6 +44,7 @@ func NewFile(name string, size string, extension string) (*File, error) {
 func (file *File) Validate() (bool, error) {
 	inputs := make(map[string]string)
 
+	inputs["entity_id"] = file.EntityId
 	inputs["name"] = file.Name
 	inputs["size"] = file.Size
 	inputs["extension"] = file.Extension

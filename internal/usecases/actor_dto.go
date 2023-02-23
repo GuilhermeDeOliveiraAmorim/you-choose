@@ -65,3 +65,9 @@ type OutputFindAllActorMoviesDto struct {
 	Actor  ActorDto   `json:"actor"`
 	Movies []MovieDto `json:"movies"`
 }
+
+type InputAddFileToActorDto struct {
+}
+
+type OutputAddFileToActorDto struct {
+}

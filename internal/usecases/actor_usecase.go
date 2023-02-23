@@ -155,3 +155,9 @@ func (actorUseCase *ActorUseCase) FindAll() (OutputFindAllActorDto, error) {
 
 	return output, nil
 }
+
+func (actorUseCase *ActorUseCase) AddFileToActor(input InputAddFileToActorDto) (OutputAddFileToActorDto, error) {
+	output := OutputAddFileToActorDto{}
+
+	return output, nil
+}

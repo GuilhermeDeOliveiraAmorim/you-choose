@@ -25,6 +25,7 @@ func main() {
 	newWebDirectorHandler := NewWebDirectorHandlerGen(db)
 	newWebGenreHandler := NewWebGenreHandlerGen(db)
 	newWebTagHandler := NewWebTagHandlerGen(db)
+	newWebFileHandler := NewWebFileHandlerGen(db)
 
 	webserver.AddHandler("/choosers/create/chooser", newWebChooserHandler.Create)
 	webserver.AddHandler("/choosers/find/chooser", newWebChooserHandler.Find)
@@ -100,6 +101,8 @@ func main() {
 	webserver.AddHandler("/tags/delete/tag", newWebTagHandler.Delete)
 	webserver.AddHandler("/tags/isdeleted/tag", newWebTagHandler.IsDeleted)
 	webserver.AddHandler("/tags/find/all/tags", newWebTagHandler.FindAll)
+
+	webserver.AddHandler("/files/create/file", newWebFileHandler.Create)
 
 	webserver.Start()
 }

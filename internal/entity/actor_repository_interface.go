@@ -7,4 +7,5 @@ type ActorRepositoryInterface interface {
 	Delete(actor *Actor) error
 	IsDeleted(id string) error
 	FindAll() ([]Actor, error)
+	// AddFileToActor(id string) error
 }

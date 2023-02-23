@@ -54,6 +54,11 @@ var SetTagRepositoryDependency = wire.NewSet(
 	wire.Bind(new(*entity.TagRepositoryInterface), new(*database.TagRepository)),
 )
 
+var SetFileRepositoryDependency = wire.NewSet(
+	database.NewFileRepository,
+	wire.Bind(new(*entity.FileRepositoryInterface), new(*database.FileRepository)),
+)
+
 func NewCreateChooserUseCase(db *sql.DB) *usecases.ChooserUseCase {
 	wire.Build(
 		SetChooserRepositoryDependency,
@@ -164,4 +169,18 @@ func NewWebTagHandler(db *sql.DB) *web.WebTagHandler {
 		SetTagRepositoryDependency,
 	)
 	return &web.WebTagHandler{}
+}
+
+func NewCreateFileUseCase(db *sql.DB) *usecases.FileUseCase {
+	wire.Build(
+		SetFileRepositoryDependency,
+	)
+	return &usecases.FileUseCase{}
+}
+
+func NewWebFileHandler(db *sql.DB) *web.WebFileHandler {
+	wire.Build(
+		SetFileRepositoryDependency,
+	)
+	return &web.WebFileHandler{}
 }
