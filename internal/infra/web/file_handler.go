@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"text/template"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 
@@ -29,30 +28,33 @@ func (fileHandler *WebFileHandler) Create(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var data interface{}
-	var templates = template.Must(template.ParseFiles("files/index.html"))
-	templates.ExecuteTemplate(w, "index.html", data)
+	err := r.ParseMultipartForm(1 << 2)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	// Maximum upload of 10 MB files
-	r.ParseMultipartForm(10 << 20)
-
-	fmt.Println(r)
-
-	// Get handler for filename, size and headers
-	// file, handler, err := r.FormFile("myFile")
-	// if err != nil {
-	// 	fmt.Println("Error Retrieving the File")
-	// 	fmt.Println(err)
-	// 	return
-	// }
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	var dto usecases.InputCreateFileDto
 
-	err := json.NewDecoder(r.Body).Decode(&dto)
+	dto.EntityId = r.MultipartForm.Value["entity_id"][0]
+	dto.Name = r.MultipartForm.Value["name"][0]
+	dto.File = file
+	dto.Handler = handler
+
+	errs := json.NewDecoder(r.Body).Decode(&dto)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, errs.Error(), http.StatusBadRequest)
 		return
 	}
+
+	fmt.Println(dto.EntityId)
+	fmt.Println(dto.Name)
 
 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
 

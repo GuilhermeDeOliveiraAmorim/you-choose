@@ -11,7 +11,7 @@ type File struct {
 	ID        string
 	EntityId  string
 	Name      string
-	Size      string
+	Size      int64
 	Extension string
 	IsDeleted bool
 	CreatedAt string
@@ -19,7 +19,7 @@ type File struct {
 	DeletedAt string
 }
 
-func NewFile(name string, entityId string, size string, extension string) (*File, error) {
+func NewFile(name string, entityId string, size int64, extension string) (*File, error) {
 	dateNow := time.Now()
 	file := &File{
 		ID:        uuid.New().String(),
@@ -46,8 +46,6 @@ func (file *File) Validate() (bool, error) {
 
 	inputs["entity_id"] = file.EntityId
 	inputs["name"] = file.Name
-	inputs["size"] = file.Size
-	inputs["extension"] = file.Extension
 
 	for key, value := range inputs {
 		if value == "" {

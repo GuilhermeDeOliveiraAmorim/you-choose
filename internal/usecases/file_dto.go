@@ -6,7 +6,7 @@ type FileDto struct {
 	ID        string `json:"file_id"`
 	EntityId  string `json:"entity_id"`
 	Name      string `json:"name"`
-	Size      string `json:"size"`
+	Size      int64  `json:"size"`
 	Extension string `json:"extension"`
 	IsDeleted bool   `json:"is_deleted"`
 	CreatedAt string `json:"created_at"`

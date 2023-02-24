@@ -2,12 +2,14 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"mime/multipart"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
+	"github.com/google/uuid"
 )
 
 type FileUseCase struct {
@@ -23,14 +25,12 @@ func NewFileUseCase(fileRepository entity.FileRepositoryInterface) *FileUseCase 
 func (fileUseCase *FileUseCase) Create(input InputCreateFileDto) (OutputCreateFileDto, error) {
 	output := OutputCreateFileDto{}
 
-	file, err := MoveFile(input.File, input.Handler)
+	_, name, size, extension, err := MoveFile(input.Name, input.File, input.Handler)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println("file", file)
-
-	fileEntity, err := entity.NewFile(input.Name, input.EntityId, input.Handler.Filename, "")
+	fileEntity, err := entity.NewFile(name, input.EntityId, size, extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -172,19 +172,48 @@ func (fileUseCase *FileUseCase) Create(input InputCreateFileDto) (OutputCreateFi
 // 	return output, nil
 // }
 
-func MoveFile(file multipart.File, handler *multipart.FileHeader) (int64, error) {
-	fileCreate, err := os.Create(handler.Filename)
+func MoveFile(name string, file multipart.File, handler *multipart.FileHeader) (int64, string, int64, string, error) {
+	path := "upload/"
+
+	extension := filepath.Ext(handler.Filename)
+
+	treatedName, err := TreatingName(name)
+	if err != nil {
+		return 0, "", 0, "", errors.New(err.Error())
+	}
+
+	name = treatedName + "_" + uuid.New().String()
+
+	size := handler.Size
+
+	fileCreate, err := os.Create(path + name + extension)
+
 	defer file.Close()
 	defer fileCreate.Close()
 
 	if err != nil {
-		return 0, errors.New(err.Error())
+		return 0, "", 0, "", errors.New(err.Error())
 	}
 
 	fileWritten, err := io.Copy(fileCreate, file)
 	if err != nil {
-		return 0, errors.New(err.Error())
+		return 0, "", 0, "", errors.New(err.Error())
 	}
 
-	return fileWritten, nil
+	extension = strings.Replace(filepath.Ext(handler.Filename), ".", "", -1)
+
+	return fileWritten, name, size, extension, nil
+}
+
+func TreatingName(name string) (string, error) {
+
+	name = strings.ReplaceAll(name, " ", "_")
+
+	name = strings.ToLower(name)
+
+	if name == "" {
+		return "", nil
+	}
+
+	return name, nil
 }
