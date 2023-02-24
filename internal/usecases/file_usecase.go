@@ -25,7 +25,7 @@ func NewFileUseCase(fileRepository entity.FileRepositoryInterface) *FileUseCase 
 func (fileUseCase *FileUseCase) Create(input InputCreateFileDto) (OutputCreateFileDto, error) {
 	output := OutputCreateFileDto{}
 
-	_, name, size, extension, err := MoveFile(input.Name, input.File, input.Handler)
+	_, name, size, extension, err := MoveFile(input.File, input.Handler)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -172,17 +172,12 @@ func (fileUseCase *FileUseCase) Create(input InputCreateFileDto) (OutputCreateFi
 // 	return output, nil
 // }
 
-func MoveFile(name string, file multipart.File, handler *multipart.FileHeader) (int64, string, int64, string, error) {
+func MoveFile(file multipart.File, handler *multipart.FileHeader) (int64, string, int64, string, error) {
 	path := "upload/"
 
 	extension := filepath.Ext(handler.Filename)
 
-	treatedName, err := TreatingName(name)
-	if err != nil {
-		return 0, "", 0, "", errors.New(err.Error())
-	}
-
-	name = treatedName + "_" + uuid.New().String()
+	name := uuid.New().String()
 
 	size := handler.Size
 
@@ -203,17 +198,4 @@ func MoveFile(name string, file multipart.File, handler *multipart.FileHeader) (
 	extension = strings.Replace(filepath.Ext(handler.Filename), ".", "", -1)
 
 	return fileWritten, name, size, extension, nil
-}
-
-func TreatingName(name string) (string, error) {
-
-	name = strings.ReplaceAll(name, " ", "_")
-
-	name = strings.ToLower(name)
-
-	if name == "" {
-		return "", nil
-	}
-
-	return name, nil
 }

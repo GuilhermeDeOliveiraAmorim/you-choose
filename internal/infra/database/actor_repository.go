@@ -59,7 +59,7 @@ func (actorRepository *ActorRepository) Find(id string) (entity.Actor, error) {
 }
 
 func (actorRepository *ActorRepository) Update(actor *entity.Actor) error {
-	stmt, err := actorRepository.Db.Prepare("UPDATE actors SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")
+	stmt, err := actorRepository.Db.Prepare("UPDATE actors SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE actor_id = $7")
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (actorRepository *ActorRepository) Update(actor *entity.Actor) error {
 }
 
 func (actorRepository *ActorRepository) Delete(actor *entity.Actor) error {
-	stmt, err := actorRepository.Db.Prepare("UPDATE actors SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	stmt, err := actorRepository.Db.Prepare("UPDATE actors SET is_deleted = $1, deleted_at = $2 WHERE actor_id = $3")
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (actorRepository *ActorRepository) Delete(actor *entity.Actor) error {
 func (actorRepository *ActorRepository) IsDeleted(id string) error {
 	var actor entity.Actor
 
-	rows, err := actorRepository.Db.Query("SELECT * FROM actors WHERE id = $1", id)
+	rows, err := actorRepository.Db.Query("SELECT * FROM actors WHERE actor_id = $1", id)
 	if err != nil {
 		return err
 	}

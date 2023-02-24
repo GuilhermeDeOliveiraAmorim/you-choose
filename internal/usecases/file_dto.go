@@ -16,7 +16,6 @@ type FileDto struct {
 
 type InputCreateFileDto struct {
 	EntityId string                `json:"entity_id"`
-	Name     string                `json:"name"`
 	File     multipart.File        `json:"file"`
 	Handler  *multipart.FileHeader `json:"handler"`
 }

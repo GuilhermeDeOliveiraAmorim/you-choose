@@ -75,14 +75,16 @@ func NewWebMovieHandlerGen(db *sql.DB) *web.WebMovieHandler{
 func NewCreateActorUseCaseGen(db *sql.DB) *usecases.ActorUseCase {
 	actorRepository := database.NewActorRepository(db)
 	movieRepository := database.NewMovieRepository(db)
-	ActorUseCase := usecases.NewActorUseCase(actorRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+	ActorUseCase := usecases.NewActorUseCase(actorRepository, movieRepository, fileRepository)
 	return ActorUseCase
 }
 
 func NewWebActorHandlerGen(db *sql.DB) *web.WebActorHandler{
 	actorRepository := database.NewActorRepository(db)
 	movieRepository := database.NewMovieRepository(db)
-	webActorHandler := web.NewActorHandler(actorRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+	webActorHandler := web.NewActorHandler(actorRepository, movieRepository, fileRepository)
 	return webActorHandler
 }
 

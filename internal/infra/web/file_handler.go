@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
@@ -43,7 +42,6 @@ func (fileHandler *WebFileHandler) Create(w http.ResponseWriter, r *http.Request
 	var dto usecases.InputCreateFileDto
 
 	dto.EntityId = r.MultipartForm.Value["entity_id"][0]
-	dto.Name = r.MultipartForm.Value["name"][0]
 	dto.File = file
 	dto.Handler = handler
 
@@ -52,9 +50,6 @@ func (fileHandler *WebFileHandler) Create(w http.ResponseWriter, r *http.Request
 		http.Error(w, errs.Error(), http.StatusBadRequest)
 		return
 	}
-
-	fmt.Println(dto.EntityId)
-	fmt.Println(dto.Name)
 
 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
 

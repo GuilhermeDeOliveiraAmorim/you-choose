@@ -66,8 +66,11 @@ type OutputFindAllActorMoviesDto struct {
 	Movies []MovieDto `json:"movies"`
 }
 
-type InputAddFileToActorDto struct {
+type InputAddPictureToActorDto struct {
+	ActorId string             `json:"actor_id"`
+	File    InputCreateFileDto `json:"file"`
 }
 
-type OutputAddFileToActorDto struct {
+type OutputAddPictureToActorDto struct {
+	Actor ActorDto `json:"actor"`
 }

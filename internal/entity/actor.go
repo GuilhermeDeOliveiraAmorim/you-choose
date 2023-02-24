@@ -15,14 +15,14 @@ type Actor struct {
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
+	Pictures  []*File
 }
 
-func NewActor(name string, picture string) (*Actor, error) {
+func NewActor(name string) (*Actor, error) {
 	dateNow := time.Now()
 	actor := &Actor{
 		ID:        uuid.New().String(),
 		Name:      name,
-		Picture:   picture,
 		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
@@ -35,6 +35,20 @@ func NewActor(name string, picture string) (*Actor, error) {
 	}
 
 	return actor, nil
+}
+
+func (actor *Actor) AddPicture(picture *File) {
+	actor.Picture = picture.Name
+	actor.Pictures = append(actor.Pictures, picture)
+}
+
+func (actor *Actor) RemovePicture(picture *File) {
+	for position, pictureInArray := range actor.Pictures {
+		if picture.ID == pictureInArray.ID {
+			actor.Pictures = append(actor.Pictures[:position], actor.Pictures[position+1:]...)
+			return
+		}
+	}
 }
 
 func (actor *Actor) Validate() (bool, error) {

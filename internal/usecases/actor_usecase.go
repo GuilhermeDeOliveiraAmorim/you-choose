@@ -10,19 +10,24 @@ import (
 type ActorUseCase struct {
 	ActorRepository entity.ActorRepositoryInterface
 	MovieRepository entity.MovieRepositoryInterface
+	FileRepository  entity.FileRepositoryInterface
 }
 
-func NewActorUseCase(actorRepository entity.ActorRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *ActorUseCase {
+func NewActorUseCase(
+	actorRepository entity.ActorRepositoryInterface,
+	movieRepository entity.MovieRepositoryInterface,
+	fileRepository entity.FileRepositoryInterface) *ActorUseCase {
 	return &ActorUseCase{
 		ActorRepository: actorRepository,
 		MovieRepository: movieRepository,
+		FileRepository:  fileRepository,
 	}
 }
 
 func (actorUseCase *ActorUseCase) Create(input InputCreateActorDto) (OutputCreateActorDto, error) {
 	output := OutputCreateActorDto{}
 
-	actor, err := entity.NewActor(input.Name, input.Picture)
+	actor, err := entity.NewActor(input.Name)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -156,8 +161,50 @@ func (actorUseCase *ActorUseCase) FindAll() (OutputFindAllActorDto, error) {
 	return output, nil
 }
 
-func (actorUseCase *ActorUseCase) AddFileToActor(input InputAddFileToActorDto) (OutputAddFileToActorDto, error) {
-	output := OutputAddFileToActorDto{}
+func (actorUseCase *ActorUseCase) AddPictureToActor(input InputAddPictureToActorDto) (OutputAddPictureToActorDto, error) {
+	timeNow := time.Now().Local().String()
+	output := OutputAddPictureToActorDto{}
+
+	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	_, name, size, extension, err := MoveFile(input.File.File, input.File.Handler)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := entity.NewFile(name, actor.ID, size, extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if err := actorUseCase.FileRepository.Create(picture); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	actor.Picture = picture.ID
+
+	isValid, err := actor.Validate()
+	if !isValid {
+		return output, errors.New(err.Error())
+	}
+
+	actor.UpdatedAt = timeNow
+
+	err = actorUseCase.ActorRepository.Update(&actor)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Actor.ID = actor.ID
+	output.Actor.Name = actor.Name
+	output.Actor.Picture = actor.Picture
+	output.Actor.IsDeleted = actor.IsDeleted
+	output.Actor.CreatedAt = actor.CreatedAt
+	output.Actor.UpdatedAt = actor.UpdatedAt
+	output.Actor.DeletedAt = actor.DeletedAt
 
 	return output, nil
 }
