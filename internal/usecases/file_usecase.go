@@ -1,9 +1,12 @@
 package usecases
 
 import (
+	"encoding/base64"
 	"errors"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -52,26 +55,26 @@ func (fileUseCase *FileUseCase) Create(input InputCreateFileDto) (OutputCreateFi
 	return output, nil
 }
 
-// func (fileUseCase *FileUseCase) Find(input InputFindFileDto) (OutputFindFileDto, error) {
-// 	output := OutputFindFileDto{}
+func (fileUseCase *FileUseCase) Find(input InputFindFileDto) (OutputFindFileDto, error) {
+	output := OutputFindFileDto{}
 
-// 	file, err := fileUseCase.FileRepository.Find(input.FileId)
-// 	if err != nil {
-// 		return output, errors.New(err.Error())
-// 	}
+	file, err := fileUseCase.FileRepository.Find(input.FileId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
 
-// 	output.File.ID = file.ID
-// 	output.File.EntityId = file.EntityId
-// 	output.File.Name = file.Name
-// 	output.File.Size = file.Size
-// 	output.File.Extension = file.Extension
-// 	output.File.IsDeleted = file.IsDeleted
-// 	output.File.CreatedAt = file.CreatedAt
-// 	output.File.UpdatedAt = file.UpdatedAt
-// 	output.File.DeletedAt = file.DeletedAt
+	output.File.ID = file.ID
+	output.File.EntityId = file.EntityId
+	output.File.Name = file.Name
+	output.File.Size = file.Size
+	output.File.Extension = file.Extension
+	output.File.IsDeleted = file.IsDeleted
+	output.File.CreatedAt = file.CreatedAt
+	output.File.UpdatedAt = file.UpdatedAt
+	output.File.DeletedAt = file.DeletedAt
 
-// 	return output, nil
-// }
+	return output, nil
+}
 
 // func (fileUseCase *FileUseCase) Delete(input InputDeleteFileDto) (OutputDeleteFileDto, error) {
 // 	timeNow := time.Now().Local().String()
@@ -198,4 +201,28 @@ func MoveFile(file multipart.File, handler *multipart.FileHeader) (int64, string
 	extension = strings.Replace(filepath.Ext(handler.Filename), ".", "", -1)
 
 	return fileWritten, name, size, extension, nil
+}
+
+func PictureToBase64(path string, name string, extension string) (string, error) {
+	pictureBytes, err := ioutil.ReadFile(path + name + "." + extension)
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+
+	var pictureBase64 string
+
+	mimeType := http.DetectContentType(pictureBytes)
+
+	switch mimeType {
+	case "image/jpeg":
+		pictureBase64 += "data:image/jpeg;base64,"
+	case "image/png":
+		pictureBase64 += "data:image/png;base64,"
+	case "image/jpg":
+		pictureBase64 += "data:image/jpg;base64,"
+	}
+
+	pictureBase64 += base64.StdEncoding.EncodeToString(pictureBytes)
+
+	return pictureBase64, nil
 }

@@ -238,3 +238,32 @@ func (actorHandler *WebActorHandler) AddPictureToActor(w http.ResponseWriter, r 
 		return
 	}
 }
+
+func (actorHandler *WebActorHandler) FindActorPictureToBase64(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	actorId := r.URL.Query().Get("actor_id")
+
+	input := usecases.InputFindActorPictureToBase64Dto{
+		ActorId: actorId,
+	}
+
+	actorUseCase := *usecases.NewActorUseCase(actorHandler.ActorRepository, actorHandler.MovieRepository, actorHandler.FileRepository)
+
+	actor, err := actorUseCase.FindActorPictureToBase64(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(actor)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

@@ -30,33 +30,35 @@ func (fileRepository *FileRepository) Create(file *entity.File) error {
 	return nil
 }
 
-// func (fileRepository *FileRepository) Find(id string) (entity.File, error) {
-// 	var file entity.File
+func (fileRepository *FileRepository) Find(id string) (entity.File, error) {
+	var file entity.File
 
-// 	rows, err := fileRepository.Db.Query("SELECT * FROM files WHERE file_id = $1", id)
-// 	if err != nil {
-// 		return file, err
-// 	}
+	rows, err := fileRepository.Db.Query("SELECT * FROM files WHERE file_id = $1", id)
+	if err != nil {
+		return file, err
+	}
 
-// 	for rows.Next() {
-// 		if err := rows.Scan(
-// 			&file.ID,
-// 			&file.Name,
-// 			&file.Picture,
-// 			&file.IsDeleted,
-// 			&file.CreatedAt,
-// 			&file.UpdatedAt,
-// 			&file.DeletedAt); err != nil {
-// 			return file, err
-// 		}
-// 	}
+	for rows.Next() {
+		if err := rows.Scan(
+			&file.ID,
+			&file.EntityId,
+			&file.Name,
+			&file.Size,
+			&file.Extension,
+			&file.IsDeleted,
+			&file.CreatedAt,
+			&file.UpdatedAt,
+			&file.DeletedAt); err != nil {
+			return file, err
+		}
+	}
 
-// 	if err = rows.Err(); err != nil {
-// 		return file, err
-// 	}
+	if err = rows.Err(); err != nil {
+		return file, err
+	}
 
-// 	return file, nil
-// }
+	return file, nil
+}
 
 // func (fileRepository *FileRepository) Update(file *entity.File) error {
 // 	stmt, err := fileRepository.Db.Prepare("UPDATE files SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")

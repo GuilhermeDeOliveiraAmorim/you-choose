@@ -74,3 +74,11 @@ type InputAddPictureToActorDto struct {
 type OutputAddPictureToActorDto struct {
 	Actor ActorDto `json:"actor"`
 }
+
+type InputFindActorPictureToBase64Dto struct {
+	ActorId string `json:"actor_id"`
+}
+
+type OutputFindActorPictureToBase64Dto struct {
+	Actor ActorDto `json:"actor"`
+}

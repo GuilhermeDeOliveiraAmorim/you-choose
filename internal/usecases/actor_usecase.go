@@ -215,3 +215,32 @@ func (actorUseCase *ActorUseCase) AddPictureToActor(input InputAddPictureToActor
 
 	return output, nil
 }
+
+func (actorUseCase *ActorUseCase) FindActorPictureToBase64(input InputFindActorPictureToBase64Dto) (OutputFindActorPictureToBase64Dto, error) {
+	output := OutputFindActorPictureToBase64Dto{}
+
+	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := actorUseCase.FileRepository.Find(actor.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Actor.ID = actor.ID
+	output.Actor.Name = actor.Name
+	output.Actor.Picture = pictureToBase64
+	output.Actor.IsDeleted = actor.IsDeleted
+	output.Actor.CreatedAt = actor.CreatedAt
+	output.Actor.UpdatedAt = actor.UpdatedAt
+	output.Actor.DeletedAt = actor.DeletedAt
+
+	return output, nil
+}
