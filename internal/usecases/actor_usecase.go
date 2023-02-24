@@ -2,6 +2,8 @@ package usecases
 
 import (
 	"errors"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -168,6 +170,11 @@ func (actorUseCase *ActorUseCase) AddPictureToActor(input InputAddPictureToActor
 	actor, err := actorUseCase.ActorRepository.Find(input.ActorId)
 	if err != nil {
 		return output, errors.New(err.Error())
+	}
+
+	extension := strings.Replace(filepath.Ext(input.File.Handler.Filename), ".", "", -1)
+	if strings.ToLower(extension) != "jpeg" && strings.ToLower(extension) != "jpg" && strings.ToLower(extension) != "png" {
+		return output, errors.New("format not allowed")
 	}
 
 	_, name, size, extension, err := MoveFile(input.File.File, input.File.Handler)
