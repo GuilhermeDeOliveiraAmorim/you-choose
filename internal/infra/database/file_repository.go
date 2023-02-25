@@ -45,6 +45,7 @@ func (fileRepository *FileRepository) Find(id string) (entity.File, error) {
 			&file.Name,
 			&file.Size,
 			&file.Extension,
+			&file.AverageColor,
 			&file.IsDeleted,
 			&file.CreatedAt,
 			&file.UpdatedAt,

@@ -105,6 +105,7 @@ func main() {
 	webserver.AddHandler("/tags/find/all/tags", newWebTagHandler.FindAll)
 
 	webserver.AddHandler("/files/create/file", newWebFileHandler.Create)
+	webserver.AddHandler("/files/find/file", newWebFileHandler.Find)
 
 	webserver.Start()
 }

@@ -66,34 +66,34 @@ func (fileHandler *WebFileHandler) Create(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// func (fileHandler *WebFileHandler) Find(w http.ResponseWriter, r *http.Request) {
-// 	handlerMethod := http.MethodGet
-// 	requestMethod := r.Method
-// 	if handlerMethod != requestMethod {
-// 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-// 		return
-// 	}
+func (fileHandler *WebFileHandler) Find(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
 
-// 	fileId := r.URL.Query().Get("file_id")
+	fileId := r.URL.Query().Get("file_id")
 
-// 	input := usecases.InputFindFileDto{
-// 		FileId: fileId,
-// 	}
+	input := usecases.InputFindFileDto{
+		FileId: fileId,
+	}
 
-// 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
+	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
 
-// 	file, err := fileUseCase.Find(input)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
+	file, err := fileUseCase.Find(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	err = json.NewEncoder(w).Encode(file)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+	err = json.NewEncoder(w).Encode(file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
 // func (fileHandler *WebFileHandler) Update(w http.ResponseWriter, r *http.Request) {
 // 	handlerMethod := http.MethodPut

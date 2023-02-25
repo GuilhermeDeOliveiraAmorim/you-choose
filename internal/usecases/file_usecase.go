@@ -8,7 +8,6 @@ import (
 	"image/color"
 	_ "image/jpeg"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -39,29 +38,30 @@ func (fileUseCase *FileUseCase) Create(input InputCreateFileDto) (OutputCreateFi
 		return output, errors.New(err.Error())
 	}
 
-	colorAverage, err := PictureAverageColor(name, extension)
+	averageColor, err := PictureAverageColor(name, extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	fileEntity, err := entity.NewFile(name, input.EntityId, size, extension, colorAverage)
+	file, err := entity.NewFile(name, input.EntityId, size, extension, averageColor)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	if err := fileUseCase.FileRepository.Create(fileEntity); err != nil {
+	if err := fileUseCase.FileRepository.Create(file); err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	output.File.ID = fileEntity.ID
-	output.File.EntityId = fileEntity.EntityId
-	output.File.Name = fileEntity.Name
-	output.File.Size = fileEntity.Size
-	output.File.Extension = fileEntity.Extension
-	output.File.IsDeleted = fileEntity.IsDeleted
-	output.File.CreatedAt = fileEntity.CreatedAt
-	output.File.UpdatedAt = fileEntity.UpdatedAt
-	output.File.DeletedAt = fileEntity.DeletedAt
+	output.File.ID = file.ID
+	output.File.EntityId = file.EntityId
+	output.File.Name = file.Name
+	output.File.Size = file.Size
+	output.File.Extension = file.Extension
+	output.File.AverageColor = file.AverageColor
+	output.File.IsDeleted = file.IsDeleted
+	output.File.CreatedAt = file.CreatedAt
+	output.File.UpdatedAt = file.UpdatedAt
+	output.File.DeletedAt = file.DeletedAt
 
 	return output, nil
 }
@@ -79,6 +79,7 @@ func (fileUseCase *FileUseCase) Find(input InputFindFileDto) (OutputFindFileDto,
 	output.File.Name = file.Name
 	output.File.Size = file.Size
 	output.File.Extension = file.Extension
+	output.File.AverageColor = file.AverageColor
 	output.File.IsDeleted = file.IsDeleted
 	output.File.CreatedAt = file.CreatedAt
 	output.File.UpdatedAt = file.UpdatedAt
@@ -214,7 +215,7 @@ func MoveFile(file multipart.File, handler *multipart.FileHeader) (int64, string
 }
 
 func PictureToBase64(path string, name string, extension string) (string, error) {
-	pictureBytes, err := ioutil.ReadFile(path + name + "." + extension)
+	pictureBytes, err := os.ReadFile(path + name + "." + extension)
 	if err != nil {
 		return "", errors.New(err.Error())
 	}
@@ -281,64 +282,26 @@ func PictureAverageColor(name string, extension string) (string, error) {
 }
 
 func RgbToHex(R float64, G float64, B float64) (string, error) {
-	a := fmt.Sprintf("%f", R/16)
-	aa, err := strconv.ParseFloat(strings.Split(a, ".")[0], 64)
+
+	rToHex, err := CalcRgbToHex(R)
 	if err != nil {
-		return "", errors.New("error during conversion")
+		return "", errors.New(err.Error())
 	}
 
-	b := fmt.Sprintf("%f", ((R/16)-aa)*16)
-	bb, err := strconv.ParseFloat(strings.Split(b, ".")[0], 64)
+	gToHex, err := CalcRgbToHex(G)
 	if err != nil {
-		return "", errors.New("error during conversion")
+		return "", errors.New(err.Error())
 	}
 
-	c := fmt.Sprintf("%f", G/16)
-	cc, err := strconv.ParseFloat(strings.Split(c, ".")[0], 64)
+	bToHex, err := CalcRgbToHex(B)
 	if err != nil {
-		return "", errors.New("error during conversion")
+		return "", errors.New(err.Error())
 	}
 
-	d := fmt.Sprintf("%f", ((G/16)-cc)*16)
-	dd, err := strconv.ParseFloat(strings.Split(d, ".")[0], 64)
-	if err != nil {
-		return "", errors.New("error during conversion")
-	}
-
-	e := fmt.Sprintf("%f", (B / 16))
-	ee, err := strconv.ParseFloat(strings.Split(e, ".")[0], 64)
-	if err != nil {
-		return "", errors.New("error during conversion")
-	}
-
-	f := fmt.Sprintf("%f", ((B/16)-ee)*16)
-	ff, err := strconv.ParseFloat(strings.Split(f, ".")[0], 64)
-	if err != nil {
-		return "", errors.New("error during conversion")
-	}
-
-	g := fmt.Sprintf("%f", aa)
-	h := fmt.Sprintf("%f", bb)
-	i := fmt.Sprintf("%f", cc)
-	j := fmt.Sprintf("%f", dd)
-	k := fmt.Sprintf("%f", ee)
-	l := fmt.Sprintf("%f", ff)
-
-	var decimalsToConvert []string
-
-	decimalsToConvert = append(decimalsToConvert, strings.Split(g, ".")[0])
-	decimalsToConvert = append(decimalsToConvert, strings.Split(h, ".")[0])
-	decimalsToConvert = append(decimalsToConvert, strings.Split(i, ".")[0])
-	decimalsToConvert = append(decimalsToConvert, strings.Split(j, ".")[0])
-	decimalsToConvert = append(decimalsToConvert, strings.Split(k, ".")[0])
-	decimalsToConvert = append(decimalsToConvert, strings.Split(l, ".")[0])
-
-	decimalsToConvert = DecToHexTable(decimalsToConvert)
-
-	return "#" + decimalsToConvert[0] + decimalsToConvert[1] + decimalsToConvert[2] + decimalsToConvert[3] + decimalsToConvert[4] + decimalsToConvert[5], nil
+	return "#" + rToHex + gToHex + bToHex, nil
 }
 
-func DecToHexTable(decimalsToConvert []string) []string {
+func DecimalHexadecimalTable(decimalsToConvert []string) []string {
 	var dec = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63"}
 	var hex = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1a", "1b", "1c", "1d", "1e", "1f", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2a", "2b", "2c", "2d", "2e", "2f", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "3a", "3b", "3c", "3d", "3e", "3f"}
 
@@ -351,4 +314,33 @@ func DecToHexTable(decimalsToConvert []string) []string {
 	}
 
 	return decimalsToConvert
+}
+
+func CalcRgbToHex(color float64) (string, error) {
+	colorFirstValue := fmt.Sprintf("%f", color/16)
+	colorFirstValueFloat, err := strconv.ParseFloat(strings.Split(colorFirstValue, ".")[0], 64)
+	if err != nil {
+		return "", errors.New("error during conversion")
+	}
+
+	colorSecondValue := fmt.Sprintf("%f", ((color/16)-colorFirstValueFloat)*16)
+	colorSecondValueFloat, err := strconv.ParseFloat(strings.Split(colorSecondValue, ".")[0], 64)
+	if err != nil {
+		return "", errors.New("error during conversion")
+	}
+
+	firstValueForConvertToHex := fmt.Sprintf("%f", colorFirstValueFloat)
+	secondValueForConvertToHex := fmt.Sprintf("%f", colorSecondValueFloat)
+
+	firstValueForConvertToHex = strings.Split(firstValueForConvertToHex, ".")[0]
+	secondValueForConvertToHex = strings.Split(secondValueForConvertToHex, ".")[0]
+
+	var decimalsToConvert []string
+
+	decimalsToConvert = append(decimalsToConvert, strings.Split(firstValueForConvertToHex, ".")[0])
+	decimalsToConvert = append(decimalsToConvert, strings.Split(secondValueForConvertToHex, ".")[0])
+
+	decimalsToConvert = DecimalHexadecimalTable(decimalsToConvert)
+
+	return decimalsToConvert[0] + decimalsToConvert[1], nil
 }
