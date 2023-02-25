@@ -173,7 +173,7 @@ func (actorUseCase *ActorUseCase) AddPictureToActor(input InputAddPictureToActor
 	}
 
 	extension := strings.Replace(filepath.Ext(input.File.Handler.Filename), ".", "", -1)
-	if strings.ToLower(extension) != "jpeg" && strings.ToLower(extension) != "jpg" && strings.ToLower(extension) != "png" {
+	if strings.ToLower(extension) != "jpeg" && strings.ToLower(extension) != "jpg" {
 		return output, errors.New("format not allowed")
 	}
 
@@ -182,7 +182,12 @@ func (actorUseCase *ActorUseCase) AddPictureToActor(input InputAddPictureToActor
 		return output, errors.New(err.Error())
 	}
 
-	picture, err := entity.NewFile(name, actor.ID, size, extension)
+	colorAverage, err := PictureAverageColor(name, extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := entity.NewFile(name, actor.ID, size, extension, colorAverage)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -229,7 +234,7 @@ func (actorUseCase *ActorUseCase) FindActorPictureToBase64(input InputFindActorP
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

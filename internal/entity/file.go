@@ -8,29 +8,31 @@ import (
 )
 
 type File struct {
-	ID        string
-	EntityId  string
-	Name      string
-	Size      int64
-	Extension string
-	IsDeleted bool
-	CreatedAt string
-	UpdatedAt string
-	DeletedAt string
+	ID           string
+	EntityId     string
+	Name         string
+	Size         int64
+	Extension    string
+	AverageColor string
+	IsDeleted    bool
+	CreatedAt    string
+	UpdatedAt    string
+	DeletedAt    string
 }
 
-func NewFile(name string, entityId string, size int64, extension string) (*File, error) {
+func NewFile(name string, entityId string, size int64, extension string, averageColor string) (*File, error) {
 	dateNow := time.Now()
 	file := &File{
-		ID:        uuid.New().String(),
-		EntityId:  entityId,
-		Name:      name,
-		Size:      size,
-		Extension: extension,
-		IsDeleted: false,
-		CreatedAt: dateNow.Local().String(),
-		UpdatedAt: dateNow.Local().String(),
-		DeletedAt: dateNow.Local().String(),
+		ID:           uuid.New().String(),
+		EntityId:     entityId,
+		Name:         name,
+		Size:         size,
+		Extension:    extension,
+		AverageColor: averageColor,
+		IsDeleted:    false,
+		CreatedAt:    dateNow.Local().String(),
+		UpdatedAt:    dateNow.Local().String(),
+		DeletedAt:    dateNow.Local().String(),
 	}
 
 	isValid, err := file.Validate()

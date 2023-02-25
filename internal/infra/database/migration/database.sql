@@ -164,6 +164,7 @@ CREATE TABLE IF NOT EXISTS files (
     name text,
     size text,
     extension text,
+    average_color text,
     is_deleted boolean,
     created_at text,
     updated_at text,

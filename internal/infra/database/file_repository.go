@@ -17,12 +17,12 @@ func NewFileRepository(db *sql.DB) *FileRepository {
 }
 
 func (fileRepository *FileRepository) Create(file *entity.File) error {
-	stmt, err := fileRepository.Db.Prepare("INSERT INTO files (file_id, entity_id, name, size, extension, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)")
+	stmt, err := fileRepository.Db.Prepare("INSERT INTO files (file_id, entity_id, name, size, extension, average_color, is_deleted, created_at, updated_at, deleted_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)")
 	if err != nil {
 		return err
 	}
 
-	_, err = stmt.Exec(file.ID, file.EntityId, file.Name, file.Size, file.Extension, file.IsDeleted, file.CreatedAt, file.UpdatedAt, file.DeletedAt)
+	_, err = stmt.Exec(file.ID, file.EntityId, file.Name, file.Size, file.Extension, file.AverageColor, file.IsDeleted, file.CreatedAt, file.UpdatedAt, file.DeletedAt)
 	if err != nil {
 		return err
 	}
