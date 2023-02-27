@@ -59,7 +59,7 @@ func (tagRepository *TagRepository) Find(id string) (entity.Tag, error) {
 }
 
 func (tagRepository *TagRepository) Update(tag *entity.Tag) error {
-	stmt, err := tagRepository.Db.Prepare("UPDATE tags SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")
+	stmt, err := tagRepository.Db.Prepare("UPDATE tags SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE tag_id = $7")
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (tagRepository *TagRepository) Update(tag *entity.Tag) error {
 }
 
 func (tagRepository *TagRepository) Delete(tag *entity.Tag) error {
-	stmt, err := tagRepository.Db.Prepare("UPDATE tags SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	stmt, err := tagRepository.Db.Prepare("UPDATE tags SET is_deleted = $1, deleted_at = $2 WHERE tag_id = $3")
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (tagRepository *TagRepository) Delete(tag *entity.Tag) error {
 func (tagRepository *TagRepository) IsDeleted(id string) error {
 	var tag entity.Tag
 
-	rows, err := tagRepository.Db.Query("SELECT * FROM tags WHERE id = $1", id)
+	rows, err := tagRepository.Db.Query("SELECT * FROM tags WHERE tag_id = $1", id)
 	if err != nil {
 		return err
 	}

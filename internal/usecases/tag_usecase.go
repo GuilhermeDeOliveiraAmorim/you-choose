@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -70,25 +71,6 @@ func (tagUseCase *TagUseCase) Find(input InputFindTagDto) (OutputFindTagDto, err
 	return output, nil
 }
 
-func (tagUseCase *TagUseCase) FindTagByName(input InputFindTagByNameDto) (OutputFindTagByNameDto, error) {
-	output := OutputFindTagByNameDto{}
-
-	tag, err := tagUseCase.TagRepository.FindTagByName(input.TagName)
-	if err != nil {
-		return output, errors.New(err.Error())
-	}
-
-	output.Tag.ID = tag.ID
-	output.Tag.Name = tag.Name
-	output.Tag.Picture = tag.Picture
-	output.Tag.IsDeleted = tag.IsDeleted
-	output.Tag.CreatedAt = tag.CreatedAt
-	output.Tag.UpdatedAt = tag.UpdatedAt
-	output.Tag.DeletedAt = tag.DeletedAt
-
-	return output, nil
-}
-
 func (tagUseCase *TagUseCase) Delete(input InputDeleteTagDto) (OutputDeleteTagDto, error) {
 	output := OutputDeleteTagDto{}
 
@@ -97,6 +79,8 @@ func (tagUseCase *TagUseCase) Delete(input InputDeleteTagDto) (OutputDeleteTagDt
 		return output, errors.New(err.Error())
 	}
 
+	fmt.Println(tag.IsDeleted)
+
 	if tag.IsDeleted {
 		return output, errors.New("tag previously deleted")
 	}
@@ -104,9 +88,14 @@ func (tagUseCase *TagUseCase) Delete(input InputDeleteTagDto) (OutputDeleteTagDt
 	tag.IsDeleted = true
 	tag.DeletedAt = time.Now().Local().String()
 
+	err = tagUseCase.TagRepository.Delete(&tag)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
 	output.IsDeleted = tag.IsDeleted
 
-	return output, errors.New(err.Error())
+	return output, nil
 }
 
 func (tagUseCase *TagUseCase) Update(input InputUpdateTagDto) (OutputUpdateTagDto, error) {
@@ -180,6 +169,25 @@ func (tagUseCase *TagUseCase) FindAll() (OutputFindAllTagDto, error) {
 			DeletedAt: tag.DeletedAt,
 		})
 	}
+
+	return output, nil
+}
+
+func (tagUseCase *TagUseCase) FindTagByName(input InputFindTagByNameDto) (OutputFindTagByNameDto, error) {
+	output := OutputFindTagByNameDto{}
+
+	tag, err := tagUseCase.TagRepository.FindTagByName(input.TagName)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Tag.ID = tag.ID
+	output.Tag.Name = tag.Name
+	output.Tag.Picture = tag.Picture
+	output.Tag.IsDeleted = tag.IsDeleted
+	output.Tag.CreatedAt = tag.CreatedAt
+	output.Tag.UpdatedAt = tag.UpdatedAt
+	output.Tag.DeletedAt = tag.DeletedAt
 
 	return output, nil
 }

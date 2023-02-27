@@ -59,7 +59,7 @@ func (directorRepository *DirectorRepository) Find(id string) (entity.Director, 
 }
 
 func (directorRepository *DirectorRepository) Update(director *entity.Director) error {
-	stmt, err := directorRepository.Db.Prepare("UPDATE directors SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")
+	stmt, err := directorRepository.Db.Prepare("UPDATE directors SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE director_id = $7")
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (directorRepository *DirectorRepository) Update(director *entity.Director) 
 }
 
 func (directorRepository *DirectorRepository) Delete(director *entity.Director) error {
-	stmt, err := directorRepository.Db.Prepare("UPDATE directors SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	stmt, err := directorRepository.Db.Prepare("UPDATE directors SET is_deleted = $1, deleted_at = $2 WHERE director_id = $3")
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (directorRepository *DirectorRepository) Delete(director *entity.Director) 
 func (directorRepository *DirectorRepository) IsDeleted(id string) error {
 	var director entity.Director
 
-	rows, err := directorRepository.Db.Query("SELECT * FROM directors WHERE id = $1", id)
+	rows, err := directorRepository.Db.Query("SELECT * FROM directors WHERE director_id = $1", id)
 	if err != nil {
 		return err
 	}

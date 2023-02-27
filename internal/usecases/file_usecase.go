@@ -239,7 +239,7 @@ func PictureToBase64(path string, name string, extension string) (string, error)
 }
 
 func PictureAverageColor(name string, extension string) (string, error) {
-	file, err := os.Open("/home/guilherme/Workspace/you-choose/cmd/upload/" + name + "." + extension)
+	file, err := os.Open("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/" + name + "." + extension)
 	if err != nil {
 		log.Fatalln(err)
 	}

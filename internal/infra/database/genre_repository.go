@@ -59,7 +59,7 @@ func (genreRepository *GenreRepository) Find(id string) (entity.Genre, error) {
 }
 
 func (genreRepository *GenreRepository) Update(genre *entity.Genre) error {
-	stmt, err := genreRepository.Db.Prepare("UPDATE genres SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")
+	stmt, err := genreRepository.Db.Prepare("UPDATE genres SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE genre_id = $7")
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (genreRepository *GenreRepository) Update(genre *entity.Genre) error {
 }
 
 func (genreRepository *GenreRepository) Delete(genre *entity.Genre) error {
-	stmt, err := genreRepository.Db.Prepare("UPDATE genres SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	stmt, err := genreRepository.Db.Prepare("UPDATE genres SET is_deleted = $1, deleted_at = $2 WHERE genre_id = $3")
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (genreRepository *GenreRepository) Delete(genre *entity.Genre) error {
 func (genreRepository *GenreRepository) IsDeleted(id string) error {
 	var genre entity.Genre
 
-	rows, err := genreRepository.Db.Query("SELECT * FROM genres WHERE id = $1", id)
+	rows, err := genreRepository.Db.Query("SELECT * FROM genres WHERE genre_id = $1", id)
 	if err != nil {
 		return err
 	}

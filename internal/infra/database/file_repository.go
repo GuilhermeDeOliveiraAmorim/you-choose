@@ -62,7 +62,7 @@ func (fileRepository *FileRepository) Find(id string) (entity.File, error) {
 }
 
 // func (fileRepository *FileRepository) Update(file *entity.File) error {
-// 	stmt, err := fileRepository.Db.Prepare("UPDATE files SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")
+// 	stmt, err := fileRepository.Db.Prepare("UPDATE files SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE file_id = $7")
 // 	if err != nil {
 // 		return err
 // 	}
@@ -76,7 +76,7 @@ func (fileRepository *FileRepository) Find(id string) (entity.File, error) {
 // }
 
 // func (fileRepository *FileRepository) Delete(file *entity.File) error {
-// 	stmt, err := fileRepository.Db.Prepare("UPDATE files SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+// 	stmt, err := fileRepository.Db.Prepare("UPDATE files SET is_deleted = $1, deleted_at = $2 WHERE file_id = $3")
 // 	if err != nil {
 // 		return err
 // 	}
@@ -92,7 +92,7 @@ func (fileRepository *FileRepository) Find(id string) (entity.File, error) {
 // func (fileRepository *FileRepository) IsDeleted(id string) error {
 // 	var file entity.File
 
-// 	rows, err := fileRepository.Db.Query("SELECT * FROM files WHERE id = $1", id)
+// 	rows, err := fileRepository.Db.Query("SELECT * FROM files WHERE file_id = $1", id)
 // 	if err != nil {
 // 		return err
 // 	}

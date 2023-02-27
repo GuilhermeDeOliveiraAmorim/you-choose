@@ -59,7 +59,7 @@ func (writerRepository *WriterRepository) Find(id string) (entity.Writer, error)
 }
 
 func (writerRepository *WriterRepository) Update(writer *entity.Writer) error {
-	stmt, err := writerRepository.Db.Prepare("UPDATE writers SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE id = $7")
+	stmt, err := writerRepository.Db.Prepare("UPDATE writers SET name = $1, picture = $2, is_deleted = $3, created_at = $4, updated_at = $5, deleted_at = $6 WHERE writer_id = $7")
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (writerRepository *WriterRepository) Update(writer *entity.Writer) error {
 }
 
 func (writerRepository *WriterRepository) Delete(writer *entity.Writer) error {
-	stmt, err := writerRepository.Db.Prepare("UPDATE writers SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	stmt, err := writerRepository.Db.Prepare("UPDATE writers SET is_deleted = $1, deleted_at = $2 WHERE writer_id = $3")
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (writerRepository *WriterRepository) Delete(writer *entity.Writer) error {
 func (writerRepository *WriterRepository) IsDeleted(id string) error {
 	var writer entity.Writer
 
-	rows, err := writerRepository.Db.Query("SELECT * FROM writers WHERE id = $1", id)
+	rows, err := writerRepository.Db.Query("SELECT * FROM writers WHERE writer_id = $1", id)
 	if err != nil {
 		return err
 	}

@@ -77,7 +77,7 @@ func (movieRepository *MovieRepository) Update(movie *entity.Movie) error {
 }
 
 func (movieRepository *MovieRepository) Delete(movie *entity.Movie) error {
-	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET is_deleted = $1, deleted_at = $2 WHERE id = $3")
+	stmt, err := movieRepository.Db.Prepare("UPDATE movies SET is_deleted = $1, deleted_at = $2 WHERE movie_id = $3")
 	if err != nil {
 		return err
 	}
@@ -93,7 +93,7 @@ func (movieRepository *MovieRepository) Delete(movie *entity.Movie) error {
 func (movieRepository *MovieRepository) IsDeleted(id string) error {
 	var movie entity.Movie
 
-	rows, err := movieRepository.Db.Query("SELECT * FROM movies WHERE id = $1", id)
+	rows, err := movieRepository.Db.Query("SELECT * FROM movies WHERE movie_id = $1", id)
 	if err != nil {
 		return err
 	}
