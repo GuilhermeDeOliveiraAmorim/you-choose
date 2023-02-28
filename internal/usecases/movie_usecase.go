@@ -201,7 +201,7 @@ func (movieUseCase *MovieUseCase) Delete(input InputDeleteMovieDto) (OutputDelet
 
 	output.IsDeleted = movie.IsDeleted
 
-	return output, errors.New(err.Error())
+	return output, nil
 }
 
 func (movieUseCase *MovieUseCase) Update(input InputUpdateMovieDto) (OutputUpdateMovieDto, error) {
@@ -802,19 +802,19 @@ func (movieUseCase *MovieUseCase) AddVoteToMovie(input InputAddVoteToMovieDto) (
 
 	movie, err := movieUseCase.MovieRepository.Find(input.MovieId)
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	movie.AddVote()
 
 	err = movieUseCase.MovieRepository.Update(&movie)
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	moviesIds, err := movieUseCase.MovieListRepository.FindMovieListMovies(input.MovieListId)
 	if err != nil {
-		return output, err
+		return output, errors.New(err.Error())
 	}
 
 	var movies []entity.Movie
@@ -822,7 +822,7 @@ func (movieUseCase *MovieUseCase) AddVoteToMovie(input InputAddVoteToMovieDto) (
 	for _, movieId := range moviesIds {
 		movie, err := movieUseCase.MovieRepository.Find(movieId)
 		if err != nil {
-			return output, err
+			return output, errors.New(err.Error())
 		}
 		movies = append(movies, movie)
 	}
@@ -837,7 +837,7 @@ func (movieUseCase *MovieUseCase) AddVoteToMovie(input InputAddVoteToMovieDto) (
 		movie.YouChooseRating = (float32(movie.GetVotes()) / float32(totalOfVotes)) * 100
 		err = movieUseCase.MovieRepository.AddVoteToMovie(&movie)
 		if err != nil {
-			return output, err
+			return output, errors.New(err.Error())
 		}
 	}
 

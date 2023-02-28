@@ -78,7 +78,7 @@ func (writerUseCase *WriterUseCase) Delete(input InputDeleteWriterDto) (OutputDe
 
 	output.IsDeleted = writer.IsDeleted
 
-	return output, errors.New(err.Error())
+	return output, nil
 }
 
 func (writerUseCase *WriterUseCase) Update(input InputUpdateWriterDto) (OutputUpdateWriterDto, error) {

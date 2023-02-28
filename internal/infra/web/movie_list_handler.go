@@ -305,7 +305,7 @@ func (movieListHandler *WebMovieListHandler) FindMovieListTags(w http.ResponseWr
 		return
 	}
 
-	tagListId := r.URL.Query().Get("tag_list_id")
+	tagListId := r.URL.Query().Get("movie_list_id")
 
 	input := usecases.InputFindMovieListTagsDto{
 		MovieListId: tagListId,

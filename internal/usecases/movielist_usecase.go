@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -14,7 +15,11 @@ type MovieListUseCase struct {
 	TagRepository       entity.TagRepositoryInterface
 }
 
-func NewMovieListUseCase(movieListRepository entity.MovieListRepositoryInterface, chooserRepository entity.ChooserRepositoryInterface, movieRepository entity.MovieRepositoryInterface, tagRepository entity.TagRepositoryInterface) *MovieListUseCase {
+func NewMovieListUseCase(
+	movieListRepository entity.MovieListRepositoryInterface,
+	chooserRepository entity.ChooserRepositoryInterface,
+	movieRepository entity.MovieRepositoryInterface,
+	tagRepository entity.TagRepositoryInterface) *MovieListUseCase {
 	return &MovieListUseCase{
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
@@ -324,17 +329,29 @@ func (movieListUseCase *MovieListUseCase) FindMovieListChoosers(input InputFindM
 func (movieListUseCase *MovieListUseCase) FindMovieListTags(input InputFindMovieListTagsDto) (OutputFindMovieListTagsDto, error) {
 	output := OutputFindMovieListTagsDto{}
 
+	fmt.Println(input)
+
 	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
+
+	fmt.Println(movieList)
 
 	tagsIds, err := movieListUseCase.MovieListRepository.FindMovieListTags(input.MovieListId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
+	fmt.Println(tagsIds)
+
 	var outputTags []TagDto
+
+	// field TagRepository entity.TagRepositoryInterface
+	// (usecases.MovieListUseCase).TagRepository
+
+	// field TagRepository entity.TagRepositoryInterface
+	// (usecases.ChooserUseCase).TagRepository
 
 	for _, tagId := range tagsIds {
 		tag, err := movieListUseCase.TagRepository.Find(tagId)

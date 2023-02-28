@@ -69,7 +69,7 @@ func (chooserUseCase *ChooserUseCase) Find(input InputFindChooserDto) (OutputFin
 	output.UserName = chooser.UserName
 	output.Picture = chooser.Picture
 
-	return output, errors.New(err.Error())
+	return output, nil
 }
 
 func (chooserUseCase *ChooserUseCase) Update(input InputUpdateChooserDto) (OutputUpdateChooserDto, error) {
@@ -381,12 +381,12 @@ func (chooserUseCase *ChooserUseCase) AddTagsToMovieList(input InputAddTagsToMov
 
 	var tagsInMovieList []entity.Tag
 
-	for _, chooserId := range tagsIds {
-		chooser, err := chooserUseCase.TagRepository.Find(chooserId)
+	for _, tagId := range tagsIds {
+		tag, err := chooserUseCase.TagRepository.Find(tagId)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}
-		tagsInMovieList = append(tagsInMovieList, chooser)
+		tagsInMovieList = append(tagsInMovieList, tag)
 	}
 
 	var tagsAdded []entity.Tag

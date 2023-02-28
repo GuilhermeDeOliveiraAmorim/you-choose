@@ -79,7 +79,7 @@ func (directorUseCase *DirectorUseCase) Delete(input InputDeleteDirectorDto) (Ou
 
 	output.IsDeleted = director.IsDeleted
 
-	return output, errors.New(err.Error())
+	return output, nil
 }
 
 func (directorUseCase *DirectorUseCase) Update(input InputUpdateDirectorDto) (OutputUpdateDirectorDto, error) {
