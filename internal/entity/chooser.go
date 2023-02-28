@@ -10,16 +10,15 @@ import (
 )
 
 type Chooser struct {
-	ID         string
-	FirstName  string
-	LastName   string
-	UserName   string
-	Picture    string
-	IsDeleted  bool
-	CreatedAt  string
-	UpdatedAt  string
-	DeletedAt  string
-	MovieLists []*MovieList
+	ID        string
+	FirstName string
+	LastName  string
+	UserName  string
+	Picture   string
+	IsDeleted bool
+	CreatedAt string
+	UpdatedAt string
+	DeletedAt string
 }
 
 func NewChooser(firstName string, lastName string, userName string, picture string) (*Chooser, error) {
@@ -42,19 +41,6 @@ func NewChooser(firstName string, lastName string, userName string, picture stri
 	}
 
 	return chooser, nil
-}
-
-func (chooser *Chooser) AddMovieList(movieList *MovieList) {
-	chooser.MovieLists = append(chooser.MovieLists, movieList)
-}
-
-func (chooser *Chooser) RemoveMovieList(movieList *MovieList) {
-	for position, movieListInArray := range chooser.MovieLists {
-		if movieList.ID == movieListInArray.ID {
-			chooser.MovieLists = append(chooser.MovieLists[:position], chooser.MovieLists[position+1:]...)
-			return
-		}
-	}
 }
 
 func (chooser *Chooser) Validate() (bool, error) {

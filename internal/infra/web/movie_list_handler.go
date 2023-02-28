@@ -24,6 +24,7 @@ func NewMovieListHandler(
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
 		MovieRepository:     movieRepository,
+		TagRepository:       tagRepository,
 	}
 }
 
@@ -305,10 +306,10 @@ func (movieListHandler *WebMovieListHandler) FindMovieListTags(w http.ResponseWr
 		return
 	}
 
-	tagListId := r.URL.Query().Get("movie_list_id")
+	movieListId := r.URL.Query().Get("movie_list_id")
 
 	input := usecases.InputFindMovieListTagsDto{
-		MovieListId: tagListId,
+		MovieListId: movieListId,
 	}
 
 	movieListUseCase := *usecases.NewMovieListUseCase(

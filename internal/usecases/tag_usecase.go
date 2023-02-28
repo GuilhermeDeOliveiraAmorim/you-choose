@@ -60,6 +60,10 @@ func (tagUseCase *TagUseCase) Find(input InputFindTagDto) (OutputFindTagDto, err
 		return output, errors.New(err.Error())
 	}
 
+	if tag.ID == "" {
+		return output, errors.New("tag not found")
+	}
+
 	output.Tag.ID = tag.ID
 	output.Tag.Name = tag.Name
 	output.Tag.Picture = tag.Picture

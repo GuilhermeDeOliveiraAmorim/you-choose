@@ -127,8 +127,34 @@ func (movieListUseCase *MovieListUseCase) Find(input InputFindMovieListDto) (Out
 		})
 	}
 
+	tagsIds, err := movieListUseCase.MovieListRepository.FindMovieListTags(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	var outputTags []TagDto
+
+	for _, tagId := range tagsIds {
+		tag, err := movieListUseCase.TagRepository.Find(tagId)
+		fmt.Println(tag)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		outputTags = append(outputTags, TagDto{
+			ID:        tag.ID,
+			Name:      tag.Name,
+			Picture:   tag.Picture,
+			IsDeleted: tag.IsDeleted,
+			CreatedAt: tag.CreatedAt,
+			UpdatedAt: tag.UpdatedAt,
+			DeletedAt: tag.DeletedAt,
+		})
+	}
+
 	output.MovieList.Choosers = outputChoosers
 	output.MovieList.Movies = outputMovies
+	output.MovieList.Tags = outputTags
 
 	return output, nil
 }
@@ -295,7 +321,10 @@ func (movieListUseCase *MovieListUseCase) FindMovieListChoosers(input InputFindM
 	var outputChoosers []ChooserDto
 
 	for _, chooserId := range choosersIds {
+		fmt.Println()
+		fmt.Println(chooserId)
 		chooser, err := movieListUseCase.ChooserRepository.Find(chooserId)
+		fmt.Println(chooser)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}
@@ -329,32 +358,21 @@ func (movieListUseCase *MovieListUseCase) FindMovieListChoosers(input InputFindM
 func (movieListUseCase *MovieListUseCase) FindMovieListTags(input InputFindMovieListTagsDto) (OutputFindMovieListTagsDto, error) {
 	output := OutputFindMovieListTagsDto{}
 
-	fmt.Println(input)
-
 	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(movieList)
-
-	tagsIds, err := movieListUseCase.MovieListRepository.FindMovieListTags(input.MovieListId)
+	tagsIds, err := movieListUseCase.MovieListRepository.FindMovieListTags(movieList.ID)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	fmt.Println(tagsIds)
-
 	var outputTags []TagDto
-
-	// field TagRepository entity.TagRepositoryInterface
-	// (usecases.MovieListUseCase).TagRepository
-
-	// field TagRepository entity.TagRepositoryInterface
-	// (usecases.ChooserUseCase).TagRepository
 
 	for _, tagId := range tagsIds {
 		tag, err := movieListUseCase.TagRepository.Find(tagId)
+		fmt.Println(tag)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}

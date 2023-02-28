@@ -39,7 +39,16 @@ func (chooserRepository *ChooserRepository) Find(id string) (entity.Chooser, err
 	}
 
 	for rows.Next() {
-		if err := rows.Scan(&chooser.ID, &chooser.FirstName, &chooser.LastName, &chooser.UserName, &chooser.Picture, &chooser.IsDeleted, &chooser.CreatedAt, &chooser.UpdatedAt, &chooser.DeletedAt); err != nil {
+		if err := rows.Scan(
+			&chooser.ID,
+			&chooser.FirstName,
+			&chooser.LastName,
+			&chooser.UserName,
+			&chooser.Picture,
+			&chooser.IsDeleted,
+			&chooser.CreatedAt,
+			&chooser.UpdatedAt,
+			&chooser.DeletedAt); err != nil {
 			return chooser, err
 		}
 	}
