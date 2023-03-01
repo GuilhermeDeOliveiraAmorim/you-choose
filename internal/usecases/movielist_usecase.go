@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -136,7 +135,6 @@ func (movieListUseCase *MovieListUseCase) Find(input InputFindMovieListDto) (Out
 
 	for _, tagId := range tagsIds {
 		tag, err := movieListUseCase.TagRepository.Find(tagId)
-		fmt.Println(tag)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}
@@ -326,10 +324,7 @@ func (movieListUseCase *MovieListUseCase) FindMovieListChoosers(input InputFindM
 	var outputChoosers []ChooserDto
 
 	for _, chooserId := range choosersIds {
-		fmt.Println()
-		fmt.Println(chooserId)
 		chooser, err := movieListUseCase.ChooserRepository.Find(chooserId)
-		fmt.Println(chooser)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}
@@ -377,7 +372,6 @@ func (movieListUseCase *MovieListUseCase) FindMovieListTags(input InputFindMovie
 
 	for _, tagId := range tagsIds {
 		tag, err := movieListUseCase.TagRepository.Find(tagId)
-		fmt.Println(tag)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}

@@ -1,13 +1,14 @@
 package usecases
 
 type ActorDto struct {
-	ID        string `json:"actor_id"`
-	Name      string `json:"name"`
-	Picture   string `json:"picture"`
-	IsDeleted bool   `json:"is_deleted"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
-	DeletedAt string `json:"deleted_at"`
+	ID        string  `json:"actor_id"`
+	Name      string  `json:"name"`
+	Picture   string  `json:"picture"`
+	IsDeleted bool    `json:"is_deleted"`
+	CreatedAt string  `json:"created_at"`
+	UpdatedAt string  `json:"updated_at"`
+	DeletedAt string  `json:"deleted_at"`
+	File      FileDto `json:"file"`
 }
 
 type InputCreateActorDto struct {

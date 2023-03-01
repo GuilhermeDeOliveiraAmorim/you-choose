@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -82,8 +81,6 @@ func (tagUseCase *TagUseCase) Delete(input InputDeleteTagDto) (OutputDeleteTagDt
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
-
-	fmt.Println(tag.IsDeleted)
 
 	if tag.IsDeleted {
 		return output, errors.New("tag previously deleted")

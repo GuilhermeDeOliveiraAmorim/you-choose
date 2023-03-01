@@ -55,7 +55,6 @@ func (actor *Actor) Validate() (bool, error) {
 	inputs := make(map[string]string)
 
 	inputs["name"] = actor.Name
-	inputs["picture"] = actor.Picture
 
 	for key, value := range inputs {
 		if value == "" {

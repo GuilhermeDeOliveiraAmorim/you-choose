@@ -57,13 +57,41 @@ func (actorUseCase *ActorUseCase) Find(input InputFindActorDto) (OutputFindActor
 		return output, errors.New(err.Error())
 	}
 
+	inputFindPicture := InputFindActorPictureToBase64Dto{
+		ActorId: actor.ID,
+	}
+
+	picture, err := actorUseCase.FindActorPictureToBase64(inputFindPicture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	file, err := actorUseCase.FileRepository.Find(actor.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	fileDto := FileDto{
+		ID:           file.ID,
+		EntityId:     file.EntityId,
+		Name:         file.Name,
+		Size:         file.Size,
+		Extension:    file.Extension,
+		AverageColor: file.AverageColor,
+		IsDeleted:    file.IsDeleted,
+		CreatedAt:    file.CreatedAt,
+		UpdatedAt:    file.UpdatedAt,
+		DeletedAt:    file.DeletedAt,
+	}
+
 	output.Actor.ID = actor.ID
 	output.Actor.Name = actor.Name
-	output.Actor.Picture = actor.Picture
 	output.Actor.IsDeleted = actor.IsDeleted
+	output.Actor.Picture = picture.Actor.Picture
 	output.Actor.CreatedAt = actor.CreatedAt
 	output.Actor.UpdatedAt = actor.UpdatedAt
 	output.Actor.DeletedAt = actor.DeletedAt
+	output.Actor.File = fileDto
 
 	return output, nil
 }
@@ -234,7 +262,7 @@ func (actorUseCase *ActorUseCase) FindActorPictureToBase64(input InputFindActorP
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

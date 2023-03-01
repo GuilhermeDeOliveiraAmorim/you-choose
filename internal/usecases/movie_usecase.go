@@ -275,10 +275,8 @@ func (movieUseCase *MovieUseCase) FindAll() (OutputFindAllMoviesDto, error) {
 		return output, errors.New(err.Error())
 	}
 
-	moviesOutput := []MovieDto{}
-
 	for _, movie := range movies {
-		moviesOutput = append(moviesOutput, MovieDto{
+		output.Movies = append(output.Movies, MovieDto{
 			ID:              movie.ID,
 			Title:           movie.Title,
 			Synopsis:        movie.Synopsis,
@@ -292,8 +290,6 @@ func (movieUseCase *MovieUseCase) FindAll() (OutputFindAllMoviesDto, error) {
 			IsDeleted:       movie.IsDeleted,
 		})
 	}
-
-	output.Movies = moviesOutput
 
 	return output, nil
 }
