@@ -71,6 +71,7 @@ func (genreUseCase *GenreUseCase) Find(input InputFindGenreDto) (OutputFindGenre
 }
 
 func (genreUseCase *GenreUseCase) Delete(input InputDeleteGenreDto) (OutputDeleteGenreDto, error) {
+	timeNow := time.Now().Local().String()
 	output := OutputDeleteGenreDto{}
 
 	genre, err := genreUseCase.GenreRepository.Find(input.GenreId)
@@ -83,7 +84,7 @@ func (genreUseCase *GenreUseCase) Delete(input InputDeleteGenreDto) (OutputDelet
 	}
 
 	genre.IsDeleted = true
-	genre.DeletedAt = time.Now().Local().String()
+	genre.DeletedAt = timeNow
 
 	err = genreUseCase.GenreRepository.Update(&genre)
 	if err != nil {
