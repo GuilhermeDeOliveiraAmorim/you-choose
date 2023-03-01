@@ -195,7 +195,7 @@ func (movieHandler *WebMovieHandler) FindAll(w http.ResponseWriter, r *http.Requ
 
 	movieUseCase := *usecases.NewMovieUseCase(movieHandler.MovieRepository, movieHandler.ActorRepository, movieHandler.WriterRepository, movieHandler.DirectorRepository, movieHandler.GenreRepository, movieHandler.MovieListRepository)
 
-	movies, err := movieUseCase.MovieRepository.FindAll()
+	movies, err := movieUseCase.FindAll()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
