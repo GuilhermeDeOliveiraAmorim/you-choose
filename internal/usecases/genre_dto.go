@@ -65,3 +65,11 @@ type OutputFindAllGenreMoviesDto struct {
 	Genre  GenreDto   `json:"genre"`
 	Movies []MovieDto `json:"movies"`
 }
+
+type InputFindGenreByNameDto struct {
+	GenreName string `json:"genre_name"`
+}
+
+type OutputFindGenreByNameDto struct {
+	Genre GenreDto `json:"genre"`
+}

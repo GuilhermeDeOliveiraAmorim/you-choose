@@ -131,3 +131,31 @@ func (genreRepository *GenreRepository) FindAll() ([]entity.Genre, error) {
 
 	return genres, nil
 }
+
+func (genreRepository *GenreRepository) FindGenreByName(name string) (entity.Genre, error) {
+	var genre entity.Genre
+
+	rows, err := genreRepository.Db.Query("SELECT * FROM genres WHERE name = $1", name)
+	if err != nil {
+		return genre, err
+	}
+
+	for rows.Next() {
+		if err := rows.Scan(
+			&genre.ID,
+			&genre.Name,
+			&genre.Picture,
+			&genre.IsDeleted,
+			&genre.CreatedAt,
+			&genre.UpdatedAt,
+			&genre.DeletedAt); err != nil {
+			return genre, err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return genre, err
+	}
+
+	return genre, nil
+}

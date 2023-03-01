@@ -12,146 +12,179 @@ type GenreUseCase struct {
 	MovieRepository entity.MovieRepositoryInterface
 }
 
-func NewGenreUseCase(actorRepository entity.GenreRepositoryInterface, genreRepository entity.MovieRepositoryInterface) *GenreUseCase {
+func NewGenreUseCase(genreRepository entity.GenreRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *GenreUseCase {
 	return &GenreUseCase{
-		GenreRepository: actorRepository,
-		MovieRepository: genreRepository,
+		GenreRepository: genreRepository,
+		MovieRepository: movieRepository,
 	}
 }
 
-func (actorUseCase *GenreUseCase) Create(input InputCreateGenreDto) (OutputCreateGenreDto, error) {
+func (genreUseCase *GenreUseCase) Create(input InputCreateGenreDto) (OutputCreateGenreDto, error) {
 	output := OutputCreateGenreDto{}
 
-	actor, err := entity.NewGenre(input.Name, input.Picture)
+	genre, err := entity.NewGenre(input.Name, input.Picture)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	if err := actorUseCase.GenreRepository.Create(actor); err != nil {
+	doesThisGenreAlreadyExist, err := genreUseCase.GenreRepository.FindGenreByName(input.Name)
+	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	output.Genre.ID = actor.ID
-	output.Genre.Name = actor.Name
-	output.Genre.Picture = actor.Picture
-	output.Genre.IsDeleted = actor.IsDeleted
-	output.Genre.CreatedAt = actor.CreatedAt
-	output.Genre.UpdatedAt = actor.UpdatedAt
-	output.Genre.DeletedAt = actor.DeletedAt
+	if doesThisGenreAlreadyExist.Name != "" {
+		return output, errors.New("this genre already exists")
+	}
+
+	if err := genreUseCase.GenreRepository.Create(genre); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Genre.ID = genre.ID
+	output.Genre.Name = genre.Name
+	output.Genre.Picture = genre.Picture
+	output.Genre.IsDeleted = genre.IsDeleted
+	output.Genre.CreatedAt = genre.CreatedAt
+	output.Genre.UpdatedAt = genre.UpdatedAt
+	output.Genre.DeletedAt = genre.DeletedAt
 
 	return output, nil
 }
 
-func (actorUseCase *GenreUseCase) Find(input InputFindGenreDto) (OutputFindGenreDto, error) {
+func (genreUseCase *GenreUseCase) Find(input InputFindGenreDto) (OutputFindGenreDto, error) {
 	output := OutputFindGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
+	genre, err := genreUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	output.Genre.ID = actor.ID
-	output.Genre.Name = actor.Name
-	output.Genre.Picture = actor.Picture
-	output.Genre.IsDeleted = actor.IsDeleted
-	output.Genre.CreatedAt = actor.CreatedAt
-	output.Genre.UpdatedAt = actor.UpdatedAt
-	output.Genre.DeletedAt = actor.DeletedAt
+	output.Genre.ID = genre.ID
+	output.Genre.Name = genre.Name
+	output.Genre.Picture = genre.Picture
+	output.Genre.IsDeleted = genre.IsDeleted
+	output.Genre.CreatedAt = genre.CreatedAt
+	output.Genre.UpdatedAt = genre.UpdatedAt
+	output.Genre.DeletedAt = genre.DeletedAt
 
 	return output, nil
 }
 
-func (actorUseCase *GenreUseCase) Delete(input InputDeleteGenreDto) (OutputDeleteGenreDto, error) {
+func (genreUseCase *GenreUseCase) Delete(input InputDeleteGenreDto) (OutputDeleteGenreDto, error) {
 	output := OutputDeleteGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
+	genre, err := genreUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	if actor.IsDeleted {
-		return output, errors.New("actor previously deleted")
+	if genre.IsDeleted {
+		return output, errors.New("genre previously deleted")
 	}
 
-	actor.IsDeleted = true
-	actor.DeletedAt = time.Now().Local().String()
+	genre.IsDeleted = true
+	genre.DeletedAt = time.Now().Local().String()
 
-	output.IsDeleted = actor.IsDeleted
+	err = genreUseCase.GenreRepository.Update(&genre)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.IsDeleted = genre.IsDeleted
 
 	return output, nil
 }
 
-func (actorUseCase *GenreUseCase) Update(input InputUpdateGenreDto) (OutputUpdateGenreDto, error) {
+func (genreUseCase *GenreUseCase) Update(input InputUpdateGenreDto) (OutputUpdateGenreDto, error) {
 	timeNow := time.Now().Local().String()
 	output := OutputUpdateGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
+	genre, err := genreUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	actor.Name = input.Name
-	actor.Picture = input.Picture
+	genre.Name = input.Name
+	genre.Picture = input.Picture
 
-	isValid, err := actor.Validate()
+	isValid, err := genre.Validate()
 	if !isValid {
 		return output, errors.New(err.Error())
 	}
 
-	actor.UpdatedAt = timeNow
+	genre.UpdatedAt = timeNow
 
-	err = actorUseCase.GenreRepository.Update(&actor)
+	err = genreUseCase.GenreRepository.Update(&genre)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	output.Genre.ID = actor.ID
-	output.Genre.Name = actor.Name
-	output.Genre.Picture = actor.Picture
-	output.Genre.IsDeleted = actor.IsDeleted
-	output.Genre.CreatedAt = actor.CreatedAt
-	output.Genre.UpdatedAt = actor.UpdatedAt
-	output.Genre.DeletedAt = actor.DeletedAt
+	output.Genre.ID = genre.ID
+	output.Genre.Name = genre.Name
+	output.Genre.Picture = genre.Picture
+	output.Genre.IsDeleted = genre.IsDeleted
+	output.Genre.CreatedAt = genre.CreatedAt
+	output.Genre.UpdatedAt = genre.UpdatedAt
+	output.Genre.DeletedAt = genre.DeletedAt
 
 	return output, nil
 }
 
-func (actorUseCase *GenreUseCase) IsDeleted(input InputIsDeletedGenreDto) (OutputIsDeletedGenreDto, error) {
+func (genreUseCase *GenreUseCase) IsDeleted(input InputIsDeletedGenreDto) (OutputIsDeletedGenreDto, error) {
 	output := OutputIsDeletedGenreDto{}
 
-	actor, err := actorUseCase.GenreRepository.Find(input.GenreId)
+	genre, err := genreUseCase.GenreRepository.Find(input.GenreId)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
 	output.IsDeleted = false
 
-	if actor.IsDeleted {
+	if genre.IsDeleted {
 		output.IsDeleted = true
 	}
 
 	return output, nil
 }
 
-func (actorUseCase *GenreUseCase) FindAll() (OutputFindAllGenreDto, error) {
+func (genreUseCase *GenreUseCase) FindAll() (OutputFindAllGenreDto, error) {
 	output := OutputFindAllGenreDto{}
 
-	actors, err := actorUseCase.GenreRepository.FindAll()
+	genres, err := genreUseCase.GenreRepository.FindAll()
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
 
-	for _, actor := range actors {
+	for _, genre := range genres {
 		output.Genres = append(output.Genres, GenreDto{
-			ID:        actor.ID,
-			Name:      actor.Name,
-			Picture:   actor.Picture,
-			IsDeleted: actor.IsDeleted,
-			CreatedAt: actor.CreatedAt,
-			UpdatedAt: actor.UpdatedAt,
-			DeletedAt: actor.DeletedAt,
+			ID:        genre.ID,
+			Name:      genre.Name,
+			Picture:   genre.Picture,
+			IsDeleted: genre.IsDeleted,
+			CreatedAt: genre.CreatedAt,
+			UpdatedAt: genre.UpdatedAt,
+			DeletedAt: genre.DeletedAt,
 		})
 	}
+
+	return output, nil
+}
+
+func (genreUseCase *GenreUseCase) FindGenreByName(input InputFindGenreByNameDto) (OutputFindGenreByNameDto, error) {
+	output := OutputFindGenreByNameDto{}
+
+	genre, err := genreUseCase.GenreRepository.FindGenreByName(input.GenreName)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Genre.ID = genre.ID
+	output.Genre.Name = genre.Name
+	output.Genre.Picture = genre.Picture
+	output.Genre.IsDeleted = genre.IsDeleted
+	output.Genre.CreatedAt = genre.CreatedAt
+	output.Genre.UpdatedAt = genre.UpdatedAt
+	output.Genre.DeletedAt = genre.DeletedAt
 
 	return output, nil
 }

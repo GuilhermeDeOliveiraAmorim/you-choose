@@ -76,6 +76,11 @@ func (writerUseCase *WriterUseCase) Delete(input InputDeleteWriterDto) (OutputDe
 	writer.IsDeleted = true
 	writer.DeletedAt = time.Now().Local().String()
 
+	err = writerUseCase.WriterRepository.Update(&writer)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
 	output.IsDeleted = writer.IsDeleted
 
 	return output, nil

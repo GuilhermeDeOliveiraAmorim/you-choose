@@ -77,6 +77,11 @@ func (directorUseCase *DirectorUseCase) Delete(input InputDeleteDirectorDto) (Ou
 	director.IsDeleted = true
 	director.DeletedAt = timeNow
 
+	err = directorUseCase.DirectorRepository.Update(&director)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
 	output.IsDeleted = director.IsDeleted
 
 	return output, nil
