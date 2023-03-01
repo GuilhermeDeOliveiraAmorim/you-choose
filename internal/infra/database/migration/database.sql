@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS choosers (
-    id text,
+    chooser_id text,
     first_name text,
     last_name text,
     username text,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS choosers (
 );
 
 CREATE TABLE IF NOT EXISTS movie_lists (
-    id text,
+    movie_list_id text,
     title text,
     description text,
     picture text,
