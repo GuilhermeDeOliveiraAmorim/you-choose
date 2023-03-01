@@ -95,114 +95,83 @@ func (fileHandler *WebFileHandler) Find(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// func (fileHandler *WebFileHandler) Update(w http.ResponseWriter, r *http.Request) {
-// 	handlerMethod := http.MethodPut
-// 	requestMethod := r.Method
-// 	if handlerMethod != requestMethod {
-// 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-// 		return
-// 	}
+func (fileHandler *WebFileHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPatch
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
 
-// 	var input usecases.InputUpdateFileDto
+	fileId := r.URL.Query().Get("file_id")
 
-// 	err := json.NewDecoder(r.Body).Decode(&input)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
+	input := usecases.InputDeleteFileDto{
+		FileId: fileId,
+	}
 
-// 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
+	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
 
-// 	file, err := fileUseCase.Update(input)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
+	file, err := fileUseCase.Delete(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	err = json.NewEncoder(w).Encode(file)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+	err = json.NewEncoder(w).Encode(file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
-// func (fileHandler *WebFileHandler) Delete(w http.ResponseWriter, r *http.Request) {
-// 	handlerMethod := http.MethodPatch
-// 	requestMethod := r.Method
-// 	if handlerMethod != requestMethod {
-// 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-// 		return
-// 	}
+func (fileHandler *WebFileHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
 
-// 	fileId := r.URL.Query().Get("file_id")
+	fileId := r.URL.Query().Get("file_id")
 
-// 	input := usecases.InputDeleteFileDto{
-// 		FileId: fileId,
-// 	}
+	input := usecases.InputIsDeletedFileDto{
+		FileId: fileId,
+	}
 
-// 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
+	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
 
-// 	file, err := fileUseCase.Delete(input)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
+	file, err := fileUseCase.IsDeleted(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	err = json.NewEncoder(w).Encode(file)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+	err = json.NewEncoder(w).Encode(file)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
-// func (fileHandler *WebFileHandler) IsDeleted(w http.ResponseWriter, r *http.Request) {
-// 	handlerMethod := http.MethodGet
-// 	requestMethod := r.Method
-// 	if handlerMethod != requestMethod {
-// 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-// 		return
-// 	}
+func (fileHandler *WebFileHandler) FindAll(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
 
-// 	fileId := r.URL.Query().Get("file_id")
+	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
 
-// 	input := usecases.InputIsDeletedFileDto{
-// 		FileId: fileId,
-// 	}
+	files, err := fileUseCase.FindAll()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-// 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
-
-// 	file, err := fileUseCase.IsDeleted(input)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	err = json.NewEncoder(w).Encode(file)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func (fileHandler *WebFileHandler) FindAll(w http.ResponseWriter, r *http.Request) {
-// 	handlerMethod := http.MethodGet
-// 	requestMethod := r.Method
-// 	if handlerMethod != requestMethod {
-// 		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	fileUseCase := *usecases.NewFileUseCase(fileHandler.FileRepository)
-
-// 	files, err := fileUseCase.FindAll()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	err = json.NewEncoder(w).Encode(files)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+	err = json.NewEncoder(w).Encode(files)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

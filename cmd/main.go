@@ -106,6 +106,9 @@ func main() {
 
 	webserver.AddHandler("/files/create/file", newWebFileHandler.Create)
 	webserver.AddHandler("/files/find/file", newWebFileHandler.Find)
+	webserver.AddHandler("/files/delete/file", newWebFileHandler.Delete)
+	webserver.AddHandler("/files/isdelete/file", newWebFileHandler.IsDeleted)
+	webserver.AddHandler("/files/find/all/files", newWebFileHandler.FindAll)
 
 	webserver.Start()
 }

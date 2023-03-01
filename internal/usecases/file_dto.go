@@ -42,8 +42,8 @@ type OutputFindFileDto struct {
 }
 
 type InputUpdateFileDto struct {
-	FileId string `json:"file_id"`
-	Name   string `json:"name"`
+	FileId    string `json:"file_id"`
+	IsDeleted string `json:"name"`
 }
 
 type OutputUpdateFileDto struct {

@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 	"github.com/google/uuid"
@@ -88,104 +89,74 @@ func (fileUseCase *FileUseCase) Find(input InputFindFileDto) (OutputFindFileDto,
 	return output, nil
 }
 
-// func (fileUseCase *FileUseCase) Delete(input InputDeleteFileDto) (OutputDeleteFileDto, error) {
-// 	timeNow := time.Now().Local().String()
-// 	output := OutputDeleteFileDto{}
+func (fileUseCase *FileUseCase) Delete(input InputDeleteFileDto) (OutputDeleteFileDto, error) {
+	timeNow := time.Now().Local().String()
+	output := OutputDeleteFileDto{}
 
-// 	file, err := fileUseCase.FileRepository.Find(input.FileId)
-// 	if err != nil {
-// 		return output, errors.New(err.Error())
-// 	}
+	file, err := fileUseCase.FileRepository.Find(input.FileId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
 
-// 	if file.IsDeleted {
-// 		return output, errors.New("file previously deleted")
-// 	}
+	if file.IsDeleted {
+		return output, errors.New("file previously deleted")
+	}
 
-// 	file.IsDeleted = true
-// 	file.DeletedAt = timeNow
+	file.IsDeleted = true
+	file.DeletedAt = timeNow
 
-// 	output.IsDeleted = file.IsDeleted
+	err = fileUseCase.FileRepository.Update(&file)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
 
-// 	return output, errors.New(err.Error())
-// }
+	output.IsDeleted = file.IsDeleted
 
-// func (fileUseCase *FileUseCase) Update(input InputUpdateFileDto) (OutputUpdateFileDto, error) {
-// 	timeNow := time.Now().Local().String()
-// 	output := OutputUpdateFileDto{}
+	return output, nil
+}
 
-// 	file, err := fileUseCase.FileRepository.Find(input.FileId)
-// 	if err != nil {
-// 		return output, errors.New(err.Error())
-// 	}
+func (fileUseCase *FileUseCase) IsDeleted(input InputIsDeletedFileDto) (OutputIsDeletedFileDto, error) {
+	output := OutputIsDeletedFileDto{}
 
-// 	file.Name = input.Name
+	file, err := fileUseCase.FileRepository.Find(input.FileId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
 
-// 	isValid, err := file.Validate()
-// 	if !isValid {
-// 		return output, errors.New(err.Error())
-// 	}
+	output.IsDeleted = false
 
-// 	file.UpdatedAt = timeNow
+	if file.IsDeleted {
+		output.IsDeleted = true
+	}
 
-// 	err = fileUseCase.FileRepository.Update(&file)
-// 	if err != nil {
-// 		return output, errors.New(err.Error())
-// 	}
+	return output, nil
+}
 
-// 	output.File.ID = file.ID
-// 	output.File.EntityId = file.EntityId
-// 	output.File.Name = file.Name
-// 	output.File.Size = file.Size
-// 	output.File.Extension = file.Extension
-// 	output.File.IsDeleted = file.IsDeleted
-// 	output.File.CreatedAt = file.CreatedAt
-// 	output.File.UpdatedAt = file.UpdatedAt
-// 	output.File.DeletedAt = file.DeletedAt
+func (fileUseCase *FileUseCase) FindAll() (OutputFindAllFileDto, error) {
+	output := OutputFindAllFileDto{}
 
-// 	return output, nil
-// }
+	files, err := fileUseCase.FileRepository.FindAll()
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
 
-// func (fileUseCase *FileUseCase) IsDeleted(input InputIsDeletedFileDto) (OutputIsDeletedFileDto, error) {
-// 	output := OutputIsDeletedFileDto{}
+	for _, file := range files {
+		output.Files = append(output.Files, FileDto{
+			ID:           file.ID,
+			EntityId:     file.EntityId,
+			Name:         file.Name,
+			Size:         file.Size,
+			Extension:    file.Extension,
+			AverageColor: file.AverageColor,
+			IsDeleted:    file.IsDeleted,
+			CreatedAt:    file.CreatedAt,
+			UpdatedAt:    file.UpdatedAt,
+			DeletedAt:    file.DeletedAt,
+		})
+	}
 
-// 	file, err := fileUseCase.FileRepository.Find(input.FileId)
-// 	if err != nil {
-// 		return output, errors.New(err.Error())
-// 	}
-
-// 	output.IsDeleted = false
-
-// 	if file.IsDeleted {
-// 		output.IsDeleted = true
-// 	}
-
-// 	return output, nil
-// }
-
-// func (fileUseCase *FileUseCase) FindAll() (OutputFindAllFileDto, error) {
-// 	output := OutputFindAllFileDto{}
-
-// 	files, err := fileUseCase.FileRepository.FindAll()
-// 	if err != nil {
-// 		return output, errors.New(err.Error())
-// 	}
-
-// 	for _, file := range files {
-// 		output.Files = append(output.Files, FileDto{
-// 			ID:        file.ID,
-// 			EntityId:  file.EntityId,
-// 			Name:      file.Name,
-// 			Size:      file.Size,
-// 			Extension: file.Extension,
-// 			IsDeleted: file.IsDeleted,
-// 			CreatedAt: file.CreatedAt,
-// 			UpdatedAt: file.UpdatedAt,
-// 			DeletedAt: file.DeletedAt,
-// 		})
-// 	}
-
-// 	return output, nil
-// }
+	return output, nil
+}
 
 func MoveFile(file multipart.File, handler *multipart.FileHeader) (int64, string, int64, string, error) {
 	path := "upload/"
