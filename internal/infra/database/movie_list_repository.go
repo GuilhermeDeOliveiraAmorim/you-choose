@@ -57,7 +57,7 @@ func (movieListRepository *MovieListRepository) Update(movieList *entity.MovieLi
 		return err
 	}
 
-	_, err = stmt.Exec(movieList.Title, movieList.Description, movieList.Picture, movieList.IsDeleted, movieList.CreatedAt, movieList.UpdatedAt, movieList.DeletedAt)
+	_, err = stmt.Exec(movieList.Title, movieList.Description, movieList.Picture, movieList.IsDeleted, movieList.CreatedAt, movieList.UpdatedAt, movieList.DeletedAt, movieList.ID)
 	if err != nil {
 		return err
 	}

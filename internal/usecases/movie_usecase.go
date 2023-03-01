@@ -199,6 +199,11 @@ func (movieUseCase *MovieUseCase) Delete(input InputDeleteMovieDto) (OutputDelet
 	movie.IsDeleted = true
 	movie.DeletedAt = time.Now().Local().String()
 
+	err = movieUseCase.MovieRepository.Update(&movie)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
 	output.IsDeleted = movie.IsDeleted
 
 	return output, nil

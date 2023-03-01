@@ -142,7 +142,7 @@ func (movieListHandler *WebMovieListHandler) Delete(w http.ResponseWriter, r *ht
 		return
 	}
 
-	movieListId := r.URL.Query().Get("movieList_id")
+	movieListId := r.URL.Query().Get("movie_list_id")
 
 	input := usecases.InputDeleteMovieListDto{
 		MovieListId: movieListId,
@@ -176,7 +176,7 @@ func (movieListHandler *WebMovieListHandler) IsDeleted(w http.ResponseWriter, r 
 		return
 	}
 
-	movieListId := r.URL.Query().Get("movieList_id")
+	movieListId := r.URL.Query().Get("movie_list_id")
 
 	input := usecases.InputIsDeletedMovieListDto{
 		MovieListId: movieListId,
