@@ -37,20 +37,6 @@ func NewActor(name string) (*Actor, error) {
 	return actor, nil
 }
 
-func (actor *Actor) AddPicture(picture *File) {
-	actor.Picture = picture.Name
-	actor.Pictures = append(actor.Pictures, picture)
-}
-
-func (actor *Actor) RemovePicture(picture *File) {
-	for position, pictureInArray := range actor.Pictures {
-		if picture.ID == pictureInArray.ID {
-			actor.Pictures = append(actor.Pictures[:position], actor.Pictures[position+1:]...)
-			return
-		}
-	}
-}
-
 func (actor *Actor) Validate() (bool, error) {
 	inputs := make(map[string]string)
 

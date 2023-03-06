@@ -133,14 +133,16 @@ func NewWebGenreHandlerGen(db *sql.DB) *web.WebGenreHandler{
 func NewCreateTagUseCaseGen(db *sql.DB) *usecases.TagUseCase {
     tagRepository := database.NewTagRepository(db)
     movieListRepository := database.NewMovieListRepository(db)
-    TagUseCase := usecases.NewTagUseCase(tagRepository, movieListRepository)
+	fileRepository := database.NewFileRepository(db)
+    TagUseCase := usecases.NewTagUseCase(tagRepository, movieListRepository, fileRepository)
     return TagUseCase
 }
 
 func NewWebTagHandlerGen(db *sql.DB) *web.WebTagHandler{
     tagRepository := database.NewTagRepository(db)
     movieListRepository := database.NewMovieListRepository(db)
-    webTagHandler := web.NewTagHandler(tagRepository, movieListRepository)
+	fileRepository := database.NewFileRepository(db)
+    webTagHandler := web.NewTagHandler(tagRepository, movieListRepository, fileRepository)
     return webTagHandler
 }
 

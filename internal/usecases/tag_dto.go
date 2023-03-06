@@ -8,6 +8,7 @@ type TagDto struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	DeletedAt string `json:"deleted_at"`
+	File      FileDto `json:"file"`
 }
 
 type InputCreateTagDto struct {
@@ -72,4 +73,20 @@ type InputFindAllTagMovieListsDto struct {
 type OutputFindAllTagMovieListsDto struct {
 	Tag        TagDto         `json:"tag"`
 	MovieLists []MovieListDto `json:"movies"`
+}
+
+type InputAddPictureToTagDto struct {
+	TagId string             `json:"tag_id"`
+	File    InputCreateFileDto `json:"file"`
+}
+
+type OutputAddPictureToTagDto struct {
+	Tag TagDto `json:"tag"`
+}
+type InputFindTagPictureToBase64Dto struct {
+	TagId string `json:"tag_id"`
+}
+
+type OutputFindTagPictureToBase64Dto struct {
+	Tag TagDto `json:"tag"`
 }

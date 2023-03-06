@@ -103,6 +103,7 @@ func main() {
 	webserver.AddHandler("/tags/delete/tag", newWebTagHandler.Delete)
 	webserver.AddHandler("/tags/isdeleted/tag", newWebTagHandler.IsDeleted)
 	webserver.AddHandler("/tags/find/all/tags", newWebTagHandler.FindAll)
+	webserver.AddHandler("/tags/add/tag/picture", newWebTagHandler.AddPictureToTag)
 
 	webserver.AddHandler("/files/create/file", newWebFileHandler.Create)
 	webserver.AddHandler("/files/find/file", newWebFileHandler.Find)
