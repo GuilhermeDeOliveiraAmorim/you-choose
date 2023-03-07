@@ -105,14 +105,16 @@ func NewWebWriterHandlerGen(db *sql.DB) *web.WebWriterHandler{
 func NewCreateDirectorUseCaseGen(db *sql.DB) *usecases.DirectorUseCase {
     directorRepository := database.NewDirectorRepository(db)
     movieRepository := database.NewMovieRepository(db)
-    DirectorUseCase := usecases.NewDirectorUseCase(directorRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+    DirectorUseCase := usecases.NewDirectorUseCase(directorRepository, movieRepository, fileRepository)
     return DirectorUseCase
 }
 
 func NewWebDirectorHandlerGen(db *sql.DB) *web.WebDirectorHandler{
     directorRepository := database.NewDirectorRepository(db)
     movieRepository := database.NewMovieRepository(db)
-    webDirectorHandler := web.NewDirectorHandler(directorRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+    webDirectorHandler := web.NewDirectorHandler(directorRepository, movieRepository, fileRepository)
     return webDirectorHandler
 }
 

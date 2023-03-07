@@ -267,3 +267,73 @@ func (actorHandler *WebActorHandler) FindActorPictureToBase64(w http.ResponseWri
 		return
 	}
 }
+
+func (directorHandler *WebDirectorHandler) AddPictureToDirector(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	err := r.ParseMultipartForm(1 << 2)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var dto usecases.InputAddPictureToDirectorDto
+
+	dto.DirectorId = r.MultipartForm.Value["director_id"][0]
+	dto.File.File = file
+	dto.File.Handler = handler
+
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
+
+	directors, err := directorUseCase.AddPictureToDirector(dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(directors)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (directorHandler *WebDirectorHandler) FindDirectorPictureToBase64(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	directorId := r.URL.Query().Get("director_id")
+
+	input := usecases.InputFindDirectorPictureToBase64Dto{
+		DirectorId: directorId,
+	}
+
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
+
+	director, err := directorUseCase.FindDirectorPictureToBase64(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(director)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

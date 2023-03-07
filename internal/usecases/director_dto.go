@@ -7,7 +7,8 @@ type DirectorDto struct {
 	IsDeleted bool   `json:"is_deleted"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
-	DeletedAt string `json:"deleted_at"`
+	DeletedAt string  `json:"deleted_at"`
+	File      FileDto `json:"file"`
 }
 
 type InputCreateDirectorDto struct {
@@ -64,4 +65,21 @@ type InputFindAllDirectorMoviesDto struct {
 type OutputFindAllDirectorMoviesDto struct {
 	Director DirectorDto `json:"director"`
 	Movies   []MovieDto  `json:"movies"`
+}
+
+type InputAddPictureToDirectorDto struct {
+	DirectorId string             `json:"director_id"`
+	File    InputCreateFileDto `json:"file"`
+}
+
+type OutputAddPictureToDirectorDto struct {
+	Director DirectorDto `json:"director"`
+}
+
+type InputFindDirectorPictureToBase64Dto struct {
+	DirectorId string `json:"director_id"`
+}
+
+type OutputFindDirectorPictureToBase64Dto struct {
+	Director DirectorDto `json:"director"`
 }

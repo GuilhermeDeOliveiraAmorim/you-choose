@@ -328,7 +328,7 @@ func (tagUseCase *TagUseCase) FindTagPictureToBase64(input InputFindTagPictureTo
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

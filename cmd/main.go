@@ -89,6 +89,8 @@ func main() {
 	webserver.AddHandler("/directors/delete/director", newWebDirectorHandler.Delete)
 	webserver.AddHandler("/directors/isdeleted/director", newWebDirectorHandler.IsDeleted)
 	webserver.AddHandler("/directors/find/all/directors", newWebDirectorHandler.FindAll)
+	webserver.AddHandler("/directors/add/director/picture", newWebDirectorHandler.AddPictureToDirector)
+	webserver.AddHandler("/directors/find/director/picture", newWebDirectorHandler.FindDirectorPictureToBase64)
 
 	webserver.AddHandler("/genres/create/genre", newWebGenreHandler.Create)
 	webserver.AddHandler("/genres/find/genre", newWebGenreHandler.Find)

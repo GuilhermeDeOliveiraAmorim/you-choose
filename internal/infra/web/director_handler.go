@@ -12,12 +12,17 @@ import (
 type WebDirectorHandler struct {
 	DirectorRepository entity.DirectorRepositoryInterface
 	MovieRepository    entity.MovieRepositoryInterface
+	FileRepository  entity.FileRepositoryInterface
 }
 
-func NewDirectorHandler(directorRepository entity.DirectorRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *WebDirectorHandler {
+func NewDirectorHandler(
+	directorRepository entity.DirectorRepositoryInterface,
+	movieRepository entity.MovieRepositoryInterface,
+	fileRepository entity.FileRepositoryInterface) *WebDirectorHandler {
 	return &WebDirectorHandler{
 		DirectorRepository: directorRepository,
 		MovieRepository:    movieRepository,
+		FileRepository:  fileRepository,
 	}
 }
 
@@ -37,7 +42,7 @@ func (directorHandler *WebDirectorHandler) Create(w http.ResponseWriter, r *http
 		return
 	}
 
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
 
 	output, err := directorUseCase.Create(dto)
 	if err != nil {
@@ -66,7 +71,7 @@ func (directorHandler *WebDirectorHandler) Find(w http.ResponseWriter, r *http.R
 		DirectorId: directorId,
 	}
 
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
 
 	director, err := directorUseCase.Find(input)
 	if err != nil {
@@ -97,7 +102,7 @@ func (directorHandler *WebDirectorHandler) Update(w http.ResponseWriter, r *http
 		return
 	}
 
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
 
 	director, err := directorUseCase.Update(input)
 	if err != nil {
@@ -126,7 +131,7 @@ func (directorHandler *WebDirectorHandler) Delete(w http.ResponseWriter, r *http
 		DirectorId: directorId,
 	}
 
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
 
 	director, err := directorUseCase.Delete(input)
 	if err != nil {
@@ -155,7 +160,7 @@ func (directorHandler *WebDirectorHandler) IsDeleted(w http.ResponseWriter, r *h
 		DirectorId: directorId,
 	}
 
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
 
 	director, err := directorUseCase.IsDeleted(input)
 	if err != nil {
@@ -178,7 +183,7 @@ func (directorHandler *WebDirectorHandler) FindAll(w http.ResponseWriter, r *htt
 		return
 	}
 
-	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository)
+	directorUseCase := *usecases.NewDirectorUseCase(directorHandler.DirectorRepository, directorHandler.MovieRepository, directorHandler.FileRepository)
 
 	directors, err := directorUseCase.FindAll()
 	if err != nil {
