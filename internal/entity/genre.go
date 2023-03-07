@@ -17,12 +17,11 @@ type Genre struct {
 	DeletedAt string
 }
 
-func NewGenre(name string, picture string) (*Genre, error) {
+func NewGenre(name string) (*Genre, error) {
 	dateNow := time.Now()
 	genre := &Genre{
 		ID:        uuid.New().String(),
 		Name:      name,
-		Picture:   picture,
 		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
@@ -41,7 +40,6 @@ func (genre *Genre) Validate() (bool, error) {
 	inputs := make(map[string]string)
 
 	inputs["name"] = genre.Name
-	inputs["picture"] = genre.Picture
 
 	for key, value := range inputs {
 		if value == "" {

@@ -8,6 +8,7 @@ type WriterDto struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	DeletedAt string `json:"deleted_at"`
+	File      FileDto `json:"file"`
 }
 
 type InputCreateWriterDto struct {
@@ -64,4 +65,22 @@ type InputFindAllWriterMoviesDto struct {
 type OutputFindAllWriterMoviesDto struct {
 	Writer WriterDto  `json:"writer"`
 	Movies []MovieDto `json:"movies"`
+}
+
+
+type InputAddPictureToWriterDto struct {
+	WriterId string             `json:"writer_id"`
+	File    InputCreateFileDto `json:"file"`
+}
+
+type OutputAddPictureToWriterDto struct {
+	Writer WriterDto `json:"writer"`
+}
+
+type InputFindWriterPictureToBase64Dto struct {
+	WriterId string `json:"writer_id"`
+}
+
+type OutputFindWriterPictureToBase64Dto struct {
+	Writer WriterDto `json:"writer"`
 }

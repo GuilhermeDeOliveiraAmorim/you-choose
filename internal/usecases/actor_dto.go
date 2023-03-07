@@ -13,7 +13,6 @@ type ActorDto struct {
 
 type InputCreateActorDto struct {
 	Name    string `json:"name"`
-	Picture string `json:"picture"`
 }
 
 type OutputCreateActorDto struct {

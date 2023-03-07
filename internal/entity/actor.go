@@ -15,7 +15,6 @@ type Actor struct {
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
-	Pictures  []*File
 }
 
 func NewActor(name string) (*Actor, error) {

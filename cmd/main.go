@@ -98,6 +98,8 @@ func main() {
 	webserver.AddHandler("/genres/delete/genre", newWebGenreHandler.Delete)
 	webserver.AddHandler("/genres/isdeleted/genre", newWebGenreHandler.IsDeleted)
 	webserver.AddHandler("/genres/find/all/genres", newWebGenreHandler.FindAll)
+	webserver.AddHandler("/genres/add/genre/picture", newWebGenreHandler.AddPictureToGenre)
+	webserver.AddHandler("/genres/find/genre/picture", newWebGenreHandler.FindGenrePictureToBase64)
 
 	webserver.AddHandler("/tags/create/tag", newWebTagHandler.Create)
 	webserver.AddHandler("/tags/find/tag", newWebTagHandler.Find)

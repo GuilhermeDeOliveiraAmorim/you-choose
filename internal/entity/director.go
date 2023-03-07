@@ -17,12 +17,11 @@ type Director struct {
 	DeletedAt string
 }
 
-func NewDirector(name string, picture string) (*Director, error) {
+func NewDirector(name string) (*Director, error) {
 	dateNow := time.Now()
 	director := &Director{
 		ID:        uuid.New().String(),
 		Name:      name,
-		Picture:   picture,
 		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),
@@ -41,7 +40,6 @@ func (director *Director) Validate() (bool, error) {
 	inputs := make(map[string]string)
 
 	inputs["name"] = director.Name
-	inputs["picture"] = director.Picture
 
 	for key, value := range inputs {
 		if value == "" {

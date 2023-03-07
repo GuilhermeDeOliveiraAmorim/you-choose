@@ -121,14 +121,16 @@ func NewWebDirectorHandlerGen(db *sql.DB) *web.WebDirectorHandler{
 func NewCreateGenreUseCaseGen(db *sql.DB) *usecases.GenreUseCase {
     genreRepository := database.NewGenreRepository(db)
     movieRepository := database.NewMovieRepository(db)
-    GenreUseCase := usecases.NewGenreUseCase(genreRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+    GenreUseCase := usecases.NewGenreUseCase(genreRepository, movieRepository, fileRepository)
     return GenreUseCase
 }
 
 func NewWebGenreHandlerGen(db *sql.DB) *web.WebGenreHandler{
     genreRepository := database.NewGenreRepository(db)
     movieRepository := database.NewMovieRepository(db)
-    webGenreHandler := web.NewGenreHandler(genreRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+    webGenreHandler := web.NewGenreHandler(genreRepository, movieRepository, fileRepository)
     return webGenreHandler
 }
 

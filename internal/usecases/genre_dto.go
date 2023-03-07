@@ -8,11 +8,11 @@ type GenreDto struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 	DeletedAt string `json:"deleted_at"`
+	File      FileDto `json:"file"`
 }
 
 type InputCreateGenreDto struct {
 	Name    string `json:"name"`
-	Picture string `json:"picture"`
 }
 
 type OutputCreateGenreDto struct {
@@ -71,5 +71,23 @@ type InputFindGenreByNameDto struct {
 }
 
 type OutputFindGenreByNameDto struct {
+	Genre GenreDto `json:"genre"`
+}
+
+
+type InputAddPictureToGenreDto struct {
+	GenreId string             `json:"genre_id"`
+	File    InputCreateFileDto `json:"file"`
+}
+
+type OutputAddPictureToGenreDto struct {
+	Genre GenreDto `json:"genre"`
+}
+
+type InputFindGenrePictureToBase64Dto struct {
+	GenreId string `json:"genre_id"`
+}
+
+type OutputFindGenrePictureToBase64Dto struct {
 	Genre GenreDto `json:"genre"`
 }

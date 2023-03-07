@@ -29,7 +29,7 @@ func NewDirectorUseCase(
 func (directorUseCase *DirectorUseCase) Create(input InputCreateDirectorDto) (OutputCreateDirectorDto, error) {
 	output := OutputCreateDirectorDto{}
 
-	director, err := entity.NewDirector(input.Name, input.Picture)
+	director, err := entity.NewDirector(input.Name)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
