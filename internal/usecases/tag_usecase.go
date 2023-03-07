@@ -12,7 +12,7 @@ import (
 type TagUseCase struct {
 	TagRepository       entity.TagRepositoryInterface
 	MovieListRepository entity.MovieListRepositoryInterface
-	FileRepository  entity.FileRepositoryInterface
+	FileRepository      entity.FileRepositoryInterface
 }
 
 func NewTagUseCase(
@@ -22,7 +22,7 @@ func NewTagUseCase(
 	return &TagUseCase{
 		TagRepository:       tagRepository,
 		MovieListRepository: movieListRepository,
-		FileRepository: fileRepository,
+		FileRepository:      fileRepository,
 	}
 }
 
@@ -199,17 +199,17 @@ func (tagUseCase *TagUseCase) FindAll() (OutputFindAllTagDto, error) {
 		inputFindPicture := InputFindTagPictureToBase64Dto{
 			TagId: tag.ID,
 		}
-	
+
 		picture, err := tagUseCase.FindTagPictureToBase64(inputFindPicture)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}
-	
+
 		file, err := tagUseCase.FileRepository.Find(tag.Picture)
 		if err != nil {
 			return output, errors.New(err.Error())
 		}
-	
+
 		fileDto := FileDto{
 			ID:           file.ID,
 			EntityId:     file.EntityId,
@@ -231,7 +231,7 @@ func (tagUseCase *TagUseCase) FindAll() (OutputFindAllTagDto, error) {
 			CreatedAt: tag.CreatedAt,
 			UpdatedAt: tag.UpdatedAt,
 			DeletedAt: tag.DeletedAt,
-			File: fileDto,
+			File:      fileDto,
 		})
 	}
 
@@ -328,7 +328,7 @@ func (tagUseCase *TagUseCase) FindTagPictureToBase64(input InputFindTagPictureTo
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

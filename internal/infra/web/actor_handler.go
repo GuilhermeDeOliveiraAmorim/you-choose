@@ -267,4 +267,3 @@ func (actorHandler *WebActorHandler) FindActorPictureToBase64(w http.ResponseWri
 		return
 	}
 }
-
