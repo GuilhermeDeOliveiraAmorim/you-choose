@@ -2,6 +2,8 @@ package usecases
 
 import (
 	"errors"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -10,19 +12,24 @@ import (
 type WriterUseCase struct {
 	WriterRepository entity.WriterRepositoryInterface
 	MovieRepository  entity.MovieRepositoryInterface
+	FileRepository  entity.FileRepositoryInterface
 }
 
-func NewWriterUseCase(writerRepository entity.WriterRepositoryInterface, movieRepository entity.MovieRepositoryInterface) *WriterUseCase {
+func NewWriterUseCase(
+	writerRepository entity.WriterRepositoryInterface,
+	movieRepository entity.MovieRepositoryInterface,
+	fileRepository  entity.FileRepositoryInterface) *WriterUseCase {
 	return &WriterUseCase{
 		WriterRepository: writerRepository,
 		MovieRepository:  movieRepository,
+		FileRepository: fileRepository,
 	}
 }
 
 func (writerUseCase *WriterUseCase) Create(input InputCreateWriterDto) (OutputCreateWriterDto, error) {
 	output := OutputCreateWriterDto{}
 
-	writer, err := entity.NewWriter(input.Name, input.Picture)
+	writer, err := entity.NewWriter(input.Name)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -157,6 +164,93 @@ func (writerUseCase *WriterUseCase) FindAll() (OutputFindAllWriterDto, error) {
 			DeletedAt: writer.DeletedAt,
 		})
 	}
+
+	return output, nil
+}
+
+func (writerUseCase *WriterUseCase) AddPictureToWriter(input InputAddPictureToWriterDto) (OutputAddPictureToWriterDto, error) {
+	timeNow := time.Now().Local().String()
+	output := OutputAddPictureToWriterDto{}
+
+	writer, err := writerUseCase.WriterRepository.Find(input.WriterId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	extension := strings.Replace(filepath.Ext(input.File.Handler.Filename), ".", "", -1)
+	if strings.ToLower(extension) != "jpeg" && strings.ToLower(extension) != "jpg" {
+		return output, errors.New("format not allowed")
+	}
+
+	_, name, size, extension, err := MoveFile(input.File.File, input.File.Handler)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	colorAverage, err := PictureAverageColor(name, extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := entity.NewFile(name, writer.ID, size, extension, colorAverage)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if err := writerUseCase.FileRepository.Create(picture); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	writer.Picture = picture.ID
+
+	isValid, err := writer.Validate()
+	if !isValid {
+		return output, errors.New(err.Error())
+	}
+
+	writer.UpdatedAt = timeNow
+
+	err = writerUseCase.WriterRepository.Update(&writer)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Writer.ID = writer.ID
+	output.Writer.Name = writer.Name
+	output.Writer.Picture = writer.Picture
+	output.Writer.IsDeleted = writer.IsDeleted
+	output.Writer.CreatedAt = writer.CreatedAt
+	output.Writer.UpdatedAt = writer.UpdatedAt
+	output.Writer.DeletedAt = writer.DeletedAt
+
+	return output, nil
+}
+
+func (writerUseCase *WriterUseCase) FindWriterPictureToBase64(input InputFindWriterPictureToBase64Dto) (OutputFindWriterPictureToBase64Dto, error) {
+	output := OutputFindWriterPictureToBase64Dto{}
+
+	writer, err := writerUseCase.WriterRepository.Find(input.WriterId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := writerUseCase.FileRepository.Find(writer.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.Writer.ID = writer.ID
+	output.Writer.Name = writer.Name
+	output.Writer.Picture = pictureToBase64
+	output.Writer.IsDeleted = writer.IsDeleted
+	output.Writer.CreatedAt = writer.CreatedAt
+	output.Writer.UpdatedAt = writer.UpdatedAt
+	output.Writer.DeletedAt = writer.DeletedAt
 
 	return output, nil
 }

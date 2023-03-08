@@ -91,14 +91,16 @@ func NewWebActorHandlerGen(db *sql.DB) *web.WebActorHandler{
 func NewCreateWriterUseCaseGen(db *sql.DB) *usecases.WriterUseCase {
     writerRepository := database.NewWriterRepository(db)
     movieRepository := database.NewMovieRepository(db)
-    WriterUseCase := usecases.NewWriterUseCase(writerRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+    WriterUseCase := usecases.NewWriterUseCase(writerRepository, movieRepository, fileRepository)
     return WriterUseCase
 }
 
 func NewWebWriterHandlerGen(db *sql.DB) *web.WebWriterHandler{
     writerRepository := database.NewWriterRepository(db)
     movieRepository := database.NewMovieRepository(db)
-    webWriterHandler := web.NewWriterHandler(writerRepository, movieRepository)
+	fileRepository := database.NewFileRepository(db)
+    webWriterHandler := web.NewWriterHandler(writerRepository, movieRepository, fileRepository)
     return webWriterHandler
 }
 

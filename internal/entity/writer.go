@@ -17,12 +17,11 @@ type Writer struct {
 	DeletedAt string
 }
 
-func NewWriter(name string, picture string) (*Writer, error) {
+func NewWriter(name string) (*Writer, error) {
 	dateNow := time.Now()
 	writer := &Writer{
 		ID:        uuid.New().String(),
 		Name:      name,
-		Picture:   picture,
 		IsDeleted: false,
 		CreatedAt: dateNow.Local().String(),
 		UpdatedAt: dateNow.Local().String(),

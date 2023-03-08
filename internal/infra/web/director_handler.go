@@ -198,7 +198,6 @@ func (directorHandler *WebDirectorHandler) FindAll(w http.ResponseWriter, r *htt
 	}
 }
 
-
 func (directorHandler *WebDirectorHandler) AddPictureToDirector(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodPost
 	requestMethod := r.Method

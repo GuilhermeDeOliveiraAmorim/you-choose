@@ -13,7 +13,6 @@ type WriterDto struct {
 
 type InputCreateWriterDto struct {
 	Name    string `json:"name"`
-	Picture string `json:"picture"`
 }
 
 type OutputCreateWriterDto struct {

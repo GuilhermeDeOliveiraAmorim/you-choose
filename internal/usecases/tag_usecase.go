@@ -38,7 +38,7 @@ func (tagUseCase *TagUseCase) Create(input InputCreateTagDto) (OutputCreateTagDt
 		return output, errors.New("this tag already exists")
 	}
 
-	tag, err := entity.NewTag(input.Name, input.Picture)
+	tag, err := entity.NewTag(input.Name)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

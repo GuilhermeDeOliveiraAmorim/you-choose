@@ -82,6 +82,8 @@ func main() {
 	webserver.AddHandler("/writers/delete/writer", newWebWriterHandler.Delete)
 	webserver.AddHandler("/writers/isdeleted/writer", newWebWriterHandler.IsDeleted)
 	webserver.AddHandler("/writers/find/all/writers", newWebWriterHandler.FindAll)
+	webserver.AddHandler("/writers/add/writer/picture", newWebWriterHandler.AddPictureToWriter)
+	webserver.AddHandler("/writers/find/writer/picture", newWebWriterHandler.FindWriterPictureToBase64)
 
 	webserver.AddHandler("/directors/create/director", newWebDirectorHandler.Create)
 	webserver.AddHandler("/directors/find/director", newWebDirectorHandler.Find)

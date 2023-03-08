@@ -13,7 +13,6 @@ type TagDto struct {
 
 type InputCreateTagDto struct {
 	Name    string `json:"name"`
-	Picture string `json:"picture"`
 }
 
 type OutputCreateTagDto struct {
