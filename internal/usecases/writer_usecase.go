@@ -12,17 +12,17 @@ import (
 type WriterUseCase struct {
 	WriterRepository entity.WriterRepositoryInterface
 	MovieRepository  entity.MovieRepositoryInterface
-	FileRepository  entity.FileRepositoryInterface
+	FileRepository   entity.FileRepositoryInterface
 }
 
 func NewWriterUseCase(
 	writerRepository entity.WriterRepositoryInterface,
 	movieRepository entity.MovieRepositoryInterface,
-	fileRepository  entity.FileRepositoryInterface) *WriterUseCase {
+	fileRepository entity.FileRepositoryInterface) *WriterUseCase {
 	return &WriterUseCase{
 		WriterRepository: writerRepository,
 		MovieRepository:  movieRepository,
-		FileRepository: fileRepository,
+		FileRepository:   fileRepository,
 	}
 }
 
@@ -218,7 +218,7 @@ func (writerUseCase *WriterUseCase) FindAll() (OutputFindAllWriterDto, error) {
 			CreatedAt: writer.CreatedAt,
 			UpdatedAt: writer.UpdatedAt,
 			DeletedAt: writer.DeletedAt,
-			File: fileDto,
+			File:      fileDto,
 		})
 	}
 
@@ -296,7 +296,7 @@ func (writerUseCase *WriterUseCase) FindWriterPictureToBase64(input InputFindWri
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

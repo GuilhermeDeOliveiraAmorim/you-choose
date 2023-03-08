@@ -12,17 +12,17 @@ import (
 type DirectorUseCase struct {
 	DirectorRepository entity.DirectorRepositoryInterface
 	MovieRepository    entity.MovieRepositoryInterface
-	FileRepository  entity.FileRepositoryInterface
+	FileRepository     entity.FileRepositoryInterface
 }
 
 func NewDirectorUseCase(
 	directorRepository entity.DirectorRepositoryInterface,
 	movieRepository entity.MovieRepositoryInterface,
-	fileRepository  entity.FileRepositoryInterface) *DirectorUseCase {
+	fileRepository entity.FileRepositoryInterface) *DirectorUseCase {
 	return &DirectorUseCase{
 		DirectorRepository: directorRepository,
 		MovieRepository:    movieRepository,
-		FileRepository: fileRepository,
+		FileRepository:     fileRepository,
 	}
 }
 
@@ -219,7 +219,7 @@ func (directorUseCase *DirectorUseCase) FindAll() (OutputFindAllDirectorDto, err
 			CreatedAt: director.CreatedAt,
 			UpdatedAt: director.UpdatedAt,
 			DeletedAt: director.DeletedAt,
-			File: fileDto,
+			File:      fileDto,
 		})
 	}
 
@@ -297,7 +297,7 @@ func (directorUseCase *DirectorUseCase) FindDirectorPictureToBase64(input InputF
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

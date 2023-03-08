@@ -22,13 +22,13 @@ func NewMovieListUseCase(
 	chooserRepository entity.ChooserRepositoryInterface,
 	movieRepository entity.MovieRepositoryInterface,
 	tagRepository entity.TagRepositoryInterface,
-	fileRepository      entity.FileRepositoryInterface) *MovieListUseCase {
+	fileRepository entity.FileRepositoryInterface) *MovieListUseCase {
 	return &MovieListUseCase{
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
 		MovieRepository:     movieRepository,
 		TagRepository:       tagRepository,
-		FileRepository: fileRepository,
+		FileRepository:      fileRepository,
 	}
 }
 
@@ -504,7 +504,7 @@ func (movieListUseCase *MovieListUseCase) FindMovieListPictureToBase64(input Inp
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

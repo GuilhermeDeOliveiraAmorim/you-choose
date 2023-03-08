@@ -18,11 +18,11 @@ type GenreUseCase struct {
 func NewGenreUseCase(
 	genreRepository entity.GenreRepositoryInterface,
 	movieRepository entity.MovieRepositoryInterface,
-	fileRepository  entity.FileRepositoryInterface) *GenreUseCase {
+	fileRepository entity.FileRepositoryInterface) *GenreUseCase {
 	return &GenreUseCase{
 		GenreRepository: genreRepository,
 		MovieRepository: movieRepository,
-		FileRepository: fileRepository,
+		FileRepository:  fileRepository,
 	}
 }
 
@@ -228,7 +228,7 @@ func (genreUseCase *GenreUseCase) FindAll() (OutputFindAllGenreDto, error) {
 			CreatedAt: genre.CreatedAt,
 			UpdatedAt: genre.UpdatedAt,
 			DeletedAt: genre.DeletedAt,
-			File: fileDto,
+			File:      fileDto,
 		})
 	}
 
@@ -325,7 +325,7 @@ func (genreUseCase *GenreUseCase) FindGenrePictureToBase64(input InputFindGenreP
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
