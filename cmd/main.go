@@ -46,6 +46,8 @@ func main() {
 	webserver.AddHandler("/movielists/find/movielist/movies", newWebMovieListHandler.FindMovieListMovies)
 	webserver.AddHandler("/movielists/find/movielist/choosers", newWebMovieListHandler.FindMovieListChoosers)
 	webserver.AddHandler("/movielists/find/movielist/tags", newWebMovieListHandler.FindMovieListTags)
+	webserver.AddHandler("/movielists/add/movielist/picture", newWebMovieListHandler.AddPictureToMovieList)
+	webserver.AddHandler("/movielists/find/movielist/picture", newWebMovieListHandler.FindMovieListPictureToBase64)
 
 	webserver.AddHandler("/movies/create/movie", newWebMovieHandler.Create)
 	webserver.AddHandler("/movies/find/movie", newWebMovieHandler.Find)

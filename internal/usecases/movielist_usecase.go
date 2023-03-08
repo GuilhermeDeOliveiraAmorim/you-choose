@@ -2,6 +2,8 @@ package usecases
 
 import (
 	"errors"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
@@ -12,25 +14,28 @@ type MovieListUseCase struct {
 	ChooserRepository   entity.ChooserRepositoryInterface
 	MovieRepository     entity.MovieRepositoryInterface
 	TagRepository       entity.TagRepositoryInterface
+	FileRepository      entity.FileRepositoryInterface
 }
 
 func NewMovieListUseCase(
 	movieListRepository entity.MovieListRepositoryInterface,
 	chooserRepository entity.ChooserRepositoryInterface,
 	movieRepository entity.MovieRepositoryInterface,
-	tagRepository entity.TagRepositoryInterface) *MovieListUseCase {
+	tagRepository entity.TagRepositoryInterface,
+	fileRepository      entity.FileRepositoryInterface) *MovieListUseCase {
 	return &MovieListUseCase{
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
 		MovieRepository:     movieRepository,
 		TagRepository:       tagRepository,
+		FileRepository: fileRepository,
 	}
 }
 
 func (movieListUseCase *MovieListUseCase) Create(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
 	output := OutputCreateMovieListDto{}
 
-	movieList, err := entity.NewMovieList(input.Title, input.Description, input.Picture)
+	movieList, err := entity.NewMovieList(input.Title, input.Description)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
@@ -63,14 +68,42 @@ func (movieListUseCase *MovieListUseCase) Find(input InputFindMovieListDto) (Out
 		return output, errors.New("movie list not found")
 	}
 
+	inputFindPicture := InputFindMovieListPictureToBase64Dto{
+		MovieListId: movieList.ID,
+	}
+
+	picture, err := movieListUseCase.FindMovieListPictureToBase64(inputFindPicture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	file, err := movieListUseCase.FileRepository.Find(movieList.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	fileDto := FileDto{
+		ID:           file.ID,
+		EntityId:     file.EntityId,
+		Name:         file.Name,
+		Size:         file.Size,
+		Extension:    file.Extension,
+		AverageColor: file.AverageColor,
+		IsDeleted:    file.IsDeleted,
+		CreatedAt:    file.CreatedAt,
+		UpdatedAt:    file.UpdatedAt,
+		DeletedAt:    file.DeletedAt,
+	}
+
 	output.MovieList.ID = movieList.ID
 	output.MovieList.Title = movieList.Title
 	output.MovieList.Description = movieList.Description
-	output.MovieList.Picture = movieList.Picture
+	output.MovieList.Picture = picture.MovieList.Picture
 	output.MovieList.IsDeleted = movieList.IsDeleted
 	output.MovieList.CreatedAt = movieList.CreatedAt
 	output.MovieList.UpdatedAt = movieList.UpdatedAt
 	output.MovieList.DeletedAt = movieList.DeletedAt
+	output.MovieList.File = fileDto
 
 	choosersIds, err := movieListUseCase.MovieListRepository.FindMovieListChoosers(input.MovieListId)
 	if err != nil {
@@ -396,6 +429,93 @@ func (movieListUseCase *MovieListUseCase) FindMovieListTags(input InputFindMovie
 	output.MovieList.UpdatedAt = movieList.UpdatedAt
 	output.MovieList.DeletedAt = movieList.DeletedAt
 	output.MovieList.Tags = outputTags
+
+	return output, nil
+}
+
+func (movieListUseCase *MovieListUseCase) AddPictureToMovieList(input InputAddPictureToMovieListDto) (OutputAddPictureToMovieListDto, error) {
+	timeNow := time.Now().Local().String()
+	output := OutputAddPictureToMovieListDto{}
+
+	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	extension := strings.Replace(filepath.Ext(input.File.Handler.Filename), ".", "", -1)
+	if strings.ToLower(extension) != "jpeg" && strings.ToLower(extension) != "jpg" {
+		return output, errors.New("format not allowed")
+	}
+
+	_, name, size, extension, err := MoveFile(input.File.File, input.File.Handler)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	colorAverage, err := PictureAverageColor(name, extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := entity.NewFile(name, movieList.ID, size, extension, colorAverage)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	if err := movieListUseCase.FileRepository.Create(picture); err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	movieList.Picture = picture.ID
+
+	isValid, err := movieList.Validate()
+	if !isValid {
+		return output, errors.New(err.Error())
+	}
+
+	movieList.UpdatedAt = timeNow
+
+	err = movieListUseCase.MovieListRepository.Update(&movieList)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Picture = movieList.Picture
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = movieList.UpdatedAt
+	output.MovieList.DeletedAt = movieList.DeletedAt
+
+	return output, nil
+}
+
+func (movieListUseCase *MovieListUseCase) FindMovieListPictureToBase64(input InputFindMovieListPictureToBase64Dto) (OutputFindMovieListPictureToBase64Dto, error) {
+	output := OutputFindMovieListPictureToBase64Dto{}
+
+	movieList, err := movieListUseCase.MovieListRepository.Find(input.MovieListId)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	picture, err := movieListUseCase.FileRepository.Find(movieList.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	pictureToBase64, err := PictureToBase64("/home/guilherme/Workspace/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	output.MovieList.ID = movieList.ID
+	output.MovieList.Title = movieList.Title
+	output.MovieList.Picture = pictureToBase64
+	output.MovieList.IsDeleted = movieList.IsDeleted
+	output.MovieList.CreatedAt = movieList.CreatedAt
+	output.MovieList.UpdatedAt = movieList.UpdatedAt
+	output.MovieList.DeletedAt = movieList.DeletedAt
 
 	return output, nil
 }

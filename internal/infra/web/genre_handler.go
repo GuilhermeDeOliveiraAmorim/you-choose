@@ -199,7 +199,6 @@ func (genreHandler *WebGenreHandler) FindAll(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-
 func (genreHandler *WebGenreHandler) AddPictureToGenre(w http.ResponseWriter, r *http.Request) {
 	handlerMethod := http.MethodPost
 	requestMethod := r.Method

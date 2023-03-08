@@ -12,6 +12,7 @@ type MovieListDto struct {
 	Choosers    []ChooserDto `json:"choosers"`
 	Movies      []MovieDto   `json:"movies"`
 	Tags        []TagDto     `json:"tags"`
+	File FileDto `json:"file"`
 }
 
 type InputCreateMovieListDto struct {
@@ -84,5 +85,22 @@ type InputFindMovieListTagsDto struct {
 }
 
 type OutputFindMovieListTagsDto struct {
+	MovieList MovieListDto `json:"movie_list"`
+}
+
+
+type InputAddPictureToMovieListDto struct {
+	MovieListId string             `json:"movie_list_id"`
+	File    InputCreateFileDto `json:"file"`
+}
+
+type OutputAddPictureToMovieListDto struct {
+	MovieList MovieListDto `json:"movie_list"`
+}
+type InputFindMovieListPictureToBase64Dto struct {
+	MovieListId string `json:"movie_list_id"`
+}
+
+type OutputFindMovieListPictureToBase64Dto struct {
 	MovieList MovieListDto `json:"movie_list"`
 }

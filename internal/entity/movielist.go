@@ -20,13 +20,12 @@ type MovieList struct {
 	Movies      []*Movie
 }
 
-func NewMovieList(title string, description string, picture string) (*MovieList, error) {
+func NewMovieList(title string, description string) (*MovieList, error) {
 	dateNow := time.Now()
 	movieList := &MovieList{
 		ID:          uuid.New().String(),
 		Title:       title,
 		Description: description,
-		Picture:     picture,
 		IsDeleted:   false,
 		CreatedAt:   dateNow.Local().String(),
 		UpdatedAt:   dateNow.Local().String(),
@@ -72,7 +71,6 @@ func (movieList *MovieList) Validate() (bool, error) {
 
 	inputs["title"] = movieList.Title
 	inputs["description"] = movieList.Description
-	inputs["picture"] = movieList.Picture
 
 	for key, value := range inputs {
 		if value == "" {

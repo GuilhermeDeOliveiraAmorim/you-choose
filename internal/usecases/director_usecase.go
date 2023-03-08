@@ -57,13 +57,41 @@ func (directorUseCase *DirectorUseCase) Find(input InputFindDirectorDto) (Output
 		return output, errors.New(err.Error())
 	}
 
+	inputFindPicture := InputFindDirectorPictureToBase64Dto{
+		DirectorId: director.ID,
+	}
+
+	picture, err := directorUseCase.FindDirectorPictureToBase64(inputFindPicture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	file, err := directorUseCase.FileRepository.Find(director.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	fileDto := FileDto{
+		ID:           file.ID,
+		EntityId:     file.EntityId,
+		Name:         file.Name,
+		Size:         file.Size,
+		Extension:    file.Extension,
+		AverageColor: file.AverageColor,
+		IsDeleted:    file.IsDeleted,
+		CreatedAt:    file.CreatedAt,
+		UpdatedAt:    file.UpdatedAt,
+		DeletedAt:    file.DeletedAt,
+	}
+
 	output.Director.ID = director.ID
 	output.Director.Name = director.Name
-	output.Director.Picture = director.Picture
+	output.Director.Picture = picture.Director.Picture
 	output.Director.IsDeleted = director.IsDeleted
 	output.Director.CreatedAt = director.CreatedAt
 	output.Director.UpdatedAt = director.UpdatedAt
 	output.Director.DeletedAt = director.DeletedAt
+	output.Director.File = fileDto
 
 	return output, nil
 }

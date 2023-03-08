@@ -57,13 +57,41 @@ func (writerUseCase *WriterUseCase) Find(input InputFindWriterDto) (OutputFindWr
 		return output, errors.New(err.Error())
 	}
 
+	inputFindPicture := InputFindWriterPictureToBase64Dto{
+		WriterId: writer.ID,
+	}
+
+	picture, err := writerUseCase.FindWriterPictureToBase64(inputFindPicture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	file, err := writerUseCase.FileRepository.Find(writer.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	fileDto := FileDto{
+		ID:           file.ID,
+		EntityId:     file.EntityId,
+		Name:         file.Name,
+		Size:         file.Size,
+		Extension:    file.Extension,
+		AverageColor: file.AverageColor,
+		IsDeleted:    file.IsDeleted,
+		CreatedAt:    file.CreatedAt,
+		UpdatedAt:    file.UpdatedAt,
+		DeletedAt:    file.DeletedAt,
+	}
+
 	output.Writer.ID = writer.ID
 	output.Writer.Name = writer.Name
-	output.Writer.Picture = writer.Picture
+	output.Writer.Picture = picture.Writer.Picture
 	output.Writer.IsDeleted = writer.IsDeleted
 	output.Writer.CreatedAt = writer.CreatedAt
 	output.Writer.UpdatedAt = writer.UpdatedAt
 	output.Writer.DeletedAt = writer.DeletedAt
+	output.Writer.File = fileDto
 
 	return output, nil
 }
@@ -154,14 +182,43 @@ func (writerUseCase *WriterUseCase) FindAll() (OutputFindAllWriterDto, error) {
 	}
 
 	for _, writer := range writers {
+
+		inputFindPicture := InputFindWriterPictureToBase64Dto{
+			WriterId: writer.ID,
+		}
+
+		picture, err := writerUseCase.FindWriterPictureToBase64(inputFindPicture)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		file, err := writerUseCase.FileRepository.Find(writer.Picture)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		fileDto := FileDto{
+			ID:           file.ID,
+			EntityId:     file.EntityId,
+			Name:         file.Name,
+			Size:         file.Size,
+			Extension:    file.Extension,
+			AverageColor: file.AverageColor,
+			IsDeleted:    file.IsDeleted,
+			CreatedAt:    file.CreatedAt,
+			UpdatedAt:    file.UpdatedAt,
+			DeletedAt:    file.DeletedAt,
+		}
+
 		output.Writers = append(output.Writers, WriterDto{
 			ID:        writer.ID,
 			Name:      writer.Name,
-			Picture:   writer.Picture,
+			Picture:   picture.Writer.Picture,
 			IsDeleted: writer.IsDeleted,
 			CreatedAt: writer.CreatedAt,
 			UpdatedAt: writer.UpdatedAt,
 			DeletedAt: writer.DeletedAt,
+			File: fileDto,
 		})
 	}
 

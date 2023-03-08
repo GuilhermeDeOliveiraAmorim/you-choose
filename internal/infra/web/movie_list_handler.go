@@ -13,18 +13,21 @@ type WebMovieListHandler struct {
 	ChooserRepository   entity.ChooserRepositoryInterface
 	MovieRepository     entity.MovieRepositoryInterface
 	TagRepository       entity.TagRepositoryInterface
+	FileRepository  entity.FileRepositoryInterface
 }
 
 func NewMovieListHandler(
 	movieListRepository entity.MovieListRepositoryInterface,
 	chooserRepository entity.ChooserRepositoryInterface,
 	movieRepository entity.MovieRepositoryInterface,
-	tagRepository entity.TagRepositoryInterface) *WebMovieListHandler {
+	tagRepository entity.TagRepositoryInterface,
+	fileRepository  entity.FileRepositoryInterface) *WebMovieListHandler {
 	return &WebMovieListHandler{
 		MovieListRepository: movieListRepository,
 		ChooserRepository:   chooserRepository,
 		MovieRepository:     movieRepository,
 		TagRepository:       tagRepository,
+		FileRepository: fileRepository,
 	}
 }
 
@@ -49,6 +52,7 @@ func (movieListHandler *WebMovieListHandler) Create(w http.ResponseWriter, r *ht
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	output, err := movieListUseCase.Create(dto)
@@ -83,6 +87,7 @@ func (movieListHandler *WebMovieListHandler) Find(w http.ResponseWriter, r *http
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	movieList, err := movieListUseCase.Find(input)
@@ -119,6 +124,7 @@ func (movieListHandler *WebMovieListHandler) Update(w http.ResponseWriter, r *ht
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	movielist, err := movieListUseCase.Update(input)
@@ -153,6 +159,7 @@ func (movieListHandler *WebMovieListHandler) Delete(w http.ResponseWriter, r *ht
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	movieList, err := movieListUseCase.Delete(input)
@@ -187,6 +194,7 @@ func (movieListHandler *WebMovieListHandler) IsDeleted(w http.ResponseWriter, r 
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	movieList, err := movieListUseCase.IsDeleted(input)
@@ -215,6 +223,7 @@ func (movieListHandler *WebMovieListHandler) FindAll(w http.ResponseWriter, r *h
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	movieLists, err := movieListUseCase.FindAll()
@@ -249,6 +258,7 @@ func (movieListHandler *WebMovieListHandler) FindMovieListMovies(w http.Response
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	output, err := movieListUseCase.FindMovieListMovies(input)
@@ -283,6 +293,7 @@ func (movieListHandler *WebMovieListHandler) FindMovieListChoosers(w http.Respon
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	output, err := movieListUseCase.FindMovieListChoosers(input)
@@ -317,6 +328,7 @@ func (movieListHandler *WebMovieListHandler) FindMovieListTags(w http.ResponseWr
 		movieListHandler.ChooserRepository,
 		movieListHandler.MovieRepository,
 		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
 	)
 
 	output, err := movieListUseCase.FindMovieListTags(input)
@@ -326,6 +338,88 @@ func (movieListHandler *WebMovieListHandler) FindMovieListTags(w http.ResponseWr
 	}
 
 	err = json.NewEncoder(w).Encode(output)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (movieListHandler *WebMovieListHandler) AddPictureToMovieList(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodPost
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	err := r.ParseMultipartForm(1 << 2)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	file, handler, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var dto usecases.InputAddPictureToMovieListDto
+
+	dto.MovieListId = r.MultipartForm.Value["movie_list_id"][0]
+	dto.File.File = file
+	dto.File.Handler = handler
+	
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
+	)
+
+	movieList, err := movieListUseCase.AddPictureToMovieList(dto)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movieList)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (movieListHandler *WebMovieListHandler) FindMovieListPictureToBase64(w http.ResponseWriter, r *http.Request) {
+	handlerMethod := http.MethodGet
+	requestMethod := r.Method
+	if handlerMethod != requestMethod {
+		http.Error(w, requestMethod+" method not allowed", http.StatusInternalServerError)
+		return
+	}
+
+	movieListId := r.URL.Query().Get("movie_list_id")
+
+	input := usecases.InputFindMovieListPictureToBase64Dto{
+		MovieListId: movieListId,
+	}
+	
+	movieListUseCase := *usecases.NewMovieListUseCase(
+		movieListHandler.MovieListRepository,
+		movieListHandler.ChooserRepository,
+		movieListHandler.MovieRepository,
+		movieListHandler.TagRepository,
+		movieListHandler.FileRepository,
+	)
+	
+	movieList, err := movieListUseCase.FindMovieListPictureToBase64(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(movieList)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

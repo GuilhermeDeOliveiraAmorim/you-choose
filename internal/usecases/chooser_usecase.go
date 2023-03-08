@@ -177,7 +177,7 @@ func (chooserUseCase *ChooserUseCase) FindAll() (OutputFindAllChooserDto, error)
 func (chooserUseCase *ChooserUseCase) CreateMovieList(input InputCreateMovieListDto) (OutputCreateMovieListDto, error) {
 	output := OutputCreateMovieListDto{}
 
-	movieList, err := entity.NewMovieList(input.Title, input.Description, input.Picture)
+	movieList, err := entity.NewMovieList(input.Title, input.Description)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}

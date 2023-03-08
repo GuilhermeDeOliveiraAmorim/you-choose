@@ -66,13 +66,41 @@ func (genreUseCase *GenreUseCase) Find(input InputFindGenreDto) (OutputFindGenre
 		return output, errors.New(err.Error())
 	}
 
+	inputFindPicture := InputFindGenrePictureToBase64Dto{
+		GenreId: genre.ID,
+	}
+
+	picture, err := genreUseCase.FindGenrePictureToBase64(inputFindPicture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	file, err := genreUseCase.FileRepository.Find(genre.Picture)
+	if err != nil {
+		return output, errors.New(err.Error())
+	}
+
+	fileDto := FileDto{
+		ID:           file.ID,
+		EntityId:     file.EntityId,
+		Name:         file.Name,
+		Size:         file.Size,
+		Extension:    file.Extension,
+		AverageColor: file.AverageColor,
+		IsDeleted:    file.IsDeleted,
+		CreatedAt:    file.CreatedAt,
+		UpdatedAt:    file.UpdatedAt,
+		DeletedAt:    file.DeletedAt,
+	}
+
 	output.Genre.ID = genre.ID
 	output.Genre.Name = genre.Name
-	output.Genre.Picture = genre.Picture
+	output.Genre.Picture = picture.Genre.Picture
 	output.Genre.IsDeleted = genre.IsDeleted
 	output.Genre.CreatedAt = genre.CreatedAt
 	output.Genre.UpdatedAt = genre.UpdatedAt
 	output.Genre.DeletedAt = genre.DeletedAt
+	output.Genre.File = fileDto
 
 	return output, nil
 }
@@ -164,14 +192,43 @@ func (genreUseCase *GenreUseCase) FindAll() (OutputFindAllGenreDto, error) {
 	}
 
 	for _, genre := range genres {
+
+		inputFindPicture := InputFindGenrePictureToBase64Dto{
+			GenreId: genre.ID,
+		}
+
+		picture, err := genreUseCase.FindGenrePictureToBase64(inputFindPicture)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		file, err := genreUseCase.FileRepository.Find(genre.Picture)
+		if err != nil {
+			return output, errors.New(err.Error())
+		}
+
+		fileDto := FileDto{
+			ID:           file.ID,
+			EntityId:     file.EntityId,
+			Name:         file.Name,
+			Size:         file.Size,
+			Extension:    file.Extension,
+			AverageColor: file.AverageColor,
+			IsDeleted:    file.IsDeleted,
+			CreatedAt:    file.CreatedAt,
+			UpdatedAt:    file.UpdatedAt,
+			DeletedAt:    file.DeletedAt,
+		}
+
 		output.Genres = append(output.Genres, GenreDto{
 			ID:        genre.ID,
 			Name:      genre.Name,
-			Picture:   genre.Picture,
+			Picture:   picture.Genre.Picture,
 			IsDeleted: genre.IsDeleted,
 			CreatedAt: genre.CreatedAt,
 			UpdatedAt: genre.UpdatedAt,
 			DeletedAt: genre.DeletedAt,
+			File: fileDto,
 		})
 	}
 
