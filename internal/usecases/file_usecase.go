@@ -21,6 +21,8 @@ import (
 	"github.com/google/uuid"
 )
 
+var dotenv = goDotEnvVariable("PICTURES")
+
 type FileUseCase struct {
 	FileRepository entity.FileRepositoryInterface
 }
@@ -210,7 +212,7 @@ func PictureToBase64(path string, name string, extension string) (string, error)
 }
 
 func PictureAverageColor(name string, extension string) (string, error) {
-	file, err := os.Open("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/" + name + "." + extension)
+	file, err := os.Open(dotenv + name + "." + extension)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -8,7 +8,6 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entity"
 )
-
 type DirectorUseCase struct {
 	DirectorRepository entity.DirectorRepositoryInterface
 	MovieRepository    entity.MovieRepositoryInterface
@@ -297,7 +296,7 @@ func (directorUseCase *DirectorUseCase) FindDirectorPictureToBase64(input InputF
 		return output, errors.New(err.Error())
 	}
 
-	pictureToBase64, err := PictureToBase64("/home/guilhermeamorim/Workspace/estudo/you-choose/cmd/upload/", picture.Name, picture.Extension)
+	pictureToBase64, err := PictureToBase64(dotenv, picture.Name, picture.Extension)
 	if err != nil {
 		return output, errors.New(err.Error())
 	}
