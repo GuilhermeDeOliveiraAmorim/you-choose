@@ -1,0 +1,31 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API for managing expenses.",
+        "title": "Chef Click API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Chef Click",
+            "url": "http://www.chefclick.com.br",
+            "email": "contato@chefclick.com.br"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {},
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

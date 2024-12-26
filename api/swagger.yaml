@@ -1,0 +1,23 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: contato@chefclick.com.br
+    name: Chef Click
+    url: http://www.chefclick.com.br
+  description: This is an API for managing expenses.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Chef Click API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

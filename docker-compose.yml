@@ -1,0 +1,31 @@
+version: "3"
+services:
+  youchoose:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    container_name: youchoose
+    hostname: youchoose
+    env_file:
+      - .env
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+    networks:
+      - you-choose
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - youchoose
+    networks:
+      - you-choose
+
+volumes:
+  postgres_volume:
+
+networks:
+  you-choose:
