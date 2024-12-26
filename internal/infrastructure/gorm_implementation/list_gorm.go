@@ -45,3 +45,22 @@ func (c *ListRepository) CreateList(list entities.List) error {
 
 	return tx.Commit().Error
 }
+
+func (c *ListRepository) AddMovies(list entities.List) error {
+	tx := c.gorm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	for _, movie := range list.Movies {
+		if err := tx.Exec("INSERT INTO list_tags (lists_id, tags_id) VALUES (?, ?)", list.ID, movie.ID).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return nil
+}
