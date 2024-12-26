@@ -4,16 +4,21 @@ import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 
 type Movie struct {
 	SharedEntity
-	Name   string `json:"name"`
-	Year   int64  `json:"year"`
-	Poster string `json:"poster"`
+	Name       string `json:"name"`
+	Year       int64  `json:"year"`
+	Poster     string `json:"poster"`
+	ExternalID string `json:"external_id"`
 }
 
-func NewMovie(name string, year int64, poster string) (*Movie, []util.ProblemDetails) {
+func NewMovie(name string, year int64, externalID string) (*Movie, []util.ProblemDetails) {
 	return &Movie{
 		SharedEntity: *NewSharedEntity(),
 		Name:         name,
 		Year:         year,
-		Poster:       poster,
+		ExternalID:   externalID,
 	}, nil
+}
+
+func (m *Movie) UpdatePoster(poster string) {
+	m.Poster = poster
 }
