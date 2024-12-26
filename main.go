@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/gorm"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/gorm_implementation"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -39,7 +39,7 @@ func main() {
 	}
 	fmt.Println("Successful connection")
 
-	gorm.Migration(db, sqlDB)
+	gorm_implementation.Migration(db, sqlDB)
 
 	r := gin.Default()
 
