@@ -7,5 +7,6 @@ type MovieRepository interface {
 	GetMovieByID(movieID string) (entities.Movie, error)
 	ThisMovieExist(movieExternalID string) (bool, error)
 	GetMovies() ([]entities.Movie, error)
+	GetMoviesByID(moviesIDs []string) ([]entities.Movie, error)
 	SavePoster(poster string) (string, error)
 }
