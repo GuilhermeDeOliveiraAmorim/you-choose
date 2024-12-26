@@ -16,6 +16,7 @@ type Lists struct {
 	UpdatedAt     time.Time  `gorm:"not null"`
 	DeactivatedAt *time.Time `gorm:"default:NULL"`
 	Name          string     `gorm:"not null"`
+	Movies        []Movies   `gorm:"many2many:list_movies;"`
 	Votes         []Votes    `gorm:"foreignKey:ListID"`
 }
 
@@ -43,6 +44,7 @@ type Movies struct {
 	Year          int64      `gorm:"not null"`
 	Poster        string     `gorm:"not null"`
 	ExternalID    string     `gorm:"not null"`
+	Lists         []Lists    `gorm:"many2many:list_movies;"`
 	FirstVotes    []Votes    `gorm:"foreignKey:FirstMovieID"`
 	SecondVotes   []Votes    `gorm:"foreignKey:SecondMovieID"`
 	WinnerVotes   []Votes    `gorm:"foreignKey:WinnerID"`
@@ -62,6 +64,15 @@ func (m *Movies) ToEntity() *entities.Movie {
 		Poster:     m.Poster,
 		ExternalID: m.ExternalID,
 	}
+}
+
+type ListMovies struct {
+	ListID        string     `gorm:"primaryKey"`
+	List          Lists      `gorm:"foreignKey:ListID"`
+	MovieID       string     `gorm:"primaryKey"`
+	Movie         Movies     `gorm:"foreignKey:MovieID"`
+	CreatedAt     time.Time  `gorm:"not null"`
+	DeactivatedAt *time.Time `gorm:"default:NULL"`
 }
 
 type Votes struct {
@@ -100,6 +111,7 @@ func Migration(db *gorm.DB, sqlDB *sql.DB) {
 	if err := db.AutoMigrate(
 		Lists{},
 		Movies{},
+		ListMovies{},
 		Votes{},
 	); err != nil {
 		fmt.Println("Error during migration:", err)

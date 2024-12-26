@@ -5,12 +5,12 @@
     "swagger": "2.0",
     "info": {
         "description": "This is an API for managing expenses.",
-        "title": "Chef Click API",
+        "title": "You Choose API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "Chef Click",
-            "url": "http://www.chefclick.com.br",
-            "email": "contato@chefclick.com.br"
+            "name": "You Choose",
+            "url": "http://www.youchoose.com.br",
+            "email": "contato@youchoose.com.br"
         },
         "license": {
             "name": "Apache 2.0",

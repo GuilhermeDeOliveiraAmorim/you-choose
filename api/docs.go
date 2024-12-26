@@ -11,9 +11,9 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
-            "name": "Chef Click",
-            "url": "http://www.chefclick.com.br",
-            "email": "contato@chefclick.com.br"
+            "name": "You Choose",
+            "url": "http://www.youchoose.com.br",
+            "email": "contato@youchoose.com.br"
         },
         "license": {
             "name": "Apache 2.0",
@@ -39,10 +39,12 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
-	Title:            "Chef Click API",
+	Title:            "You Choose API",
 	Description:      "This is an API for managing expenses.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {
