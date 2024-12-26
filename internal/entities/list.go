@@ -15,6 +15,6 @@ func NewList(name string) (*List, []util.ProblemDetails) {
 	}, nil
 }
 
-func (l *List) AddMovie(movies []Movie) {
+func (l *List) AddMovies(movies []Movie) {
 	l.Movies = append(l.Movies, movies...)
 }

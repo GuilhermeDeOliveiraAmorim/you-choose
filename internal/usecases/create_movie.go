@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"strings"
+
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
@@ -31,6 +33,31 @@ func NewCreateMovieUseCase(
 }
 
 func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutputDTO, []util.ProblemDetails) {
+	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.ExternalID)
+	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
+		return CreateMovieOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error fetching existing movie",
+				Status:   500,
+				Detail:   errThisMovieExist.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
+	if movieExists {
+		return CreateMovieOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Validation Error",
+				Title:    "Conflict",
+				Status:   409,
+				Detail:   "A movie with the same external ID already exists.",
+				Instance: util.RFC409,
+			},
+		}
+	}
+
 	movie, problems := entities.NewMovie(
 		input.Name,
 		input.Year,
@@ -45,10 +72,10 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 	if errSavePoster != nil {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
-				Type:     "https://httpstatuses.com/500",
-				Title:    "Internal Server Error",
+				Type:     "Internal Server Error",
+				Title:    "Error saving poster",
 				Status:   500,
-				Detail:   "An unexpected error occurred while saving the poster.",
+				Detail:   errSavePoster.Error(),
 				Instance: util.RFC500,
 			},
 		}
@@ -60,10 +87,10 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 	if errCreateMovie != nil {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
-				Type:     "https://httpstatuses.com/500",
-				Title:    "Internal Server Error",
+				Type:     "Internal Server Error",
+				Title:    "Error creating movie",
 				Status:   500,
-				Detail:   "An unexpected error occurred while creating the movie.",
+				Detail:   errCreateMovie.Error(),
 				Instance: util.RFC500,
 			},
 		}
