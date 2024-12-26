@@ -31,7 +31,7 @@ func NewCreateListUseCase(
 }
 
 func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []util.ProblemDetails) {
-	listExists, errThisListExist := u.ListRepository.ThisListExist(input.Name)
+	listExists, errThisListExist := u.ListRepository.ThisListExistByName(input.Name)
 	if errThisListExist != nil && strings.Compare(errThisListExist.Error(), "list not found") > 0 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
