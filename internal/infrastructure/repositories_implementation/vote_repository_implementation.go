@@ -1,21 +1,21 @@
-package gorm_implementation
+package repositories_implementation
 
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"gorm.io/gorm"
 )
 
-type MovieRepository struct {
+type VoteRepository struct {
 	gorm *gorm.DB
 }
 
-func NewMovieRepository(gorm *gorm.DB) *MovieRepository {
-	return &MovieRepository{
+func NewVoteRepository(gorm *gorm.DB) *VoteRepository {
+	return &VoteRepository{
 		gorm: gorm,
 	}
 }
 
-func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
+func (c *VoteRepository) CreateVote(movie entities.Vote) error {
 	tx := c.gorm.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -24,16 +24,16 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 		}
 	}()
 
-	if err := tx.Create(&Movies{
+	if err := tx.Create(&Votes{
 		ID:            movie.ID,
 		Active:        movie.Active,
 		CreatedAt:     movie.CreatedAt,
 		UpdatedAt:     movie.UpdatedAt,
 		DeactivatedAt: movie.DeactivatedAt,
-		Name:          movie.Name,
-		Year:          movie.Year,
-		Poster:        movie.Poster,
-		ExternalID:    movie.ExternalID,
+		ListID:        movie.ListID,
+		FirstMovieID:  movie.FirstMovieID,
+		SecondMovieID: movie.SecondMovieID,
+		WinnerID:      movie.WinnerID,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err

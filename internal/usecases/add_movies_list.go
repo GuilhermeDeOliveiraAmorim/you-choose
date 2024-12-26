@@ -68,7 +68,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, problems
 	}
 
-	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByID(input.Movies)
+	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies)
 	if errGetMoviesByID != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
