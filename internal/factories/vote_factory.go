@@ -7,7 +7,7 @@ import (
 )
 
 type VoteFactory struct {
-	CreateVote *usecases.VoteUseCase
+	Vote *usecases.VoteUseCase
 }
 
 func NewVoteFactory(db *gorm.DB) *VoteFactory {
@@ -18,6 +18,6 @@ func NewVoteFactory(db *gorm.DB) *VoteFactory {
 	createVote := usecases.NewVoteUseCase(voteResository, listRepository, movieResository)
 
 	return &VoteFactory{
-		CreateVote: createVote,
+		Vote: createVote,
 	}
 }

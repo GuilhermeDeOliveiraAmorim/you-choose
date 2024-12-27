@@ -1,21 +1,23 @@
 package entities
 
-import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+import (
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+)
 
 type Vote struct {
 	SharedEntity
+	UserID        string `json:"user_id"`
+	CombinationID string `json:"combination_id"`
 	ListID        string `json:"list_id"`
-	FirstMovieID  string `json:"first_movie_id"`
-	SecondMovieID string `json:"second_movie_id"`
 	WinnerID      string `json:"winner_id"`
 }
 
-func NewVote(listID, firstMovieID, secondMovieID, winnerID string) (*Vote, []util.ProblemDetails) {
+func NewVote(userID, combinationID, listID, winnerID string) (*Vote, []util.ProblemDetails) {
 	return &Vote{
 		SharedEntity:  *NewSharedEntity(),
+		UserID:        userID,
+		CombinationID: combinationID,
 		ListID:        listID,
-		FirstMovieID:  firstMovieID,
-		SecondMovieID: secondMovieID,
 		WinnerID:      winnerID,
 	}, nil
 }

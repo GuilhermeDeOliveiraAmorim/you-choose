@@ -2,6 +2,7 @@ package repositories_implementation
 
 import (
 	"errors"
+	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"gorm.io/gorm"
@@ -39,7 +40,14 @@ func (c *ListRepository) CreateList(list entities.List) error {
 	}
 
 	for _, movie := range list.Movies {
-		if err := tx.Exec("INSERT INTO list_tags (lists_id, tags_id) VALUES (?, ?)", list.ID, movie.ID).Error; err != nil {
+		if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, movie.ID, time.Now()).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	for _, combination := range list.Combinations {
+		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_movie_id, second_movie_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstMovieID, combination.SecondMovieID).Error; err != nil {
 			tx.Rollback()
 			return err
 		}
@@ -51,22 +59,26 @@ func (c *ListRepository) CreateList(list entities.List) error {
 func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 	var listModel Lists
 
-	result := c.gorm.Model(&Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	resultListModel := c.gorm.Model(&Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
+	if resultListModel.Error != nil {
+		if errors.Is(resultListModel.Error, gorm.ErrRecordNotFound) {
 			return entities.List{}, errors.New("list not found")
 		}
-		return entities.List{}, errors.New(result.Error.Error())
+		return entities.List{}, errors.New(resultListModel.Error.Error())
 	}
 
 	var moviesModel []Movies
 
-	result.Model(&Movies{}).Joins("JOIN list_tags ON list_tags.tags_id = movies.id").Where("list_tags.lists_id =?", listID).Find(&moviesModel)
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+	resultMoviesModel := c.gorm.Table("movies").
+		Select("movies.*").
+		Joins("JOIN list_movies ON list_movies.movie_id = movies.id").
+		Where("list_movies.list_id = ?", listID).
+		Find(&moviesModel)
+	if resultMoviesModel.Error != nil {
+		if errors.Is(resultMoviesModel.Error, gorm.ErrRecordNotFound) {
 			return entities.List{}, errors.New("list not found")
 		}
-		return entities.List{}, errors.New(result.Error.Error())
+		return entities.List{}, errors.New(resultMoviesModel.Error.Error())
 	}
 
 	var movies []entities.Movie
@@ -75,7 +87,26 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 		movies = append(movies, *movie.ToEntity())
 	}
 
-	return *listModel.ToEntity(movies), nil
+	var combinationsModel []Combinations
+
+	result := c.gorm.Table("combinations").
+		Select("combinations.*").
+		Where("list_id = ?", listID).
+		Find(&combinationsModel)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return entities.List{}, errors.New("list not found")
+		}
+		return entities.List{}, errors.New(result.Error.Error())
+	}
+
+	var combinations []entities.Combination
+
+	for _, combination := range combinationsModel {
+		combinations = append(combinations, *combination.ToEntity())
+	}
+
+	return *listModel.ToEntity(movies, combinations), nil
 }
 
 func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
@@ -109,21 +140,23 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 		}
 	}()
 
-	result := tx.Model(&Lists{}).Where("id = ? AND active = ?", list.ID, true).Updates(Lists{
-		UpdatedAt: list.UpdatedAt,
-	})
-
+	result := tx.Model(&Lists{}).Where("id = ? AND active = ?", list.ID, true).Update("updated_at", list.UpdatedAt)
 	if result.Error != nil {
 		tx.Rollback()
-		return errors.New(result.Error.Error())
+		return result.Error
 	}
 
 	for _, movie := range list.Movies {
-		if err := tx.Exec("INSERT INTO list_tags (lists_id, tags_id) VALUES (?, ?)", list.ID, movie.ID).Error; err != nil {
+		err := tx.Exec(`
+			INSERT INTO list_movies (list_id, movie_id, created_at)
+			VALUES (?, ?, ?)
+			ON CONFLICT (list_id, movie_id) DO NOTHING
+		`, list.ID, movie.ID, time.Now()).Error
+		if err != nil {
 			tx.Rollback()
 			return err
 		}
 	}
 
-	return nil
+	return tx.Commit().Error
 }

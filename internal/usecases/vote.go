@@ -7,9 +7,9 @@ import (
 )
 
 type VoteInputDTO struct {
+	UserID        string `json:"user_id"`
 	ListID        string `json:"list_id"`
-	FirstMovieID  string `json:"first_movie_id"`
-	SecondMovieID string `json:"second_movie_id"`
+	CombinationID string `json:"combination"`
 	WinnerID      string `json:"winner_id"`
 }
 
@@ -62,32 +62,6 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	_, errGetFirstMovie := u.MovieRepository.GetMovieByID(input.FirstMovieID)
-	if errGetFirstMovie != nil {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching first movie",
-				Status:   500,
-				Detail:   errGetFirstMovie.Error(),
-				Instance: util.RFC500,
-			},
-		}
-	}
-
-	_, errGetSecondMovie := u.MovieRepository.GetMovieByID(input.SecondMovieID)
-	if errGetSecondMovie != nil {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching second movie",
-				Status:   500,
-				Detail:   errGetSecondMovie.Error(),
-				Instance: util.RFC500,
-			},
-		}
-	}
-
 	_, errGetWinner := u.MovieRepository.GetMovieByID(input.WinnerID)
 	if errGetWinner != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
@@ -101,7 +75,30 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	newVote, newVoteErr := entities.NewVote(input.ListID, input.FirstMovieID, input.SecondMovieID, input.WinnerID)
+	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.CombinationID, input.ListID, input.WinnerID)
+	if errVoteAlreadyRegistered != nil {
+		return VoteOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Validation Error",
+				Title:    "Conflict",
+				Status:   409,
+				Detail:   "Vote already registered for this combination.",
+				Instance: util.RFC409,
+			},
+		}
+	} else if voteAlreadyRegistered {
+		return VoteOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Validation Error",
+				Title:    "Conflict",
+				Status:   409,
+				Detail:   "Vote already registered for this combination.",
+				Instance: util.RFC409,
+			},
+		}
+	}
+
+	newVote, newVoteErr := entities.NewVote(input.UserID, input.CombinationID, input.ListID, input.WinnerID)
 	if newVoteErr != nil {
 		return VoteOutputDTO{}, newVoteErr
 	}

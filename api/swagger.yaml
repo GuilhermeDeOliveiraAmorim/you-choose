@@ -1,4 +1,171 @@
 basePath: /
+definitions:
+  entities.Combination:
+    properties:
+      first_movie:
+        type: string
+      id:
+        type: string
+      list_id:
+        type: string
+      second_movie:
+        type: string
+    type: object
+  entities.List:
+    properties:
+      active:
+        type: boolean
+      combinations:
+        items:
+          $ref: '#/definitions/entities.Combination'
+        type: array
+      created_at:
+        type: string
+      deactivated_at:
+        type: string
+      id:
+        type: string
+      movies:
+        items:
+          $ref: '#/definitions/entities.Movie'
+        type: array
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  entities.Movie:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      deactivated_at:
+        type: string
+      external_id:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      poster:
+        type: string
+      updated_at:
+        type: string
+      year:
+        type: integer
+    type: object
+  entities.Vote:
+    properties:
+      active:
+        type: boolean
+      combination:
+        type: string
+      created_at:
+        type: string
+      deactivated_at:
+        type: string
+      id:
+        type: string
+      list_id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      winner_id:
+        type: string
+    type: object
+  usecases.AddMoviesListInputDTO:
+    properties:
+      list_id:
+        type: string
+      movies:
+        items:
+          type: string
+        type: array
+    type: object
+  usecases.AddMoviesListOutputDTO:
+    properties:
+      content_message:
+        type: string
+      success_message:
+        type: string
+    type: object
+  usecases.CreateListInputDTO:
+    properties:
+      movies:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+    type: object
+  usecases.CreateListOutputDTO:
+    properties:
+      content_message:
+        type: string
+      success_message:
+        type: string
+    type: object
+  usecases.CreateMovieInputDTO:
+    properties:
+      external_id:
+        type: string
+      name:
+        type: string
+      poster:
+        type: string
+      year:
+        type: integer
+    type: object
+  usecases.CreateMovieOutputDTO:
+    properties:
+      content_message:
+        type: string
+      success_message:
+        type: string
+    type: object
+  usecases.GetListByIDOutputDTO:
+    properties:
+      list:
+        $ref: '#/definitions/entities.List'
+      votes:
+        items:
+          $ref: '#/definitions/entities.Vote'
+        type: array
+    type: object
+  usecases.VoteInputDTO:
+    properties:
+      combination:
+        type: string
+      list_id:
+        type: string
+      user_id:
+        type: string
+      winner_id:
+        type: string
+    type: object
+  usecases.VoteOutputDTO:
+    properties:
+      content_message:
+        type: string
+      success_message:
+        type: string
+    type: object
+  util.ProblemDetails:
+    properties:
+      detail:
+        type: string
+      instance:
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      type:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -12,7 +179,180 @@ info:
   termsOfService: http://swagger.io/terms/
   title: You Choose API
   version: "1.0"
-paths: {}
+paths:
+  /lists:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of movies and votes
+      parameters:
+      - description: List id
+        in: query
+        name: list_id
+        required: true
+        type: string
+      - description: User id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.GetListByIDOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Get List
+      tags:
+      - Lists
+    post:
+      consumes:
+      - application/json
+      description: Registers a new list in the system
+      parameters:
+      - description: Movie data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.CreateListInputDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.CreateListOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Create a new list
+      tags:
+      - Lists
+  /lists/movies:
+    post:
+      consumes:
+      - application/json
+      description: Add new movies to list
+      parameters:
+      - description: AddMoviesList data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.AddMoviesListInputDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.AddMoviesListOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Add movies to list
+      tags:
+      - Lists
+  /movies:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new movie in the system
+      parameters:
+      - description: Movie data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.CreateMovieInputDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.CreateMovieOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Create a new movie
+      tags:
+      - Movies
+  /votes:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new vote in the system
+      parameters:
+      - description: Vote data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.VoteInputDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.VoteOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Create a new vote
+      tags:
+      - Votes
 schemes:
 - http
 securityDefinitions:

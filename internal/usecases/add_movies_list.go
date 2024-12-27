@@ -8,7 +8,7 @@ import (
 )
 
 type AddMoviesListInputDTO struct {
-	ListID string   `json:"name"`
+	ListID string   `json:"list_id"`
 	Movies []string `json:"movies"`
 }
 
@@ -81,6 +81,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		}
 	}
 
+	list.ClearMovies()
 	list.AddMovies(movies)
 
 	errAddMovies := u.ListRepository.AddMovies(list)

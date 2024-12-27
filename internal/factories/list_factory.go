@@ -9,17 +9,22 @@ import (
 type ListFactory struct {
 	CreateList    *usecases.CreateListUseCase
 	AddMoviesList *usecases.AddMoviesListUseCase
+	GetListByID   *usecases.GetListByIDUseCase
 }
 
-func NewCategoryFactory(db *gorm.DB) *ListFactory {
+func NewListFactory(db *gorm.DB) *ListFactory {
 	listRepository := repositories_implementation.NewListRepository(db)
 	movieResository := repositories_implementation.NewMovieRepository(db)
+	voteRepository := repositories_implementation.NewVoteRepository(db)
+	combinationRepository := repositories_implementation.NewCombinationRepository(db)
 
-	createList := usecases.NewCreateListUseCase(listRepository)
+	createList := usecases.NewCreateListUseCase(listRepository, movieResository)
 	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository)
+	getListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository, combinationRepository)
 
 	return &ListFactory{
 		CreateList:    createList,
 		AddMoviesList: addMoviesList,
+		GetListByID:   getListByID,
 	}
 }

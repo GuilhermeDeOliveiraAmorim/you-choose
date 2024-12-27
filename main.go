@@ -6,7 +6,9 @@ import (
 
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/interface/handlers"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -52,9 +54,23 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	movieFactory := factories.NewMovieFactory(db)
+	movieHandler := handlers.NewMovieHandler(movieFactory)
+
+	listFactory := factories.NewListFactory(db)
+	listHandler := handlers.NewListHandler(listFactory)
+
+	voteFactory := factories.NewVoteFactory(db)
+	voteHandler := handlers.NewVoteHandler(voteFactory)
+
 	public := r.Group("/")
 	{
 		public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+		public.POST("movies", movieHandler.CreateMovie)
+		public.POST("lists", listHandler.CreateList)
+		public.POST("lists/movies", listHandler.AddMoviesList)
+		public.POST("votes", voteHandler.Vote)
+		public.GET("lists", listHandler.GetListByID)
 	}
 
 	protected := r.Group("/").Use(util.AuthMiddleware())

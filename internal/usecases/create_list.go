@@ -9,8 +9,8 @@ import (
 )
 
 type CreateListInputDTO struct {
-	Name   string           `json:"name"`
-	Movies []entities.Movie `json:"movies"`
+	Name   string   `json:"name"`
+	Movies []string `json:"movies"`
 }
 
 type CreateListOutputDTO struct {
@@ -19,14 +19,17 @@ type CreateListOutputDTO struct {
 }
 
 type CreateListUseCase struct {
-	ListRepository repositories.ListRepository
+	ListRepository  repositories.ListRepository
+	MovieRepository repositories.MovieRepository
 }
 
 func NewCreateListUseCase(
 	ListRepository repositories.ListRepository,
+	MovieRepository repositories.MovieRepository,
 ) *CreateListUseCase {
 	return &CreateListUseCase{
-		ListRepository: ListRepository,
+		ListRepository:  ListRepository,
+		MovieRepository: MovieRepository,
 	}
 }
 
@@ -56,13 +59,26 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
+	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies)
+	if errGetMoviesByID != nil {
+		return CreateListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error fetching movies",
+				Status:   500,
+				Detail:   errGetMoviesByID.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
 	list, problems := entities.NewList(input.Name)
 	if len(problems) > 0 {
 		return CreateListOutputDTO{}, problems
 	}
 
 	if len(input.Movies) > 0 {
-		list.AddMovies(input.Movies)
+		list.AddMovies(movies)
 	} else {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
@@ -74,6 +90,20 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 			},
 		}
 	}
+
+	var combinations []entities.Combination
+	for i := 0; i < len(input.Movies); i++ {
+		for j := i + 1; j < len(input.Movies); j++ {
+			newCombination, errNewCombination := entities.NewCombination(list.ID, input.Movies[i], input.Movies[j])
+			if errNewCombination != nil {
+				return CreateListOutputDTO{}, errNewCombination
+			}
+
+			combinations = append(combinations, *newCombination)
+		}
+	}
+
+	list.AddCombinations(combinations)
 
 	errCreateList := u.ListRepository.CreateList(*list)
 	if errCreateList != nil {
