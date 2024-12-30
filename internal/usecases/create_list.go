@@ -34,6 +34,18 @@ func NewCreateListUseCase(
 }
 
 func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []util.ProblemDetails) {
+	if len(input.Movies) < 2 {
+		return CreateListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Validation Error",
+				Title:    "Bad Request",
+				Status:   400,
+				Detail:   "At least two movies must be provided.",
+				Instance: util.RFC400,
+			},
+		}
+	}
+
 	listExists, errThisListExist := u.ListRepository.ThisListExistByName(input.Name)
 	if errThisListExist != nil && strings.Compare(errThisListExist.Error(), "list not found") > 0 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
@@ -77,30 +89,11 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		return CreateListOutputDTO{}, problems
 	}
 
-	if len(input.Movies) > 0 {
-		list.AddMovies(movies)
-	} else {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Validation Error",
-				Title:    "Bad Request",
-				Status:   400,
-				Detail:   "At least one movie must be provided.",
-				Instance: util.RFC400,
-			},
-		}
-	}
+	list.AddMovies(movies)
 
-	var combinations []entities.Combination
-	for i := 0; i < len(input.Movies); i++ {
-		for j := i + 1; j < len(input.Movies); j++ {
-			newCombination, errNewCombination := entities.NewCombination(list.ID, input.Movies[i], input.Movies[j])
-			if errNewCombination != nil {
-				return CreateListOutputDTO{}, errNewCombination
-			}
-
-			combinations = append(combinations, *newCombination)
-		}
+	combinations, errGetCombinations := list.GetCombinations(input.Movies)
+	if len(errGetCombinations) > 0 {
+		return CreateListOutputDTO{}, errGetCombinations
 	}
 
 	list.AddCombinations(combinations)
