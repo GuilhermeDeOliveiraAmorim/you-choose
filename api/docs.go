@@ -379,7 +379,7 @@ const docTemplate = `{
                 "active": {
                     "type": "boolean"
                 },
-                "combination": {
+                "combination_id": {
                     "type": "string"
                 },
                 "created_at": {
