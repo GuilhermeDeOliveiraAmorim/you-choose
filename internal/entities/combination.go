@@ -20,3 +20,7 @@ func NewCombination(listId, firstMovie, secondMovie string) (*Combination, []uti
 		SecondMovieID: secondMovie,
 	}, nil
 }
+
+func (c *Combination) Equals(combination Combination) bool {
+	return c.FirstMovieID == combination.FirstMovieID && c.SecondMovieID == combination.SecondMovieID && c.ListID == combination.ListID
+}
