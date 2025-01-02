@@ -22,3 +22,7 @@ func NewMovie(name string, year int64, externalID string) (*Movie, []util.Proble
 func (m *Movie) UpdatePoster(poster string) {
 	m.Poster = poster
 }
+
+func (m *Movie) Equals(movie Movie) bool {
+	return m.Name == movie.Name && m.Year == movie.Year && m.ExternalID == movie.ExternalID
+}
