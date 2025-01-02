@@ -81,8 +81,30 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		}
 	}
 
-	list.ClearMovies()
+	movieIDs := []string{}
+
+	getOldMovieIDs, errGetMovieIDs := list.GetMovieIDs()
+	if len(errGetMovieIDs) > 0 {
+		return AddMoviesListOutputDTO{}, problems
+	}
+
+	movieIDs = append(movieIDs, getOldMovieIDs...)
+
 	list.AddMovies(movies)
+
+	getNewMovieIDs, errGetMovieIDs := list.GetMovieIDs()
+	if len(errGetMovieIDs) > 0 {
+		return AddMoviesListOutputDTO{}, problems
+	}
+
+	movieIDs = append(movieIDs, getNewMovieIDs...)
+
+	combinations, errGetCombinations := list.GetCombinations(movieIDs)
+	if len(errGetCombinations) > 0 {
+		return AddMoviesListOutputDTO{}, errGetCombinations
+	}
+
+	list.AddCombinations(combinations)
 
 	errAddMovies := u.ListRepository.AddMovies(list)
 	if errAddMovies != nil {
