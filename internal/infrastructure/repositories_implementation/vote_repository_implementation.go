@@ -30,10 +30,8 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 		ID:            vote.ID,
 		Active:        vote.Active,
 		CreatedAt:     vote.CreatedAt,
-		UpdatedAt:     vote.UpdatedAt,
 		DeactivatedAt: vote.DeactivatedAt,
 		UserID:        vote.UserID,
-		ListID:        vote.ListID,
 		CombinationID: vote.CombinationID,
 		WinnerID:      vote.WinnerID,
 	}).Error; err != nil {
@@ -47,7 +45,12 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]entities.Vote, error) {
 	var votesModel []Votes
 
-	result := c.gorm.Model(&Votes{}).Where("list_id =? AND user_id =? AND active =?", listID, userID, true).Find(&votesModel)
+	result := c.gorm.
+		Model(&Votes{}).
+		Joins("JOIN combinations ON votes.combination_id = combinations.id").
+		Where("combinations.list_id = ? AND votes.user_id = ? AND votes.active = ?", listID, userID, true).
+		Find(&votesModel)
+
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("votes not found")
@@ -56,7 +59,6 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 	}
 
 	var votes []entities.Vote
-
 	for _, voteModel := range votesModel {
 		votes = append(votes, *voteModel.ToEntity())
 	}
@@ -64,10 +66,10 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 	return votes, nil
 }
 
-func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID, listID, winnerID string) (bool, error) {
+func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bool, error) {
 	var count int64
 
-	result := c.gorm.Model(&Votes{}).Where("list_id =? AND user_id =? AND combination_id =? AND winner_id =?", listID, userID, combinationID, winnerID).Count(&count)
+	result := c.gorm.Model(&Votes{}).Where("user_id =? AND combination_id =?", userID, combinationID).Count(&count)
 	if result.Error != nil {
 		return false, result.Error
 	}
