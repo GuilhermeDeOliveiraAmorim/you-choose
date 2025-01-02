@@ -17,7 +17,6 @@ type Lists struct {
 	DeactivatedAt *time.Time `gorm:"default:NULL"`
 	Name          string     `gorm:"not null"`
 	Movies        []Movies   `gorm:"many2many:list_movies;"`
-	Votes         []Votes    `gorm:"foreignKey:ListID"`
 }
 
 func (m *Lists) ToEntity(movies []entities.Movie, combinations []entities.Combination) *entities.List {
@@ -77,31 +76,25 @@ type ListMovies struct {
 }
 
 type Votes struct {
-	ID            string     `gorm:"primaryKey;not null"`
-	Active        bool       `gorm:"not null"`
-	CreatedAt     time.Time  `gorm:"not null"`
-	UpdatedAt     time.Time  `gorm:"not null"`
-	DeactivatedAt *time.Time `gorm:"default:NULL"`
-	ListID        string     `gorm:"not null"`
-	List          Lists      `gorm:"foreignKey:ListID"`
-	UserID        string     `gorm:"not null"`
-	CombinationID string     `gorm:"not null"`
-	WinnerID      string     `gorm:"not null"`
-	Winner        Movies     `gorm:"foreignKey:WinnerID"`
+	ID            string       `gorm:"primaryKey;not null"`
+	Active        bool         `gorm:"not null"`
+	CreatedAt     time.Time    `gorm:"not null"`
+	DeactivatedAt *time.Time   `gorm:"default:NULL"`
+	UserID        string       `gorm:"not null"`
+	CombinationID string       `gorm:"not null"`
+	Combination   Combinations `gorm:"foreignKey:CombinationID"`
+	WinnerID      string       `gorm:"not null"`
+	Winner        Movies       `gorm:"foreignKey:WinnerID"`
 }
 
 func (v *Votes) ToEntity() *entities.Vote {
 	return &entities.Vote{
-		SharedEntity: entities.SharedEntity{
-			ID:            v.ID,
-			Active:        v.Active,
-			CreatedAt:     v.CreatedAt,
-			UpdatedAt:     v.UpdatedAt,
-			DeactivatedAt: v.DeactivatedAt,
-		},
+		ID:            v.ID,
+		Active:        v.Active,
+		CreatedAt:     v.CreatedAt,
+		DeactivatedAt: v.DeactivatedAt,
 		UserID:        v.UserID,
 		CombinationID: v.CombinationID,
-		ListID:        v.ListID,
 		WinnerID:      v.WinnerID,
 	}
 }
