@@ -75,7 +75,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.CombinationID, input.ListID, input.WinnerID)
+	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.CombinationID)
 	if errVoteAlreadyRegistered != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
 			{
@@ -98,7 +98,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	newVote, newVoteErr := entities.NewVote(input.UserID, input.CombinationID, input.ListID, input.WinnerID)
+	newVote, newVoteErr := entities.NewVote(input.UserID, input.CombinationID, input.WinnerID)
 	if newVoteErr != nil {
 		return VoteOutputDTO{}, newVoteErr
 	}
