@@ -140,19 +140,15 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 		}
 	}()
 
-	result := tx.Model(&Lists{}).Where("id = ? AND active = ?", list.ID, true).Update("updated_at", list.UpdatedAt)
-	if result.Error != nil {
-		tx.Rollback()
-		return result.Error
+	for _, movie := range list.Movies {
+		if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, movie.ID, time.Now()).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
-	for _, movie := range list.Movies {
-		err := tx.Exec(`
-			INSERT INTO list_movies (list_id, movie_id, created_at)
-			VALUES (?, ?, ?)
-			ON CONFLICT (list_id, movie_id) DO NOTHING
-		`, list.ID, movie.ID, time.Now()).Error
-		if err != nil {
+	for _, combination := range list.Combinations {
+		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_movie_id, second_movie_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstMovieID, combination.SecondMovieID).Error; err != nil {
 			tx.Rollback()
 			return err
 		}
