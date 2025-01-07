@@ -72,33 +72,11 @@ definitions:
       winner_id:
         type: string
     type: object
-  usecases.AddMoviesListInputDTO:
-    properties:
-      list_id:
-        type: string
-      movies:
-        items:
-          type: string
-        type: array
-      user_id:
-        type: string
-    type: object
   usecases.AddMoviesListOutputDTO:
     properties:
       content_message:
         type: string
       success_message:
-        type: string
-    type: object
-  usecases.CreateListInputDTO:
-    properties:
-      movies:
-        items:
-          type: string
-        type: array
-      name:
-        type: string
-      user_id:
         type: string
     type: object
   usecases.CreateListOutputDTO:
@@ -107,19 +85,6 @@ definitions:
         type: string
       success_message:
         type: string
-    type: object
-  usecases.CreateMovieInputDTO:
-    properties:
-      external_id:
-        type: string
-      name:
-        type: string
-      poster:
-        type: string
-      user_id:
-        type: string
-      year:
-        type: integer
     type: object
   usecases.CreateMovieOutputDTO:
     properties:
@@ -155,6 +120,15 @@ definitions:
           $ref: '#/definitions/entities.Vote'
         type: array
     type: object
+  usecases.List:
+    properties:
+      movies:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+    type: object
   usecases.LoginInputDto:
     properties:
       email:
@@ -172,6 +146,26 @@ definitions:
         type: string
       success_message:
         type: string
+    type: object
+  usecases.Movie:
+    properties:
+      external_id:
+        type: string
+      name:
+        type: string
+      poster:
+        type: string
+      year:
+        type: integer
+    type: object
+  usecases.Movies:
+    properties:
+      list_id:
+        type: string
+      movies:
+        items:
+          type: string
+        type: array
     type: object
   usecases.Vote:
     properties:
@@ -256,12 +250,12 @@ paths:
       - application/json
       description: Registers a new list in the system
       parameters:
-      - description: Movie data
+      - description: List data
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/usecases.CreateListInputDTO'
+          $ref: '#/definitions/usecases.List'
       produces:
       - application/json
       responses:
@@ -297,7 +291,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/usecases.AddMoviesListInputDTO'
+          $ref: '#/definitions/usecases.Movies'
       produces:
       - application/json
       responses:
@@ -359,7 +353,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/usecases.CreateMovieInputDTO'
+          $ref: '#/definitions/usecases.Movie'
       produces:
       - application/json
       responses:

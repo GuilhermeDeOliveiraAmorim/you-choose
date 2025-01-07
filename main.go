@@ -69,17 +69,19 @@ func main() {
 	public := r.Group("/")
 	{
 		public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		public.POST("movies", movieHandler.CreateMovie)
-		public.POST("lists", listHandler.CreateList)
-		public.POST("lists/movies", listHandler.AddMoviesList)
 		public.POST("signup", userHandler.CreateUser)
 		public.POST("login", userHandler.Login)
 	}
 
 	protected := r.Group("/").Use(util.AuthMiddleware())
 	{
-		protected.POST("votes", voteHandler.Vote)
+		protected.POST("lists", listHandler.CreateList)
+		protected.POST("lists/movies", listHandler.AddMoviesList)
 		protected.GET("lists", listHandler.GetListByID)
+
+		public.POST("movies", movieHandler.CreateMovie)
+
+		protected.POST("votes", voteHandler.Vote)
 	}
 
 	r.Run(":8080")

@@ -97,12 +97,12 @@ const docTemplate = `{
                 "summary": "Create a new list",
                 "parameters": [
                     {
-                        "description": "Movie data",
+                        "description": "List data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.CreateListInputDTO"
+                            "$ref": "#/definitions/usecases.List"
                         }
                     }
                 ],
@@ -159,7 +159,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.AddMoviesListInputDTO"
+                            "$ref": "#/definitions/usecases.Movies"
                         }
                     }
                 ],
@@ -256,7 +256,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.CreateMovieInputDTO"
+                            "$ref": "#/definitions/usecases.Movie"
                         }
                     }
                 ],
@@ -497,23 +497,6 @@ const docTemplate = `{
                 }
             }
         },
-        "usecases.AddMoviesListInputDTO": {
-            "type": "object",
-            "properties": {
-                "list_id": {
-                    "type": "string"
-                },
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "usecases.AddMoviesListOutputDTO": {
             "type": "object",
             "properties": {
@@ -521,23 +504,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "success_message": {
-                    "type": "string"
-                }
-            }
-        },
-        "usecases.CreateListInputDTO": {
-            "type": "object",
-            "properties": {
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 }
             }
@@ -550,26 +516,6 @@ const docTemplate = `{
                 },
                 "success_message": {
                     "type": "string"
-                }
-            }
-        },
-        "usecases.CreateMovieInputDTO": {
-            "type": "object",
-            "properties": {
-                "external_id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "poster": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                },
-                "year": {
-                    "type": "integer"
                 }
             }
         },
@@ -626,6 +572,20 @@ const docTemplate = `{
                 }
             }
         },
+        "usecases.List": {
+            "type": "object",
+            "properties": {
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "usecases.LoginInputDto": {
             "type": "object",
             "properties": {
@@ -651,6 +611,37 @@ const docTemplate = `{
                 },
                 "success_message": {
                     "type": "string"
+                }
+            }
+        },
+        "usecases.Movie": {
+            "type": "object",
+            "properties": {
+                "external_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "poster": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecases.Movies": {
+            "type": "object",
+            "properties": {
+                "list_id": {
+                    "type": "string"
+                },
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

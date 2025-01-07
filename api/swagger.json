@@ -94,12 +94,12 @@
                 "summary": "Create a new list",
                 "parameters": [
                     {
-                        "description": "Movie data",
+                        "description": "List data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.CreateListInputDTO"
+                            "$ref": "#/definitions/usecases.List"
                         }
                     }
                 ],
@@ -156,7 +156,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.AddMoviesListInputDTO"
+                            "$ref": "#/definitions/usecases.Movies"
                         }
                     }
                 ],
@@ -253,7 +253,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.CreateMovieInputDTO"
+                            "$ref": "#/definitions/usecases.Movie"
                         }
                     }
                 ],
@@ -494,23 +494,6 @@
                 }
             }
         },
-        "usecases.AddMoviesListInputDTO": {
-            "type": "object",
-            "properties": {
-                "list_id": {
-                    "type": "string"
-                },
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "usecases.AddMoviesListOutputDTO": {
             "type": "object",
             "properties": {
@@ -518,23 +501,6 @@
                     "type": "string"
                 },
                 "success_message": {
-                    "type": "string"
-                }
-            }
-        },
-        "usecases.CreateListInputDTO": {
-            "type": "object",
-            "properties": {
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 }
             }
@@ -547,26 +513,6 @@
                 },
                 "success_message": {
                     "type": "string"
-                }
-            }
-        },
-        "usecases.CreateMovieInputDTO": {
-            "type": "object",
-            "properties": {
-                "external_id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "poster": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                },
-                "year": {
-                    "type": "integer"
                 }
             }
         },
@@ -623,6 +569,20 @@
                 }
             }
         },
+        "usecases.List": {
+            "type": "object",
+            "properties": {
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "usecases.LoginInputDto": {
             "type": "object",
             "properties": {
@@ -648,6 +608,37 @@
                 },
                 "success_message": {
                     "type": "string"
+                }
+            }
+        },
+        "usecases.Movie": {
+            "type": "object",
+            "properties": {
+                "external_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "poster": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "usecases.Movies": {
+            "type": "object",
+            "properties": {
+                "list_id": {
+                    "type": "string"
+                },
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
