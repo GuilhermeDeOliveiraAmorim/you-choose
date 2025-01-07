@@ -35,6 +35,7 @@ func (u *UserRepository) CreateUser(user entities.User) error {
 		Name:          user.Name,
 		Email:         user.Login.Email,
 		Password:      user.Login.Password,
+		IsAdmin:       user.IsAdmin,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err
@@ -104,7 +105,8 @@ func (u *UserRepository) GetUser(userID string) (entities.User, error) {
 			UpdatedAt:     userModel.UpdatedAt,
 			DeactivatedAt: userModel.DeactivatedAt,
 		},
-		Name: userModel.Name,
+		Name:    userModel.Name,
+		IsAdmin: userModel.IsAdmin,
 	}
 
 	return user, nil
