@@ -59,7 +59,9 @@ func (u *User) ChangeName(newName string) []util.ProblemDetails {
 		return validationErrors
 	}
 
-	u.UpdatedAt = time.Now()
+	timeNow := time.Now()
+
+	u.UpdatedAt = &timeNow
 	u.Name = newName
 
 	return validationErrors

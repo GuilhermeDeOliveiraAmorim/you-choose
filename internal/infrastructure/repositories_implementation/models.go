@@ -13,7 +13,7 @@ type Lists struct {
 	ID            string     `gorm:"primaryKey;not null"`
 	Active        bool       `gorm:"not null"`
 	CreatedAt     time.Time  `gorm:"not null"`
-	UpdatedAt     time.Time  `gorm:"not null"`
+	UpdatedAt     *time.Time `gorm:"default:NULL"`
 	DeactivatedAt *time.Time `gorm:"default:NULL"`
 	Name          string     `gorm:"not null"`
 	Movies        []Movies   `gorm:"many2many:list_movies;"`
@@ -38,7 +38,7 @@ type Movies struct {
 	ID            string         `gorm:"primaryKey;not null"`
 	Active        bool           `gorm:"not null"`
 	CreatedAt     time.Time      `gorm:"not null"`
-	UpdatedAt     time.Time      `gorm:"not null"`
+	UpdatedAt     *time.Time     `gorm:"default:NULL"`
 	DeactivatedAt *time.Time     `gorm:"default:NULL"`
 	Name          string         `gorm:"not null"`
 	Year          int64          `gorm:"not null"`
@@ -81,6 +81,7 @@ type Votes struct {
 	CreatedAt     time.Time    `gorm:"not null"`
 	DeactivatedAt *time.Time   `gorm:"default:NULL"`
 	UserID        string       `gorm:"not null"`
+	User          Users        `gorm:"foreignKey:UserID"`
 	CombinationID string       `gorm:"not null"`
 	Combination   Combinations `gorm:"foreignKey:CombinationID"`
 	WinnerID      string       `gorm:"not null"`
@@ -118,20 +119,6 @@ func (c *Combinations) ToEntity() *entities.Combination {
 	}
 }
 
-func Migration(db *gorm.DB, sqlDB *sql.DB) {
-	if err := db.AutoMigrate(
-		Lists{},
-		Movies{},
-		ListMovies{},
-		Votes{},
-		Combinations{},
-	); err != nil {
-		fmt.Println("Error during migration:", err)
-		return
-	}
-	fmt.Println("Successful migration")
-}
-
 type Users struct {
 	ID            string     `gorm:"primaryKey;not null"`
 	Name          string     `gorm:"not null"`
@@ -139,7 +126,7 @@ type Users struct {
 	Password      string     `gorm:"not null"`
 	Active        bool       `gorm:"not null"`
 	CreatedAt     time.Time  `gorm:"not null"`
-	UpdatedAt     time.Time  `gorm:"not null"`
+	UpdatedAt     *time.Time `gorm:"default:NULL"`
 	DeactivatedAt *time.Time `gorm:"default:NULL"`
 }
 
@@ -160,4 +147,19 @@ func (u *Users) ToEntity() *entities.User {
 		Name:  u.Name,
 		Login: login,
 	}
+}
+
+func Migration(db *gorm.DB, sqlDB *sql.DB) {
+	if err := db.AutoMigrate(
+		Lists{},
+		Movies{},
+		ListMovies{},
+		Votes{},
+		Combinations{},
+		Users{},
+	); err != nil {
+		fmt.Println("Error during migration:", err)
+		return
+	}
+	fmt.Println("Successful migration")
 }
