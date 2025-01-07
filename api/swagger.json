@@ -76,6 +76,11 @@
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Registers a new list in the system",
                 "consumes": [
                     "application/json"
@@ -128,6 +133,11 @@
         },
         "/lists/movies": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add new movies to list",
                 "consumes": [
                     "application/json"
@@ -495,6 +505,9 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -519,6 +532,9 @@
                     }
                 },
                 "name": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }

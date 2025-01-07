@@ -29,6 +29,7 @@ func NewListHandler(factory *factories.ListFactory) *ListHandler {
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Security BearerAuth
 // @Router /lists [post]
 func (h *ListHandler) CreateList(c *gin.Context) {
 	var request usecases.CreateListInputDTO
@@ -62,6 +63,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Security BearerAuth
 // @Router /lists/movies [post]
 func (h *ListHandler) AddMoviesList(c *gin.Context) {
 	var request usecases.AddMoviesListInputDTO

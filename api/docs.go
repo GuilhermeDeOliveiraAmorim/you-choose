@@ -79,6 +79,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Registers a new list in the system",
                 "consumes": [
                     "application/json"
@@ -131,6 +136,11 @@ const docTemplate = `{
         },
         "/lists/movies": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add new movies to list",
                 "consumes": [
                     "application/json"
@@ -498,6 +508,9 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                },
+                "user_id": {
+                    "type": "string"
                 }
             }
         },
@@ -522,6 +535,9 @@ const docTemplate = `{
                     }
                 },
                 "name": {
+                    "type": "string"
+                },
+                "user_id": {
                     "type": "string"
                 }
             }
