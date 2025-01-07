@@ -183,6 +183,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/login": {
+            "post": {
+                "description": "Authenticates a user and returns a JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login a user",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "LoginRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecases.LoginInputDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/usecases.LoginOutputDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/movies": {
             "post": {
                 "description": "Registers a new movie in the system",
@@ -228,6 +268,46 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "Registers a new user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User data",
+                        "name": "CreateUserRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecases.CreateUserInputDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/usecases.CreateUserOutputDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/util.ProblemDetails"
                         }
@@ -391,12 +471,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "list_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
                 "user_id": {
                     "type": "string"
                 },
@@ -483,6 +557,34 @@ const docTemplate = `{
                 }
             }
         },
+        "usecases.CreateUserInputDto": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecases.CreateUserOutputDto": {
+            "type": "object",
+            "properties": {
+                "content_message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "success_message": {
+                    "type": "string"
+                }
+            }
+        },
         "usecases.GetListByIDOutputDTO": {
             "type": "object",
             "properties": {
@@ -494,6 +596,34 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/entities.Vote"
                     }
+                }
+            }
+        },
+        "usecases.LoginInputDto": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecases.LoginOutputDto": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "content_message": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "success_message": {
+                    "type": "string"
                 }
             }
         },

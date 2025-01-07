@@ -63,6 +63,9 @@ func main() {
 	voteFactory := factories.NewVoteFactory(db)
 	voteHandler := handlers.NewVoteHandler(voteFactory)
 
+	userFactory := factories.NewUserFactory(db)
+	userHandler := handlers.NewUserHandler(userFactory)
+
 	public := r.Group("/")
 	{
 		public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -71,6 +74,8 @@ func main() {
 		public.POST("lists/movies", listHandler.AddMoviesList)
 		public.POST("votes", voteHandler.Vote)
 		public.GET("lists", listHandler.GetListByID)
+		public.POST("signup", userHandler.CreateUser)
+		public.POST("login", userHandler.Login)
 	}
 
 	protected := r.Group("/").Use(util.AuthMiddleware())

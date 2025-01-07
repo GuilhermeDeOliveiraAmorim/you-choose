@@ -67,10 +67,6 @@ definitions:
         type: string
       id:
         type: string
-      list_id:
-        type: string
-      updated_at:
-        type: string
       user_id:
         type: string
       winner_id:
@@ -126,6 +122,24 @@ definitions:
       success_message:
         type: string
     type: object
+  usecases.CreateUserInputDto:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  usecases.CreateUserOutputDto:
+    properties:
+      content_message:
+        type: string
+      name:
+        type: string
+      success_message:
+        type: string
+    type: object
   usecases.GetListByIDOutputDTO:
     properties:
       list:
@@ -134,6 +148,24 @@ definitions:
         items:
           $ref: '#/definitions/entities.Vote'
         type: array
+    type: object
+  usecases.LoginInputDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  usecases.LoginOutputDto:
+    properties:
+      access_token:
+        type: string
+      content_message:
+        type: string
+      name:
+        type: string
+      success_message:
+        type: string
     type: object
   usecases.VoteInputDTO:
     properties:
@@ -285,6 +317,32 @@ paths:
       summary: Add movies to list
       tags:
       - Lists
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and returns a JWT token
+      parameters:
+      - description: User credentials
+        in: body
+        name: LoginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.LoginInputDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/usecases.LoginOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Login a user
+      tags:
+      - Authentication
   /movies:
     post:
       consumes:
@@ -319,6 +377,32 @@ paths:
       summary: Create a new movie
       tags:
       - Movies
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user in the system
+      parameters:
+      - description: User data
+        in: body
+        name: CreateUserRequest
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.CreateUserInputDto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.CreateUserOutputDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Create a new user
+      tags:
+      - Authentication
   /votes:
     post:
       consumes:
