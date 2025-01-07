@@ -76,7 +76,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	var problems []util.ProblemDetails
 
-	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)
+	list, errGetList := u.ListRepository.GetListByUserID(input.Movies.ListID)
 	if errGetList != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{

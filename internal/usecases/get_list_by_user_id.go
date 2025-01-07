@@ -6,30 +6,30 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
-type GetListByIDInputDTO struct {
+type GetListByUserIDInputDTO struct {
 	ListID string `json:"list_id"`
 	UserID string `json:"user_id"`
 }
 
-type GetListByIDOutputDTO struct {
+type GetListByUserIDOutputDTO struct {
 	List  entities.List   `json:"list"`
 	Votes []entities.Vote `json:"votes"`
 }
 
-type GetListByIDUseCase struct {
+type GetListByUserIDUseCase struct {
 	ListRepository        repositories.ListRepository
 	VoteRepository        repositories.VoteRepository
 	CombinationRepository repositories.CombinationRepository
 	UserRepository        repositories.UserRepository
 }
 
-func NewGetListByIDUseCase(
+func NewGetListByUserIDUseCase(
 	ListRepository repositories.ListRepository,
 	VoteRepository repositories.VoteRepository,
 	CombinationRepository repositories.CombinationRepository,
 	UserRepository repositories.UserRepository,
-) *GetListByIDUseCase {
-	return &GetListByIDUseCase{
+) *GetListByUserIDUseCase {
+	return &GetListByUserIDUseCase{
 		ListRepository:        ListRepository,
 		VoteRepository:        VoteRepository,
 		CombinationRepository: CombinationRepository,
@@ -37,10 +37,10 @@ func NewGetListByIDUseCase(
 	}
 }
 
-func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutputDTO, []util.ProblemDetails) {
+func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetListByUserIDOutputDTO, []util.ProblemDetails) {
 	user, err := u.UserRepository.GetUser(input.UserID)
 	if err != nil {
-		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Not Found",
 				Title:    "User not found",
@@ -50,7 +50,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 			},
 		}
 	} else if !user.Active {
-		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
 				Title:    "User is not active",
@@ -61,9 +61,9 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 		}
 	}
 
-	list, errGetList := u.ListRepository.GetListByID(input.ListID)
+	list, errGetList := u.ListRepository.GetListByUserID(input.ListID)
 	if errGetList != nil {
-		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
@@ -76,7 +76,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 
 	votes, errGetVotesByUserIDAndListID := u.VoteRepository.GetVotesByUserIDAndListID(input.UserID, input.ListID)
 	if errGetVotesByUserIDAndListID != nil {
-		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching votes",
@@ -87,7 +87,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 		}
 	}
 
-	return GetListByIDOutputDTO{
+	return GetListByUserIDOutputDTO{
 		List:  list,
 		Votes: votes,
 	}, nil

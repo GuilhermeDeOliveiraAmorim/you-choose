@@ -7,9 +7,9 @@ import (
 )
 
 type ListFactory struct {
-	CreateList    *usecases.CreateListUseCase
-	AddMoviesList *usecases.AddMoviesListUseCase
-	GetListByID   *usecases.GetListByIDUseCase
+	CreateList      *usecases.CreateListUseCase
+	AddMoviesList   *usecases.AddMoviesListUseCase
+	GetListByUserID *usecases.GetListByUserIDUseCase
 }
 
 func NewListFactory(db *gorm.DB, bucketName string) *ListFactory {
@@ -21,11 +21,11 @@ func NewListFactory(db *gorm.DB, bucketName string) *ListFactory {
 
 	createList := usecases.NewCreateListUseCase(listRepository, movieResository, userResository)
 	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository, userResository)
-	getListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
+	GetListByUserID := usecases.NewGetListByUserIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
 
 	return &ListFactory{
-		CreateList:    createList,
-		AddMoviesList: addMoviesList,
-		GetListByID:   getListByID,
+		CreateList:      createList,
+		AddMoviesList:   addMoviesList,
+		GetListByUserID: GetListByUserID,
 	}
 }

@@ -52,7 +52,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/usecases.GetListByIDOutputDTO"
+                            "$ref": "#/definitions/usecases.GetListByUserIDOutputDTO"
                         }
                     },
                     "400": {
@@ -555,7 +555,7 @@
                 }
             }
         },
-        "usecases.GetListByIDOutputDTO": {
+        "usecases.GetListByUserIDOutputDTO": {
             "type": "object",
             "properties": {
                 "list": {

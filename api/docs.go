@@ -55,7 +55,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/usecases.GetListByIDOutputDTO"
+                            "$ref": "#/definitions/usecases.GetListByUserIDOutputDTO"
                         }
                     },
                     "400": {
@@ -558,7 +558,7 @@ const docTemplate = `{
                 }
             }
         },
-        "usecases.GetListByIDOutputDTO": {
+        "usecases.GetListByUserIDOutputDTO": {
             "type": "object",
             "properties": {
                 "list": {

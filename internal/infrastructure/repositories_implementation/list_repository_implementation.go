@@ -56,7 +56,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 	return tx.Commit().Error
 }
 
-func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
+func (c *ListRepository) GetListByUserID(listID string) (entities.List, error) {
 	var listModel Lists
 
 	resultListModel := c.gorm.Model(&Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)

@@ -77,7 +77,7 @@ func main() {
 	{
 		protected.POST("lists", listHandler.CreateList)
 		protected.POST("lists/movies", listHandler.AddMoviesList)
-		protected.GET("lists", listHandler.GetListByID)
+		protected.GET("lists", listHandler.GetListByUserID)
 
 		protected.POST("movies", movieHandler.CreateMovie)
 
