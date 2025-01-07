@@ -111,10 +111,19 @@ definitions:
       success_message:
         type: string
     type: object
+  usecases.GetListByIDOutputDTO:
+    properties:
+      list:
+        $ref: '#/definitions/entities.List'
+      number_of_votes:
+        type: integer
+    type: object
   usecases.GetListByUserIDOutputDTO:
     properties:
       list:
         $ref: '#/definitions/entities.List'
+      number_of_votes:
+        type: integer
       votes:
         items:
           $ref: '#/definitions/entities.Vote'
@@ -214,7 +223,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get a list of movies and votes
+      description: Get a list of movies and numbers of votes
       parameters:
       - description: List id
         in: query
@@ -227,7 +236,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/usecases.GetListByUserIDOutputDTO'
+            $ref: '#/definitions/usecases.GetListByIDOutputDTO'
         "400":
           description: Bad Request
           schema:
@@ -240,8 +249,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/util.ProblemDetails'
-      security:
-      - BearerAuth: []
       summary: Get List
       tags:
       - Lists
@@ -314,6 +321,41 @@ paths:
       security:
       - BearerAuth: []
       summary: Add movies to list
+      tags:
+      - Lists
+  /lists/users:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of movies and votes
+      parameters:
+      - description: List id
+        in: query
+        name: list_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.GetListByUserIDOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      security:
+      - BearerAuth: []
+      summary: Get List
       tags:
       - Lists
   /login:

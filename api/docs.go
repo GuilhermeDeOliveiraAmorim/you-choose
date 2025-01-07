@@ -26,12 +26,7 @@ const docTemplate = `{
     "paths": {
         "/lists": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get a list of movies and votes",
+                "description": "Get a list of movies and numbers of votes",
                 "consumes": [
                     "application/json"
                 ],
@@ -55,7 +50,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/usecases.GetListByUserIDOutputDTO"
+                            "$ref": "#/definitions/usecases.GetListByIDOutputDTO"
                         }
                     },
                     "400": {
@@ -168,6 +163,61 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/usecases.AddMoviesListOutputDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/lists/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of movies and votes",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lists"
+                ],
+                "summary": "Get List",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "List id",
+                        "name": "list_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/usecases.GetListByUserIDOutputDTO"
                         }
                     },
                     "400": {
@@ -558,11 +608,25 @@ const docTemplate = `{
                 }
             }
         },
+        "usecases.GetListByIDOutputDTO": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "$ref": "#/definitions/entities.List"
+                },
+                "number_of_votes": {
+                    "type": "integer"
+                }
+            }
+        },
         "usecases.GetListByUserIDOutputDTO": {
             "type": "object",
             "properties": {
                 "list": {
                     "$ref": "#/definitions/entities.List"
+                },
+                "number_of_votes": {
+                    "type": "integer"
                 },
                 "votes": {
                     "type": "array",
