@@ -1,19 +1,28 @@
 package repositories_implementation
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/oklog/ulid/v2"
 	"gorm.io/gorm"
+
+	"cloud.google.com/go/storage"
 )
 
 type MovieRepository struct {
-	gorm *gorm.DB
+	gorm       *gorm.DB
+	BucketName string
 }
 
-func NewMovieRepository(gorm *gorm.DB) *MovieRepository {
+func NewMovieRepository(gorm *gorm.DB, bucketName string) *MovieRepository {
 	return &MovieRepository{
-		gorm: gorm,
+		gorm:       gorm,
+		BucketName: bucketName,
 	}
 }
 
@@ -89,6 +98,41 @@ func (c *MovieRepository) GetMoviesByIDs(moviesIDs []string) ([]entities.Movie, 
 }
 
 func (c *MovieRepository) SavePoster(poster string) (string, error) {
-	// Save poster to a storage and return the URL
-	return "poster_url", nil
+	ctx := context.Background()
+
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to create storage client: %v", err)
+	}
+	defer client.Close()
+
+	resp, err := http.Get(poster)
+	if err != nil {
+		return "", fmt.Errorf("failed to download poster: %v", err)
+	}
+	defer resp.Body.Close()
+
+	imageData, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read poster data: %v", err)
+	}
+
+	objectName := ulid.Make().String()
+
+	bucket := client.Bucket(c.BucketName)
+
+	writer := bucket.Object(objectName).NewWriter(ctx)
+
+	writer.ContentType = http.DetectContentType(imageData)
+
+	if _, err := writer.Write(imageData); err != nil {
+		writer.Close()
+		return "", fmt.Errorf("failed to upload poster to bucket: %v", err)
+	}
+
+	if err := writer.Close(); err != nil {
+		return "", fmt.Errorf("failed to finalize upload to bucket: %v", err)
+	}
+
+	return objectName, nil
 }

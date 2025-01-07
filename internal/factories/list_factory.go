@@ -12,9 +12,9 @@ type ListFactory struct {
 	GetListByID   *usecases.GetListByIDUseCase
 }
 
-func NewListFactory(db *gorm.DB) *ListFactory {
+func NewListFactory(db *gorm.DB, bucketName string) *ListFactory {
 	listRepository := repositories_implementation.NewListRepository(db)
-	movieResository := repositories_implementation.NewMovieRepository(db)
+	movieResository := repositories_implementation.NewMovieRepository(db, bucketName)
 	voteRepository := repositories_implementation.NewVoteRepository(db)
 	combinationRepository := repositories_implementation.NewCombinationRepository(db)
 	userResository := repositories_implementation.NewUserRepository(db)

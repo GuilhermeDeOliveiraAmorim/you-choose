@@ -54,13 +54,13 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	movieFactory := factories.NewMovieFactory(db)
+	movieFactory := factories.NewMovieFactory(db, config.GOOGLE_VAR.IMAGE_BUCKET_NAME)
 	movieHandler := handlers.NewMovieHandler(movieFactory)
 
-	listFactory := factories.NewListFactory(db)
+	listFactory := factories.NewListFactory(db, config.GOOGLE_VAR.IMAGE_BUCKET_NAME)
 	listHandler := handlers.NewListHandler(listFactory)
 
-	voteFactory := factories.NewVoteFactory(db)
+	voteFactory := factories.NewVoteFactory(db, config.GOOGLE_VAR.IMAGE_BUCKET_NAME)
 	voteHandler := handlers.NewVoteHandler(voteFactory)
 
 	userFactory := factories.NewUserFactory(db)
@@ -79,7 +79,7 @@ func main() {
 		protected.POST("lists/movies", listHandler.AddMoviesList)
 		protected.GET("lists", listHandler.GetListByID)
 
-		public.POST("movies", movieHandler.CreateMovie)
+		protected.POST("movies", movieHandler.CreateMovie)
 
 		protected.POST("votes", voteHandler.Vote)
 	}
