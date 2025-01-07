@@ -59,6 +59,16 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 				Instance: util.RFC403,
 			},
 		}
+	} else if !user.IsAdmin {
+		return CreateListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not an admin",
+				Status:   403,
+				Detail:   "User is not an admin",
+				Instance: util.RFC403,
+			},
+		}
 	}
 
 	if len(input.Movies) < 2 {

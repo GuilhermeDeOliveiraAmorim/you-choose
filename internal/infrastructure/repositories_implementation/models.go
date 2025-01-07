@@ -124,6 +124,7 @@ type Users struct {
 	Name          string     `gorm:"not null"`
 	Email         string     `gorm:"unique;not null"`
 	Password      string     `gorm:"not null"`
+	IsAdmin       bool       `gorm:"not null"`
 	Active        bool       `gorm:"not null"`
 	CreatedAt     time.Time  `gorm:"not null"`
 	UpdatedAt     *time.Time `gorm:"default:NULL"`

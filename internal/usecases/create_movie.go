@@ -58,6 +58,16 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 				Instance: util.RFC403,
 			},
 		}
+	} else if !user.IsAdmin {
+		return CreateMovieOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not an admin",
+				Status:   403,
+				Detail:   "User is not an admin",
+				Instance: util.RFC403,
+			},
+		}
 	}
 
 	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.ExternalID)

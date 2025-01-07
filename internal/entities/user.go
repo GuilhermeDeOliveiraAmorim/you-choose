@@ -8,8 +8,9 @@ import (
 
 type User struct {
 	SharedEntity
-	Name  string `json:"name"`
-	Login Login  `json:"login"`
+	Name    string `json:"name"`
+	Login   Login  `json:"login"`
+	IsAdmin bool   `json:"is_admin"`
 }
 
 func NewUser(name string, login Login) (*User, []util.ProblemDetails) {
@@ -23,6 +24,7 @@ func NewUser(name string, login Login) (*User, []util.ProblemDetails) {
 		SharedEntity: *NewSharedEntity(),
 		Name:         name,
 		Login:        login,
+		IsAdmin:      false,
 	}, nil
 }
 

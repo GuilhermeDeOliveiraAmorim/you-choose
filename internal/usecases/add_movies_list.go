@@ -58,6 +58,16 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 				Instance: util.RFC403,
 			},
 		}
+	} else if !user.IsAdmin {
+		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not an admin",
+				Status:   403,
+				Detail:   "User is not an admin",
+				Instance: util.RFC403,
+			},
+		}
 	}
 
 	var problems []util.ProblemDetails
