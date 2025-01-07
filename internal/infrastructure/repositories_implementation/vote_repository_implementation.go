@@ -76,3 +76,14 @@ func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bo
 
 	return count > 0, nil
 }
+
+func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
+	var count int64
+
+	result := c.gorm.Model(&Votes{}).Where("combination_id IN (SELECT id FROM combinations WHERE list_id =? AND active =?)", listID, true).Count(&count)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+
+	return int(count), nil
+}

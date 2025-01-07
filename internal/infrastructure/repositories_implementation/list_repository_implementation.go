@@ -56,7 +56,55 @@ func (c *ListRepository) CreateList(list entities.List) error {
 	return tx.Commit().Error
 }
 
-func (c *ListRepository) GetListByUserID(listID string) (entities.List, error) {
+func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
+	var count int64
+
+	result := c.gorm.Model(&Lists{}).Where("name =? AND active =?", listName, true).Count(&count)
+	if result.Error != nil {
+		return false, errors.New(result.Error.Error())
+	}
+
+	return count > 0, nil
+}
+
+func (c *ListRepository) ThisListExistByID(listID string) (bool, error) {
+	var count int64
+
+	result := c.gorm.Model(&Lists{}).Where("id =? AND active =?", listID, true).Count(&count)
+	if result.Error != nil {
+		return false, errors.New(result.Error.Error())
+	}
+
+	return count > 0, nil
+}
+
+func (c *ListRepository) AddMovies(list entities.List) error {
+	tx := c.gorm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	for _, movie := range list.Movies {
+		if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, movie.ID, time.Now()).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	for _, combination := range list.Combinations {
+		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_movie_id, second_movie_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstMovieID, combination.SecondMovieID).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 	var listModel Lists
 
 	resultListModel := c.gorm.Model(&Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
@@ -107,52 +155,4 @@ func (c *ListRepository) GetListByUserID(listID string) (entities.List, error) {
 	}
 
 	return *listModel.ToEntity(movies, combinations), nil
-}
-
-func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
-	var count int64
-
-	result := c.gorm.Model(&Lists{}).Where("name =? AND active =?", listName, true).Count(&count)
-	if result.Error != nil {
-		return false, errors.New(result.Error.Error())
-	}
-
-	return count > 0, nil
-}
-
-func (c *ListRepository) ThisListExistByID(listID string) (bool, error) {
-	var count int64
-
-	result := c.gorm.Model(&Lists{}).Where("id =? AND active =?", listID, true).Count(&count)
-	if result.Error != nil {
-		return false, errors.New(result.Error.Error())
-	}
-
-	return count > 0, nil
-}
-
-func (c *ListRepository) AddMovies(list entities.List) error {
-	tx := c.gorm.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-			panic(r)
-		}
-	}()
-
-	for _, movie := range list.Movies {
-		if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, movie.ID, time.Now()).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	for _, combination := range list.Combinations {
-		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_movie_id, second_movie_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstMovieID, combination.SecondMovieID).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-
-	return tx.Commit().Error
 }

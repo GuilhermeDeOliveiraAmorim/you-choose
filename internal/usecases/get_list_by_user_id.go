@@ -12,8 +12,9 @@ type GetListByUserIDInputDTO struct {
 }
 
 type GetListByUserIDOutputDTO struct {
-	List  entities.List   `json:"list"`
-	Votes []entities.Vote `json:"votes"`
+	List          entities.List   `json:"list"`
+	NumberOfVotes int             `json:"number_of_votes"`
+	Votes         []entities.Vote `json:"votes"`
 }
 
 type GetListByUserIDUseCase struct {
@@ -61,7 +62,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 		}
 	}
 
-	list, errGetList := u.ListRepository.GetListByUserID(input.ListID)
+	list, errGetList := u.ListRepository.GetListByID(input.ListID)
 	if errGetList != nil {
 		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
 			{
@@ -87,8 +88,22 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 		}
 	}
 
+	numberOfVotes, errGetNumberOfVotesByListID := u.VoteRepository.GetNumberOfVotesByListID(input.ListID)
+	if errGetNumberOfVotesByListID != nil {
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error fetching number of votes",
+				Status:   500,
+				Detail:   errGetNumberOfVotesByListID.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
 	return GetListByUserIDOutputDTO{
-		List:  list,
-		Votes: votes,
+		List:          list,
+		NumberOfVotes: numberOfVotes,
+		Votes:         votes,
 	}, nil
 }

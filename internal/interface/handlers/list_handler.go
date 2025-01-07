@@ -120,7 +120,7 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
 // @Security BearerAuth
-// @Router /lists [get]
+// @Router /lists/users [get]
 func (h *ListHandler) GetListByUserID(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {
@@ -136,6 +136,33 @@ func (h *ListHandler) GetListByUserID(c *gin.Context) {
 	}
 
 	output, errs := h.listFactory.GetListByUserID.Execute(input)
+	if len(errs) > 0 {
+		handleErrors(c, errs)
+		return
+	}
+
+	c.JSON(http.StatusCreated, output)
+}
+
+// @Summary Get List
+// @Description Get a list of movies and numbers of votes
+// @Tags Lists
+// @Accept json
+// @Produce json
+// @Param list_id query string true "List id"
+// @Success 201 {object} usecases.GetListByIDOutputDTO
+// @Failure 400 {object} util.ProblemDetails "Bad Request"
+// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Router /lists [get]
+func (h *ListHandler) GetListByID(c *gin.Context) {
+	listID := c.Query("list_id")
+
+	input := usecases.GetListByIDInputDTO{
+		ListID: listID,
+	}
+
+	output, errs := h.listFactory.GetListByID.Execute(input)
 	if len(errs) > 0 {
 		handleErrors(c, errs)
 		return
