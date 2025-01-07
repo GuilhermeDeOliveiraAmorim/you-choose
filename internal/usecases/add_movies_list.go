@@ -10,6 +10,7 @@ import (
 type AddMoviesListInputDTO struct {
 	ListID string   `json:"list_id"`
 	Movies []string `json:"movies"`
+	UserID string   `json:"user_id"`
 }
 
 type AddMoviesListOutputDTO struct {
@@ -20,19 +21,45 @@ type AddMoviesListOutputDTO struct {
 type AddMoviesListUseCase struct {
 	ListRepository  repositories.ListRepository
 	MovieRepository repositories.MovieRepository
+	UserRepository  repositories.UserRepository
 }
 
 func NewAddMoviesListUseCase(
 	ListRepository repositories.ListRepository,
 	MovieRepository repositories.MovieRepository,
+	UserRepository repositories.UserRepository,
 ) *AddMoviesListUseCase {
 	return &AddMoviesListUseCase{
 		ListRepository:  ListRepository,
 		MovieRepository: MovieRepository,
+		UserRepository:  UserRepository,
 	}
 }
 
 func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesListOutputDTO, []util.ProblemDetails) {
+	user, err := u.UserRepository.GetUser(input.UserID)
+	if err != nil {
+		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Not Found",
+				Title:    "User not found",
+				Status:   404,
+				Detail:   err.Error(),
+				Instance: util.RFC404,
+			},
+		}
+	} else if !user.Active {
+		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not active",
+				Status:   403,
+				Detail:   "User is not active",
+				Instance: util.RFC403,
+			},
+		}
+	}
+
 	var problems []util.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.ListID)

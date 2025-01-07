@@ -21,11 +21,11 @@ type CreateUserOutputDto struct {
 }
 
 type CreateUserUseCase struct {
-	UserRepository repositories.UserRepositoryInterface
+	UserRepository repositories.UserRepository
 }
 
 func NewCreateUserUseCase(
-	UserRepository repositories.UserRepositoryInterface,
+	UserRepository repositories.UserRepository,
 ) *CreateUserUseCase {
 	return &CreateUserUseCase{
 		UserRepository: UserRepository,

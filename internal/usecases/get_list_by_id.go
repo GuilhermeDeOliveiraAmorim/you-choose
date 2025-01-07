@@ -20,21 +20,47 @@ type GetListByIDUseCase struct {
 	ListRepository        repositories.ListRepository
 	VoteRepository        repositories.VoteRepository
 	CombinationRepository repositories.CombinationRepository
+	UserRepository        repositories.UserRepository
 }
 
 func NewGetListByIDUseCase(
 	ListRepository repositories.ListRepository,
 	VoteRepository repositories.VoteRepository,
 	CombinationRepository repositories.CombinationRepository,
+	UserRepository repositories.UserRepository,
 ) *GetListByIDUseCase {
 	return &GetListByIDUseCase{
 		ListRepository:        ListRepository,
 		VoteRepository:        VoteRepository,
 		CombinationRepository: CombinationRepository,
+		UserRepository:        UserRepository,
 	}
 }
 
 func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutputDTO, []util.ProblemDetails) {
+	user, err := u.UserRepository.GetUser(input.UserID)
+	if err != nil {
+		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Not Found",
+				Title:    "User not found",
+				Status:   404,
+				Detail:   err.Error(),
+				Instance: util.RFC404,
+			},
+		}
+	} else if !user.Active {
+		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not active",
+				Status:   403,
+				Detail:   "User is not active",
+				Instance: util.RFC403,
+			},
+		}
+	}
+
 	list, errGetList := u.ListRepository.GetListByID(input.ListID)
 	if errGetList != nil {
 		return GetListByIDOutputDTO{}, []util.ProblemDetails{

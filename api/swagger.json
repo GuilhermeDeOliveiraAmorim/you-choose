@@ -23,6 +23,11 @@
     "paths": {
         "/lists": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a list of movies and votes",
                 "consumes": [
                     "application/json"
@@ -39,13 +44,6 @@
                         "type": "string",
                         "description": "List id",
                         "name": "list_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "user_id",
                         "in": "query",
                         "required": true
                     }
@@ -222,6 +220,11 @@
         },
         "/movies": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Registers a new movie in the system",
                 "consumes": [
                     "application/json"
@@ -314,6 +317,11 @@
         },
         "/votes": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Registers a new vote in the system",
                 "consumes": [
                     "application/json"
@@ -332,7 +340,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.VoteInputDTO"
+                            "$ref": "#/definitions/usecases.Vote"
                         }
                     }
                 ],
@@ -538,6 +546,9 @@
                 "poster": {
                     "type": "string"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "year": {
                     "type": "integer"
                 }
@@ -624,16 +635,13 @@
                 }
             }
         },
-        "usecases.VoteInputDTO": {
+        "usecases.Vote": {
             "type": "object",
             "properties": {
-                "combination": {
+                "combination_id": {
                     "type": "string"
                 },
                 "list_id": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 },
                 "winner_id": {

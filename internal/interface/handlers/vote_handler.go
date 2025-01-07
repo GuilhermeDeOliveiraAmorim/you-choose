@@ -24,15 +24,22 @@ func NewVoteHandler(factory *factories.VoteFactory) *VoteHandler {
 // @Tags Votes
 // @Accept json
 // @Produce json
-// @Param request body usecases.VoteInputDTO true "Vote data"
+// @Param request body usecases.Vote true "Vote data"
 // @Success 201 {object} usecases.VoteOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Security BearerAuth
 // @Router /votes [post]
 func (h *VoteHandler) Vote(c *gin.Context) {
-	var request usecases.VoteInputDTO
-	if err := c.ShouldBindJSON(&request); err != nil {
+	userID, err := getUserID(c)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+		return
+	}
+
+	var vote usecases.Vote
+	if err := c.ShouldBindJSON(&vote); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -43,7 +50,12 @@ func (h *VoteHandler) Vote(c *gin.Context) {
 		return
 	}
 
-	output, errs := h.voteFactory.Vote.Execute(request)
+	input := usecases.VoteInputDTO{
+		UserID: userID,
+		Vote:   vote,
+	}
+
+	output, errs := h.voteFactory.Vote.Execute(input)
 	if len(errs) > 0 {
 		handleErrors(c, errs)
 		return

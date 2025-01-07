@@ -13,6 +13,7 @@ type CreateMovieInputDTO struct {
 	Year       int64  `json:"year"`
 	Poster     string `json:"poster"`
 	ExternalID string `json:"external_id"`
+	UserID     string `json:"user_id"`
 }
 
 type CreateMovieOutputDTO struct {
@@ -22,17 +23,43 @@ type CreateMovieOutputDTO struct {
 
 type CreateMovieUseCase struct {
 	MovieRepository repositories.MovieRepository
+	UserRepository  repositories.UserRepository
 }
 
 func NewCreateMovieUseCase(
 	MovieRepository repositories.MovieRepository,
+	UserRepository repositories.UserRepository,
 ) *CreateMovieUseCase {
 	return &CreateMovieUseCase{
 		MovieRepository: MovieRepository,
+		UserRepository:  UserRepository,
 	}
 }
 
 func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutputDTO, []util.ProblemDetails) {
+	user, err := u.UserRepository.GetUser(input.UserID)
+	if err != nil {
+		return CreateMovieOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Not Found",
+				Title:    "User not found",
+				Status:   404,
+				Detail:   err.Error(),
+				Instance: util.RFC404,
+			},
+		}
+	} else if !user.Active {
+		return CreateMovieOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not active",
+				Status:   403,
+				Detail:   "User is not active",
+				Instance: util.RFC403,
+			},
+		}
+	}
+
 	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.ExternalID)
 	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{

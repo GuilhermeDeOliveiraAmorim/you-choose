@@ -91,15 +91,20 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param list_id query string true "List id"
-// @Param user_id query string true "User id"
 // @Success 201 {object} usecases.GetListByIDOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Security BearerAuth
 // @Router /lists [get]
 func (h *ListHandler) GetListByID(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+		return
+	}
+
 	listID := c.Query("list_id")
-	userID := c.Query("user_id")
 
 	input := usecases.GetListByIDInputDTO{
 		ListID: listID,

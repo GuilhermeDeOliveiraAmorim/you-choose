@@ -29,8 +29,15 @@ func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Security BearerAuth
 // @Router /movies [post]
 func (h *MovieHandler) CreateMovie(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+		return
+	}
+
 	var request usecases.CreateMovieInputDTO
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
@@ -42,6 +49,8 @@ func (h *MovieHandler) CreateMovie(c *gin.Context) {
 		}})
 		return
 	}
+
+	request.UserID = userID
 
 	output, errs := h.movieFactory.CreateMovie.Execute(request)
 	if len(errs) > 0 {

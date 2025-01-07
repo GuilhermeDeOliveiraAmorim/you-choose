@@ -11,6 +11,7 @@ import (
 type CreateListInputDTO struct {
 	Name   string   `json:"name"`
 	Movies []string `json:"movies"`
+	UserID string   `json:"user_id"`
 }
 
 type CreateListOutputDTO struct {
@@ -21,19 +22,45 @@ type CreateListOutputDTO struct {
 type CreateListUseCase struct {
 	ListRepository  repositories.ListRepository
 	MovieRepository repositories.MovieRepository
+	UserRepository  repositories.UserRepository
 }
 
 func NewCreateListUseCase(
 	ListRepository repositories.ListRepository,
 	MovieRepository repositories.MovieRepository,
+	UserRepository repositories.UserRepository,
 ) *CreateListUseCase {
 	return &CreateListUseCase{
 		ListRepository:  ListRepository,
 		MovieRepository: MovieRepository,
+		UserRepository:  UserRepository,
 	}
 }
 
 func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []util.ProblemDetails) {
+	user, err := u.UserRepository.GetUser(input.UserID)
+	if err != nil {
+		return CreateListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Not Found",
+				Title:    "User not found",
+				Status:   404,
+				Detail:   err.Error(),
+				Instance: util.RFC404,
+			},
+		}
+	} else if !user.Active {
+		return CreateListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not active",
+				Status:   403,
+				Detail:   "User is not active",
+				Instance: util.RFC403,
+			},
+		}
+	}
+
 	if len(input.Movies) < 2 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{

@@ -14,8 +14,9 @@ func NewVoteFactory(db *gorm.DB) *VoteFactory {
 	voteResository := repositories_implementation.NewVoteRepository(db)
 	listRepository := repositories_implementation.NewListRepository(db)
 	movieResository := repositories_implementation.NewMovieRepository(db)
+	userResository := repositories_implementation.NewUserRepository(db)
 
-	createVote := usecases.NewVoteUseCase(voteResository, listRepository, movieResository)
+	createVote := usecases.NewVoteUseCase(voteResository, listRepository, movieResository, userResository)
 
 	return &VoteFactory{
 		Vote: createVote,

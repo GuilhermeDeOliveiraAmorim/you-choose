@@ -17,10 +17,11 @@ func NewListFactory(db *gorm.DB) *ListFactory {
 	movieResository := repositories_implementation.NewMovieRepository(db)
 	voteRepository := repositories_implementation.NewVoteRepository(db)
 	combinationRepository := repositories_implementation.NewCombinationRepository(db)
+	userResository := repositories_implementation.NewUserRepository(db)
 
-	createList := usecases.NewCreateListUseCase(listRepository, movieResository)
-	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository)
-	getListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository, combinationRepository)
+	createList := usecases.NewCreateListUseCase(listRepository, movieResository, userResository)
+	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository, userResository)
+	getListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
 
 	return &ListFactory{
 		CreateList:    createList,

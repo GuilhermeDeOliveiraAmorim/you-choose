@@ -6,11 +6,15 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
-type VoteInputDTO struct {
-	UserID        string `json:"user_id"`
+type Vote struct {
 	ListID        string `json:"list_id"`
-	CombinationID string `json:"combination"`
+	CombinationID string `json:"combination_id"`
 	WinnerID      string `json:"winner_id"`
+}
+
+type VoteInputDTO struct {
+	UserID string `json:"user_id"`
+	Vote   Vote   `json:"vote"`
 }
 
 type VoteOutputDTO struct {
@@ -22,22 +26,48 @@ type VoteUseCase struct {
 	VoteRepository  repositories.VoteRepository
 	ListRepository  repositories.ListRepository
 	MovieRepository repositories.MovieRepository
+	UserRepository  repositories.UserRepository
 }
 
 func NewVoteUseCase(
 	VoteRepository repositories.VoteRepository,
 	ListRepository repositories.ListRepository,
 	MovieRepository repositories.MovieRepository,
+	UserRepository repositories.UserRepository,
 ) *VoteUseCase {
 	return &VoteUseCase{
 		VoteRepository:  VoteRepository,
 		ListRepository:  ListRepository,
 		MovieRepository: MovieRepository,
+		UserRepository:  UserRepository,
 	}
 }
 
 func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.ProblemDetails) {
-	listExists, errGetList := u.ListRepository.ThisListExistByID(input.ListID)
+	user, err := u.UserRepository.GetUser(input.UserID)
+	if err != nil {
+		return VoteOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Not Found",
+				Title:    "User not found",
+				Status:   404,
+				Detail:   err.Error(),
+				Instance: util.RFC404,
+			},
+		}
+	} else if !user.Active {
+		return VoteOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Forbidden",
+				Title:    "User is not active",
+				Status:   403,
+				Detail:   "User is not active",
+				Instance: util.RFC403,
+			},
+		}
+	}
+
+	listExists, errGetList := u.ListRepository.ThisListExistByID(input.Vote.ListID)
 	if errGetList != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
 			{
@@ -62,7 +92,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	_, errGetWinner := u.MovieRepository.GetMovieByID(input.WinnerID)
+	_, errGetWinner := u.MovieRepository.GetMovieByID(input.Vote.WinnerID)
 	if errGetWinner != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
 			{
@@ -75,18 +105,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.CombinationID)
-	if errVoteAlreadyRegistered != nil {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Validation Error",
-				Title:    "Conflict",
-				Status:   409,
-				Detail:   "Vote already registered for this combination.",
-				Instance: util.RFC409,
-			},
-		}
-	} else if voteAlreadyRegistered {
+	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.Vote.CombinationID)
+	if (errVoteAlreadyRegistered != nil) || voteAlreadyRegistered {
 		return VoteOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Validation Error",
@@ -98,7 +118,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	newVote, newVoteErr := entities.NewVote(input.UserID, input.CombinationID, input.WinnerID)
+	newVote, newVoteErr := entities.NewVote(input.UserID, input.Vote.CombinationID, input.Vote.WinnerID)
 	if newVoteErr != nil {
 		return VoteOutputDTO{}, newVoteErr
 	}
@@ -118,6 +138,6 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 
 	return VoteOutputDTO{
 		SuccessMessage: "Vote created successfully!",
-		ContentMessage: input.ListID,
+		ContentMessage: input.Vote.ListID,
 	}, nil
 }

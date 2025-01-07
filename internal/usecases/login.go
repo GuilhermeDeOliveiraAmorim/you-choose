@@ -22,11 +22,11 @@ type LoginOutputDto struct {
 }
 
 type LoginUseCase struct {
-	UserRepository repositories.UserRepositoryInterface
+	UserRepository repositories.UserRepository
 }
 
 func NewLoginUseCase(
-	UserRepository repositories.UserRepositoryInterface,
+	UserRepository repositories.UserRepository,
 ) *LoginUseCase {
 	return &LoginUseCase{
 		UserRepository: UserRepository,

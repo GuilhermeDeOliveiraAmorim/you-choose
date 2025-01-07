@@ -84,3 +84,28 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 
 	return true, nil
 }
+
+func (u *UserRepository) GetUser(userID string) (entities.User, error) {
+	var userModel Users
+
+	result := u.gorm.Model(&Users{}).Where("id = ?", userID).First(&userModel)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return entities.User{}, errors.New("user not found")
+		}
+		return entities.User{}, errors.New(result.Error.Error())
+	}
+
+	user := entities.User{
+		SharedEntity: entities.SharedEntity{
+			ID:            userModel.ID,
+			Active:        userModel.Active,
+			CreatedAt:     userModel.CreatedAt,
+			UpdatedAt:     userModel.UpdatedAt,
+			DeactivatedAt: userModel.DeactivatedAt,
+		},
+		Name: userModel.Name,
+	}
+
+	return user, nil
+}

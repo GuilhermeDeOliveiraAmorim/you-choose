@@ -26,6 +26,11 @@ const docTemplate = `{
     "paths": {
         "/lists": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get a list of movies and votes",
                 "consumes": [
                     "application/json"
@@ -42,13 +47,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "List id",
                         "name": "list_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "user_id",
                         "in": "query",
                         "required": true
                     }
@@ -225,6 +223,11 @@ const docTemplate = `{
         },
         "/movies": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Registers a new movie in the system",
                 "consumes": [
                     "application/json"
@@ -317,6 +320,11 @@ const docTemplate = `{
         },
         "/votes": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Registers a new vote in the system",
                 "consumes": [
                     "application/json"
@@ -335,7 +343,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecases.VoteInputDTO"
+                            "$ref": "#/definitions/usecases.Vote"
                         }
                     }
                 ],
@@ -541,6 +549,9 @@ const docTemplate = `{
                 "poster": {
                     "type": "string"
                 },
+                "user_id": {
+                    "type": "string"
+                },
                 "year": {
                     "type": "integer"
                 }
@@ -627,16 +638,13 @@ const docTemplate = `{
                 }
             }
         },
-        "usecases.VoteInputDTO": {
+        "usecases.Vote": {
             "type": "object",
             "properties": {
-                "combination": {
+                "combination_id": {
                     "type": "string"
                 },
                 "list_id": {
-                    "type": "string"
-                },
-                "user_id": {
                     "type": "string"
                 },
                 "winner_id": {
