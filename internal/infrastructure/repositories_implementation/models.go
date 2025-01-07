@@ -131,3 +131,33 @@ func Migration(db *gorm.DB, sqlDB *sql.DB) {
 	}
 	fmt.Println("Successful migration")
 }
+
+type Users struct {
+	ID            string     `gorm:"primaryKey;not null"`
+	Name          string     `gorm:"not null"`
+	Email         string     `gorm:"unique;not null"`
+	Password      string     `gorm:"not null"`
+	Active        bool       `gorm:"not null"`
+	CreatedAt     time.Time  `gorm:"not null"`
+	UpdatedAt     time.Time  `gorm:"not null"`
+	DeactivatedAt *time.Time `gorm:"default:NULL"`
+}
+
+func (u *Users) ToEntity() *entities.User {
+	login := entities.Login{
+		Email:    u.Email,
+		Password: u.Password,
+	}
+
+	return &entities.User{
+		SharedEntity: entities.SharedEntity{
+			ID:            u.ID,
+			Active:        u.Active,
+			CreatedAt:     u.CreatedAt,
+			UpdatedAt:     u.UpdatedAt,
+			DeactivatedAt: u.DeactivatedAt,
+		},
+		Name:  u.Name,
+		Login: login,
+	}
+}
