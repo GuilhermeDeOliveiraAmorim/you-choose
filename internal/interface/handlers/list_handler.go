@@ -24,7 +24,7 @@ func NewListHandler(factory *factories.ListFactory) *ListHandler {
 // @Tags Lists
 // @Accept json
 // @Produce json
-// @Param request body usecases.CreateListInputDTO true "Movie data"
+// @Param request body usecases.List true "List data"
 // @Success 201 {object} usecases.CreateListOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
@@ -32,8 +32,14 @@ func NewListHandler(factory *factories.ListFactory) *ListHandler {
 // @Security BearerAuth
 // @Router /lists [post]
 func (h *ListHandler) CreateList(c *gin.Context) {
-	var request usecases.CreateListInputDTO
-	if err := c.ShouldBindJSON(&request); err != nil {
+	userID, err := getUserID(c)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+		return
+	}
+
+	var list usecases.List
+	if err := c.ShouldBindJSON(&list); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -44,7 +50,12 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 		return
 	}
 
-	output, errs := h.listFactory.CreateList.Execute(request)
+	input := usecases.CreateListInputDTO{
+		List:   list,
+		UserID: userID,
+	}
+
+	output, errs := h.listFactory.CreateList.Execute(input)
 	if len(errs) > 0 {
 		handleErrors(c, errs)
 		return
@@ -58,7 +69,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 // @Tags Lists
 // @Accept json
 // @Produce json
-// @Param request body usecases.AddMoviesListInputDTO true "AddMoviesList data"
+// @Param request body usecases.Movies true "AddMoviesList data"
 // @Success 201 {object} usecases.AddMoviesListOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
@@ -66,8 +77,14 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 // @Security BearerAuth
 // @Router /lists/movies [post]
 func (h *ListHandler) AddMoviesList(c *gin.Context) {
-	var request usecases.AddMoviesListInputDTO
-	if err := c.ShouldBindJSON(&request); err != nil {
+	userID, err := getUserID(c)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+		return
+	}
+
+	var movies usecases.Movies
+	if err := c.ShouldBindJSON(&movies); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -78,7 +95,12 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 		return
 	}
 
-	output, errs := h.listFactory.AddMoviesList.Execute(request)
+	input := usecases.AddMoviesListInputDTO{
+		UserID: userID,
+		Movies: movies,
+	}
+
+	output, errs := h.listFactory.AddMoviesList.Execute(input)
 	if len(errs) > 0 {
 		handleErrors(c, errs)
 		return

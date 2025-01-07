@@ -8,12 +8,16 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
-type CreateMovieInputDTO struct {
+type Movie struct {
 	Name       string `json:"name"`
 	Year       int64  `json:"year"`
 	Poster     string `json:"poster"`
 	ExternalID string `json:"external_id"`
-	UserID     string `json:"user_id"`
+}
+
+type CreateMovieInputDTO struct {
+	UserID string `json:"user_id"`
+	Movie  Movie  `json:"movie"`
 }
 
 type CreateMovieOutputDTO struct {
@@ -70,7 +74,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 		}
 	}
 
-	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.ExternalID)
+	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.Movie.ExternalID)
 	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
@@ -96,16 +100,16 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 	}
 
 	movie, problems := entities.NewMovie(
-		input.Name,
-		input.Year,
-		input.ExternalID,
+		input.Movie.Name,
+		input.Movie.Year,
+		input.Movie.ExternalID,
 	)
 
 	if len(problems) > 0 {
 		return CreateMovieOutputDTO{}, problems
 	}
 
-	posterID, errSavePoster := u.MovieRepository.SavePoster(input.Poster)
+	posterID, errSavePoster := u.MovieRepository.SavePoster(input.Movie.Poster)
 	if errSavePoster != nil {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{

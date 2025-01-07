@@ -8,10 +8,14 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
-type CreateListInputDTO struct {
+type List struct {
 	Name   string   `json:"name"`
 	Movies []string `json:"movies"`
-	UserID string   `json:"user_id"`
+}
+
+type CreateListInputDTO struct {
+	List   List   `json:"list"`
+	UserID string `json:"user_id"`
 }
 
 type CreateListOutputDTO struct {
@@ -71,7 +75,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
-	if len(input.Movies) < 2 {
+	if len(input.List.Movies) < 2 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Validation Error",
@@ -83,7 +87,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
-	listExists, errThisListExist := u.ListRepository.ThisListExistByName(input.Name)
+	listExists, errThisListExist := u.ListRepository.ThisListExistByName(input.List.Name)
 	if errThisListExist != nil && strings.Compare(errThisListExist.Error(), "list not found") > 0 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
@@ -108,7 +112,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
-	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies)
+	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.List.Movies)
 	if errGetMoviesByID != nil {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
@@ -121,14 +125,14 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
-	list, problems := entities.NewList(input.Name)
+	list, problems := entities.NewList(input.List.Name)
 	if len(problems) > 0 {
 		return CreateListOutputDTO{}, problems
 	}
 
 	list.AddMovies(movies)
 
-	combinations, errGetCombinations := list.GetCombinations(input.Movies)
+	combinations, errGetCombinations := list.GetCombinations(input.List.Movies)
 	if len(errGetCombinations) > 0 {
 		return CreateListOutputDTO{}, errGetCombinations
 	}

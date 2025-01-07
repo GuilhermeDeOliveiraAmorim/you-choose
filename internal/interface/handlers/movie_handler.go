@@ -24,7 +24,7 @@ func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
 // @Tags Movies
 // @Accept json
 // @Produce json
-// @Param request body usecases.CreateMovieInputDTO true "Movie data"
+// @Param request body usecases.Movie true "Movie data"
 // @Success 201 {object} usecases.CreateMovieOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
@@ -38,8 +38,8 @@ func (h *MovieHandler) CreateMovie(c *gin.Context) {
 		return
 	}
 
-	var request usecases.CreateMovieInputDTO
-	if err := c.ShouldBindJSON(&request); err != nil {
+	var movie usecases.Movie
+	if err := c.ShouldBindJSON(&movie); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -50,9 +50,12 @@ func (h *MovieHandler) CreateMovie(c *gin.Context) {
 		return
 	}
 
-	request.UserID = userID
+	input := usecases.CreateMovieInputDTO{
+		UserID: userID,
+		Movie:  movie,
+	}
 
-	output, errs := h.movieFactory.CreateMovie.Execute(request)
+	output, errs := h.movieFactory.CreateMovie.Execute(input)
 	if len(errs) > 0 {
 		handleErrors(c, errs)
 		return

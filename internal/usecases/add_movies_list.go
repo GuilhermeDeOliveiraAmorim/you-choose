@@ -7,10 +7,14 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
-type AddMoviesListInputDTO struct {
+type Movies struct {
 	ListID string   `json:"list_id"`
 	Movies []string `json:"movies"`
-	UserID string   `json:"user_id"`
+}
+
+type AddMoviesListInputDTO struct {
+	UserID string `json:"user_id"`
+	Movies Movies `json:"add_movies_list"`
 }
 
 type AddMoviesListOutputDTO struct {
@@ -72,7 +76,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	var problems []util.ProblemDetails
 
-	list, errGetList := u.ListRepository.GetListByID(input.ListID)
+	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)
 	if errGetList != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
@@ -85,7 +89,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		}
 	}
 
-	for _, movieID := range input.Movies {
+	for _, movieID := range input.Movies.Movies {
 		for _, movie := range list.Movies {
 			if movie.ID == movieID {
 				problems = append(problems,
@@ -105,7 +109,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, problems
 	}
 
-	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies)
+	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies.Movies)
 	if errGetMoviesByID != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
