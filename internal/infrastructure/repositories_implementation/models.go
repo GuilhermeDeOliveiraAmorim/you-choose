@@ -48,6 +48,7 @@ type Movies struct {
 	FirstVotes    []Combinations `gorm:"foreignKey:FirstMovieID"`
 	SecondVotes   []Combinations `gorm:"foreignKey:SecondMovieID"`
 	WinnerVotes   []Votes        `gorm:"foreignKey:WinnerID"`
+	VotesCount    int            `gorm:"not null"`
 }
 
 func (m *Movies) ToEntity() *entities.Movie {
@@ -63,6 +64,7 @@ func (m *Movies) ToEntity() *entities.Movie {
 		Year:       m.Year,
 		Poster:     m.Poster,
 		ExternalID: m.ExternalID,
+		VotesCount: m.VotesCount,
 	}
 }
 

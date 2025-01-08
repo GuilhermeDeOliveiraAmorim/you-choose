@@ -2,6 +2,7 @@ package repositories_implementation
 
 import (
 	"errors"
+	"sort"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"gorm.io/gorm"
@@ -86,4 +87,40 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 	}
 
 	return int(count), nil
+}
+
+func (c *VoteRepository) RankMoviesByVotes(listID string) ([]entities.Movie, error) {
+	var combinations []Combinations
+	if err := c.gorm.Where("list_id = ?", listID).Find(&combinations).Error; err != nil {
+		return nil, errors.New(err.Error())
+	}
+
+	voteCounts := make(map[string]int)
+
+	for _, combination := range combinations {
+		var votes []Votes
+		if err := c.gorm.Where("combination_id = ?", combination.ID).Find(&votes).Error; err != nil {
+			return nil, errors.New(err.Error())
+		}
+
+		for _, vote := range votes {
+			voteCounts[vote.WinnerID]++
+		}
+	}
+
+	var movies []entities.Movie
+	for movieID, count := range voteCounts {
+		var movie Movies
+		if err := c.gorm.First(&movie, "id = ?", movieID).Error; err != nil {
+			return nil, errors.New(err.Error())
+		}
+		movie.VotesCount = count
+		movies = append(movies, *movie.ToEntity())
+	}
+
+	sort.Slice(movies, func(i, j int) bool {
+		return movies[i].VotesCount > movies[j].VotesCount
+	})
+
+	return movies, nil
 }

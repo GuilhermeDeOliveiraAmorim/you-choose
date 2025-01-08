@@ -45,6 +45,7 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 		Year:          movie.Year,
 		Poster:        movie.Poster,
 		ExternalID:    movie.ExternalID,
+		VotesCount:    movie.VotesCount,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err
@@ -135,4 +136,30 @@ func (c *MovieRepository) SavePoster(poster string) (string, error) {
 	}
 
 	return objectName, nil
+}
+
+func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
+	tx := c.gorm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	if err := tx.Model(&Movies{}).Where("id =?", movie.ID).Updates(Movies{
+		Active:        movie.Active,
+		Name:          movie.Name,
+		Year:          movie.Year,
+		Poster:        movie.Poster,
+		VotesCount:    movie.VotesCount,
+		DeactivatedAt: movie.DeactivatedAt,
+		UpdatedAt:     movie.UpdatedAt,
+		ExternalID:    movie.ExternalID,
+	}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }

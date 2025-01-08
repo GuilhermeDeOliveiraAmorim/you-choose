@@ -11,8 +11,9 @@ type GetListByIDInputDTO struct {
 }
 
 type GetListByIDOutputDTO struct {
-	List          entities.List `json:"list"`
-	NumberOfVotes int           `json:"number_of_votes"`
+	List          entities.List    `json:"list"`
+	RankMovies    []entities.Movie `json:"rank_movies"`
+	NumberOfVotes int              `json:"number_of_votes"`
 }
 
 type GetListByIDUseCase struct {
@@ -57,8 +58,22 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 		}
 	}
 
+	rankMovies, errGetRankMoviesByVotes := u.VoteRepository.RankMoviesByVotes(input.ListID)
+	if errGetRankMoviesByVotes != nil {
+		return GetListByIDOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error fetching ranked movies",
+				Status:   500,
+				Detail:   errGetRankMoviesByVotes.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
 	return GetListByIDOutputDTO{
 		List:          list,
+		RankMovies:    rankMovies,
 		NumberOfVotes: numberOfVotes,
 	}, nil
 }

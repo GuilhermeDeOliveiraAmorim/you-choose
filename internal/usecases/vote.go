@@ -92,7 +92,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	_, errGetWinner := u.MovieRepository.GetMovieByID(input.Vote.WinnerID)
+	winner, errGetWinner := u.MovieRepository.GetMovieByID(input.Vote.WinnerID)
 	if errGetWinner != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
 			{
@@ -104,6 +104,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 			},
 		}
 	}
+
+	winner.IncrementVotesCount()
 
 	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.Vote.CombinationID)
 	if (errVoteAlreadyRegistered != nil) || voteAlreadyRegistered {
@@ -131,6 +133,19 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 				Title:    "Error creating vote",
 				Status:   500,
 				Detail:   errVote.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
+	errUpdateWinner := u.MovieRepository.UpdadeMovie(winner)
+	if errUpdateWinner != nil {
+		return VoteOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error updating winner movie",
+				Status:   500,
+				Detail:   errUpdateWinner.Error(),
 				Instance: util.RFC500,
 			},
 		}
