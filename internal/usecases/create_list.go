@@ -10,6 +10,7 @@ import (
 
 type List struct {
 	Name   string   `json:"name"`
+	Cover  string   `json:"cover"`
 	Movies []string `json:"movies"`
 }
 
@@ -27,17 +28,20 @@ type CreateListUseCase struct {
 	ListRepository  repositories.ListRepository
 	MovieRepository repositories.MovieRepository
 	UserRepository  repositories.UserRepository
+	ImageRepository repositories.ImageRepository
 }
 
 func NewCreateListUseCase(
 	ListRepository repositories.ListRepository,
 	MovieRepository repositories.MovieRepository,
 	UserRepository repositories.UserRepository,
+	ImageRepository repositories.ImageRepository,
 ) *CreateListUseCase {
 	return &CreateListUseCase{
 		ListRepository:  ListRepository,
 		MovieRepository: MovieRepository,
 		UserRepository:  UserRepository,
+		ImageRepository: ImageRepository,
 	}
 }
 
@@ -125,7 +129,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
-	list, problems := entities.NewList(input.List.Name)
+	list, problems := entities.NewList(input.List.Name, input.List.Cover)
 	if len(problems) > 0 {
 		return CreateListOutputDTO{}, problems
 	}
@@ -138,6 +142,21 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	}
 
 	list.AddCombinations(combinations)
+
+	cover, errSaveImage := u.ImageRepository.SaveImage(input.List.Cover)
+	if errSaveImage != nil {
+		return CreateListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error saving cover",
+				Status:   500,
+				Detail:   errSaveImage.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
+	list.AddCover(cover)
 
 	errCreateList := u.ListRepository.CreateList(*list)
 	if errCreateList != nil {

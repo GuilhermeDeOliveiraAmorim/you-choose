@@ -16,6 +16,7 @@ type Lists struct {
 	UpdatedAt     *time.Time `gorm:"default:NULL"`
 	DeactivatedAt *time.Time `gorm:"default:NULL"`
 	Name          string     `gorm:"not null"`
+	Cover         string     `gorm:"not null"`
 	Movies        []Movies   `gorm:"many2many:list_movies;"`
 }
 
@@ -29,6 +30,7 @@ func (m *Lists) ToEntity(movies []entities.Movie, combinations []entities.Combin
 			DeactivatedAt: m.DeactivatedAt,
 		},
 		Name:         m.Name,
+		Cover:        m.Cover,
 		Movies:       movies,
 		Combinations: combinations,
 	}

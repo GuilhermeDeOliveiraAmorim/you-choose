@@ -13,8 +13,9 @@ type MovieFactory struct {
 func NewMovieFactory(db *gorm.DB, bucketName string) *MovieFactory {
 	movieResository := repositories_implementation.NewMovieRepository(db, bucketName)
 	userResository := repositories_implementation.NewUserRepository(db)
+	imageRepository := repositories_implementation.NewImageRepository(bucketName)
 
-	createMovie := usecases.NewCreateMovieUseCase(movieResository, userResository)
+	createMovie := usecases.NewCreateMovieUseCase(movieResository, userResository, imageRepository)
 
 	return &MovieFactory{
 		CreateMovie: createMovie,

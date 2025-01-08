@@ -466,6 +466,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/entities.Combination"
                     }
                 },
+                "cover": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
@@ -515,6 +518,9 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                },
+                "votes_count": {
+                    "type": "integer"
                 },
                 "year": {
                     "type": "integer"
@@ -616,6 +622,12 @@ const docTemplate = `{
                 },
                 "number_of_votes": {
                     "type": "integer"
+                },
+                "rank_movies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Movie"
+                    }
                 }
             }
         },
@@ -628,6 +640,12 @@ const docTemplate = `{
                 "number_of_votes": {
                     "type": "integer"
                 },
+                "rank_movies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Movie"
+                    }
+                },
                 "votes": {
                     "type": "array",
                     "items": {
@@ -639,6 +657,9 @@ const docTemplate = `{
         "usecases.List": {
             "type": "object",
             "properties": {
+                "cover": {
+                    "type": "string"
+                },
                 "movies": {
                     "type": "array",
                     "items": {

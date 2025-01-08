@@ -19,6 +19,8 @@ definitions:
         items:
           $ref: '#/definitions/entities.Combination'
         type: array
+      cover:
+        type: string
       created_at:
         type: string
       deactivated_at:
@@ -52,6 +54,8 @@ definitions:
         type: string
       updated_at:
         type: string
+      votes_count:
+        type: integer
       year:
         type: integer
     type: object
@@ -117,6 +121,10 @@ definitions:
         $ref: '#/definitions/entities.List'
       number_of_votes:
         type: integer
+      rank_movies:
+        items:
+          $ref: '#/definitions/entities.Movie'
+        type: array
     type: object
   usecases.GetListByUserIDOutputDTO:
     properties:
@@ -124,6 +132,10 @@ definitions:
         $ref: '#/definitions/entities.List'
       number_of_votes:
         type: integer
+      rank_movies:
+        items:
+          $ref: '#/definitions/entities.Movie'
+        type: array
       votes:
         items:
           $ref: '#/definitions/entities.Vote'
@@ -131,6 +143,8 @@ definitions:
     type: object
   usecases.List:
     properties:
+      cover:
+        type: string
       movies:
         items:
           type: string

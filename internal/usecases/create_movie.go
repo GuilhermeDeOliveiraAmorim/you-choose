@@ -28,15 +28,18 @@ type CreateMovieOutputDTO struct {
 type CreateMovieUseCase struct {
 	MovieRepository repositories.MovieRepository
 	UserRepository  repositories.UserRepository
+	ImageRepository repositories.ImageRepository
 }
 
 func NewCreateMovieUseCase(
 	MovieRepository repositories.MovieRepository,
 	UserRepository repositories.UserRepository,
+	ImageRepository repositories.ImageRepository,
 ) *CreateMovieUseCase {
 	return &CreateMovieUseCase{
 		MovieRepository: MovieRepository,
 		UserRepository:  UserRepository,
+		ImageRepository: ImageRepository,
 	}
 }
 
@@ -109,20 +112,20 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 		return CreateMovieOutputDTO{}, problems
 	}
 
-	posterID, errSavePoster := u.MovieRepository.SavePoster(input.Movie.Poster)
-	if errSavePoster != nil {
+	poster, errSaveImage := u.ImageRepository.SaveImage(input.Movie.Poster)
+	if errSaveImage != nil {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error saving poster",
 				Status:   500,
-				Detail:   errSavePoster.Error(),
+				Detail:   errSaveImage.Error(),
 				Instance: util.RFC500,
 			},
 		}
 	}
 
-	movie.UpdatePoster(posterID)
+	movie.AddPoster(poster)
 
 	errCreateMovie := u.MovieRepository.CreateMovie(*movie)
 	if errCreateMovie != nil {

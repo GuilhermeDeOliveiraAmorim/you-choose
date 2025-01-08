@@ -25,6 +25,10 @@ func NewMovie(name string, year int64, externalID string) (*Movie, []util.Proble
 	}, nil
 }
 
+func (m *Movie) AddPoster(poster string) {
+	m.Poster = poster
+}
+
 func (m *Movie) UpdatePoster(poster string) {
 	timeNow := time.Now()
 	m.UpdatedAt = &timeNow

@@ -34,6 +34,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		UpdatedAt:     list.UpdatedAt,
 		DeactivatedAt: list.DeactivatedAt,
 		Name:          list.Name,
+		Cover:         list.Cover,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err

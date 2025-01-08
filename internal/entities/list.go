@@ -1,20 +1,24 @@
 package entities
 
 import (
+	"time"
+
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type List struct {
 	SharedEntity
 	Name         string        `json:"name"`
+	Cover        string        `json:"cover"`
 	Movies       []Movie       `json:"movies"`
 	Combinations []Combination `json:"combinations"`
 }
 
-func NewList(name string) (*List, []util.ProblemDetails) {
+func NewList(name, cover string) (*List, []util.ProblemDetails) {
 	return &List{
 		SharedEntity: *NewSharedEntity(),
 		Name:         name,
+		Cover:        cover,
 	}, nil
 }
 
@@ -93,4 +97,15 @@ func (l *List) GetMovieIDs() ([]string, []util.ProblemDetails) {
 	}
 
 	return movieIDs, nil
+}
+
+func (l *List) AddCover(cover string) {
+	l.Cover = cover
+}
+
+func (l *List) UpdateCover(cover string) {
+	timeNow := time.Now()
+	l.UpdatedAt = &timeNow
+
+	l.Cover = cover
 }
