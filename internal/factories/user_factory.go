@@ -3,7 +3,6 @@ package factories
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"gorm.io/gorm"
 )
 
 type UserFactory struct {
@@ -11,8 +10,8 @@ type UserFactory struct {
 	Login      *usecases.LoginUseCase
 }
 
-func NewUserFactory(db *gorm.DB) *UserFactory {
-	userRepository := repositories_implementation.NewUserRepository(db)
+func NewUserFactory(input ImputFactory) *UserFactory {
+	userRepository := repositories_implementation.NewUserRepository(input.DB)
 
 	createUser := usecases.NewCreateUserUseCase(userRepository)
 	login := usecases.NewLoginUseCase(userRepository)

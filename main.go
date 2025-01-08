@@ -54,16 +54,21 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	movieFactory := factories.NewMovieFactory(db, config.GOOGLE_VAR.IMAGE_BUCKET_NAME)
+	inputFactory := factories.ImputFactory{
+		DB:         db,
+		BucketName: config.GOOGLE_VAR.IMAGE_BUCKET_NAME,
+	}
+
+	movieFactory := factories.NewMovieFactory(inputFactory)
 	movieHandler := handlers.NewMovieHandler(movieFactory)
 
-	listFactory := factories.NewListFactory(db, config.GOOGLE_VAR.IMAGE_BUCKET_NAME)
+	listFactory := factories.NewListFactory(inputFactory)
 	listHandler := handlers.NewListHandler(listFactory)
 
-	voteFactory := factories.NewVoteFactory(db, config.GOOGLE_VAR.IMAGE_BUCKET_NAME)
+	voteFactory := factories.NewVoteFactory(inputFactory)
 	voteHandler := handlers.NewVoteHandler(voteFactory)
 
-	userFactory := factories.NewUserFactory(db)
+	userFactory := factories.NewUserFactory(inputFactory)
 	userHandler := handlers.NewUserHandler(userFactory)
 
 	public := r.Group("/")

@@ -3,7 +3,6 @@ package factories
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"gorm.io/gorm"
 )
 
 type ListFactory struct {
@@ -13,13 +12,13 @@ type ListFactory struct {
 	GetListByID     *usecases.GetListByIDUseCase
 }
 
-func NewListFactory(db *gorm.DB, bucketName string) *ListFactory {
-	listRepository := repositories_implementation.NewListRepository(db)
-	movieResository := repositories_implementation.NewMovieRepository(db, bucketName)
-	voteRepository := repositories_implementation.NewVoteRepository(db)
-	combinationRepository := repositories_implementation.NewCombinationRepository(db)
-	userResository := repositories_implementation.NewUserRepository(db)
-	imageRepository := repositories_implementation.NewImageRepository(bucketName)
+func NewListFactory(input ImputFactory) *ListFactory {
+	listRepository := repositories_implementation.NewListRepository(input.DB)
+	movieResository := repositories_implementation.NewMovieRepository(input.DB)
+	voteRepository := repositories_implementation.NewVoteRepository(input.DB)
+	combinationRepository := repositories_implementation.NewCombinationRepository(input.DB)
+	userResository := repositories_implementation.NewUserRepository(input.DB)
+	imageRepository := repositories_implementation.NewImageRepository(input.BucketName)
 
 	createList := usecases.NewCreateListUseCase(listRepository, movieResository, userResository, imageRepository)
 	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository, userResository)

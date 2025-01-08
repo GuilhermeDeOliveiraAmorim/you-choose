@@ -9,13 +9,11 @@ import (
 
 type MovieRepository struct {
 	gorm       *gorm.DB
-	BucketName string
 }
 
-func NewMovieRepository(gorm *gorm.DB, bucketName string) *MovieRepository {
+func NewMovieRepository(gorm *gorm.DB) *MovieRepository {
 	return &MovieRepository{
 		gorm:       gorm,
-		BucketName: bucketName,
 	}
 }
 

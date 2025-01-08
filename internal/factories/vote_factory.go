@@ -3,18 +3,17 @@ package factories
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"gorm.io/gorm"
 )
 
 type VoteFactory struct {
 	Vote *usecases.VoteUseCase
 }
 
-func NewVoteFactory(db *gorm.DB, bucketName string) *VoteFactory {
-	voteResository := repositories_implementation.NewVoteRepository(db)
-	listRepository := repositories_implementation.NewListRepository(db)
-	movieResository := repositories_implementation.NewMovieRepository(db, bucketName)
-	userResository := repositories_implementation.NewUserRepository(db)
+func NewVoteFactory(input ImputFactory) *VoteFactory {
+	voteResository := repositories_implementation.NewVoteRepository(input.DB)
+	listRepository := repositories_implementation.NewListRepository(input.DB)
+	movieResository := repositories_implementation.NewMovieRepository(input.DB)
+	userResository := repositories_implementation.NewUserRepository(input.DB)
 
 	createVote := usecases.NewVoteUseCase(voteResository, listRepository, movieResository, userResository)
 
