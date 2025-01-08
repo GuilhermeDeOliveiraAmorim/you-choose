@@ -141,6 +141,13 @@ definitions:
           $ref: '#/definitions/entities.Vote'
         type: array
     type: object
+  usecases.GetListsOutputDTO:
+    properties:
+      lists:
+        items:
+          $ref: '#/definitions/usecases.SimpleList'
+        type: array
+    type: object
   usecases.List:
     properties:
       cover:
@@ -189,6 +196,23 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  usecases.SimpleList:
+    properties:
+      active:
+        type: boolean
+      cover:
+        type: string
+      created_at:
+        type: string
+      deactivated_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
     type: object
   usecases.Vote:
     properties:
@@ -299,6 +323,33 @@ paths:
       security:
       - BearerAuth: []
       summary: Create a new list
+      tags:
+      - Lists
+  /lists/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all lists
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.GetListsOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Get Lists
       tags:
       - Lists
   /lists/movies:

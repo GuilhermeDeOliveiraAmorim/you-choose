@@ -8,4 +8,5 @@ type ListRepository interface {
 	ThisListExistByName(listName string) (bool, error)
 	ThisListExistByID(listID string) (bool, error)
 	AddMovies(list entities.List) error
+	GetLists() ([]entities.List, error)
 }

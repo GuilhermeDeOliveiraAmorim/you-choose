@@ -20,7 +20,23 @@ type Lists struct {
 	Movies        []Movies   `gorm:"many2many:list_movies;"`
 }
 
-func (m *Lists) ToEntity(movies []entities.Movie, combinations []entities.Combination) *entities.List {
+func (m *Lists) ToEntity(movies []entities.Movie, combinations []entities.Combination, complete bool) *entities.List {
+	if complete {
+		return &entities.List{
+			SharedEntity: entities.SharedEntity{
+				ID:            m.ID,
+				Active:        m.Active,
+				CreatedAt:     m.CreatedAt,
+				UpdatedAt:     m.UpdatedAt,
+				DeactivatedAt: m.DeactivatedAt,
+			},
+			Name:         m.Name,
+			Cover:        m.Cover,
+			Movies:       movies,
+			Combinations: combinations,
+		}
+	}
+
 	return &entities.List{
 		SharedEntity: entities.SharedEntity{
 			ID:            m.ID,
@@ -29,10 +45,8 @@ func (m *Lists) ToEntity(movies []entities.Movie, combinations []entities.Combin
 			UpdatedAt:     m.UpdatedAt,
 			DeactivatedAt: m.DeactivatedAt,
 		},
-		Name:         m.Name,
-		Cover:        m.Cover,
-		Movies:       movies,
-		Combinations: combinations,
+		Name:  m.Name,
+		Cover: m.Cover,
 	}
 }
 

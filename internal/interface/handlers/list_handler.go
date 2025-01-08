@@ -170,3 +170,25 @@ func (h *ListHandler) GetListByID(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, output)
 }
+
+// @Summary Get Lists
+// @Description Get all lists
+// @Tags Lists
+// @Accept json
+// @Produce json
+// @Success 201 {object} usecases.GetListsOutputDTO
+// @Failure 400 {object} util.ProblemDetails "Bad Request"
+// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Router /lists/all [get]
+func (h *ListHandler) GetLists(c *gin.Context) {
+	input := usecases.GetListsInputDTO{}
+
+	output, errs := h.listFactory.GetLists.Execute(input)
+	if len(errs) > 0 {
+		handleErrors(c, errs)
+		return
+	}
+
+	c.JSON(http.StatusCreated, output)
+}

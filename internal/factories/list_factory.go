@@ -10,6 +10,7 @@ type ListFactory struct {
 	AddMoviesList   *usecases.AddMoviesListUseCase
 	GetListByUserID *usecases.GetListByUserIDUseCase
 	GetListByID     *usecases.GetListByIDUseCase
+	GetLists        *usecases.GetListsUseCase
 }
 
 func NewListFactory(input ImputFactory) *ListFactory {
@@ -24,11 +25,13 @@ func NewListFactory(input ImputFactory) *ListFactory {
 	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository, userResository)
 	GetListByUserID := usecases.NewGetListByUserIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
 	GetListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository)
+	GetLists := usecases.NewGetListsUseCase(listRepository)
 
 	return &ListFactory{
 		CreateList:      createList,
 		AddMoviesList:   addMoviesList,
 		GetListByUserID: GetListByUserID,
 		GetListByID:     GetListByID,
+		GetLists:        GetLists,
 	}
 }

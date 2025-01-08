@@ -77,6 +77,7 @@ func main() {
 		public.POST("signup", userHandler.CreateUser)
 		public.POST("login", userHandler.Login)
 		public.GET("lists", listHandler.GetListByID)
+		public.GET("lists/all", listHandler.GetLists)
 	}
 
 	protected := r.Group("/").Use(util.AuthMiddleware())

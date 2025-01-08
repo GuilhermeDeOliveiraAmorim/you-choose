@@ -2,6 +2,7 @@ package repositories_implementation
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
@@ -155,5 +156,27 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 		combinations = append(combinations, *combination.ToEntity())
 	}
 
-	return *listModel.ToEntity(movies, combinations), nil
+	return *listModel.ToEntity(movies, combinations, true), nil
+}
+
+func (c *ListRepository) GetLists() ([]entities.List, error) {
+	var listsModel []Lists
+
+	result := c.gorm.Model(&Lists{}).Where("active =?", true).Find(&listsModel)
+	if result.Error != nil {
+		return nil, errors.New(result.Error.Error())
+	}
+
+	var lists []entities.List
+
+	for _, list := range listsModel {
+		fmt.Println(list)
+		lists = append(lists, *list.ToEntity([]entities.Movie{}, []entities.Combination{}, false))
+	}
+
+	for _, list := range lists {
+		fmt.Println(list)
+	}
+
+	return lists, nil
 }
