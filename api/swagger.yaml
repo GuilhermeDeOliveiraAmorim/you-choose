@@ -27,9 +27,8 @@ definitions:
         type: string
       id:
         type: string
-      movies:
-        items:
-          $ref: '#/definitions/entities.Movie'
+      items:
+        items: {}
         type: array
       name:
         type: string
@@ -77,6 +76,20 @@ definitions:
         type: string
     type: object
   usecases.AddMoviesListOutputDTO:
+    properties:
+      content_message:
+        type: string
+      success_message:
+        type: string
+    type: object
+  usecases.Brand:
+    properties:
+      logo:
+        type: string
+      name:
+        type: string
+    type: object
+  usecases.CreateBrandOutputDTO:
     properties:
       content_message:
         type: string
@@ -152,11 +165,13 @@ definitions:
     properties:
       cover:
         type: string
-      movies:
+      items:
         items:
           type: string
         type: array
       name:
+        type: string
+      type:
         type: string
     type: object
   usecases.LoginInputDto:
@@ -257,6 +272,42 @@ info:
   title: You Choose API
   version: "1.0"
 paths:
+  /brands:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new brand in the system
+      parameters:
+      - description: Brand data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.Brand'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.CreateBrandOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      security:
+      - BearerAuth: []
+      summary: Create a new brand
+      tags:
+      - Brands
   /lists:
     get:
       consumes:

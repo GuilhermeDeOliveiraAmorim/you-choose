@@ -71,6 +71,9 @@ func main() {
 	userFactory := factories.NewUserFactory(inputFactory)
 	userHandler := handlers.NewUserHandler(userFactory)
 
+	brandFactory := factories.NewBrandFactory(inputFactory)
+	brandHandler := handlers.NewBrandHandler(brandFactory)
+
 	public := r.Group("/")
 	{
 		public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -87,6 +90,7 @@ func main() {
 		protected.GET("lists/users", listHandler.GetListByUserID)
 
 		protected.POST("movies", movieHandler.CreateMovie)
+		protected.POST("brands", brandHandler.CreateBrand)
 
 		protected.POST("votes", voteHandler.Vote)
 	}

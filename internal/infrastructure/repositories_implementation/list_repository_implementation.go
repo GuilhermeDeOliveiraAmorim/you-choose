@@ -36,20 +36,29 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		DeactivatedAt: list.DeactivatedAt,
 		Name:          list.Name,
 		Cover:         list.Cover,
+		TypeList:      list.TypeList,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	for _, movie := range list.Movies {
-		if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, movie.ID, time.Now()).Error; err != nil {
-			tx.Rollback()
-			return err
+	for _, item := range list.Items {
+		switch item := item.(type) {
+		case entities.Movie:
+			if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		case entities.Brand:
+			if err := tx.Exec("INSERT INTO list_brands (list_id, brand_id, created_at) VALUES (?, ?,?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
 		}
 	}
 
 	for _, combination := range list.Combinations {
-		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_movie_id, second_movie_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstMovieID, combination.SecondMovieID).Error; err != nil {
+		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_item_id, second_item_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstItemID, combination.SecondItemID).Error; err != nil {
 			tx.Rollback()
 			return err
 		}
@@ -89,15 +98,18 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 		}
 	}()
 
-	for _, movie := range list.Movies {
-		if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, movie.ID, time.Now()).Error; err != nil {
-			tx.Rollback()
-			return err
+	for _, item := range list.Items {
+		switch item := item.(type) {
+		case entities.Movie:
+			if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
 		}
 	}
 
 	for _, combination := range list.Combinations {
-		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_movie_id, second_movie_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstMovieID, combination.SecondMovieID).Error; err != nil {
+		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_item_id, second_item_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstItemID, combination.SecondItemID).Error; err != nil {
 			tx.Rollback()
 			return err
 		}
@@ -156,7 +168,12 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 		combinations = append(combinations, *combination.ToEntity())
 	}
 
-	return *listModel.ToEntity(movies, combinations, true), nil
+	var items []interface{}
+	for _, movie := range movies {
+		items = append(items, movie)
+	}
+
+	return *listModel.ToEntity(items, combinations, true), nil
 }
 
 func (c *ListRepository) GetLists() ([]entities.List, error) {
@@ -171,7 +188,7 @@ func (c *ListRepository) GetLists() ([]entities.List, error) {
 
 	for _, list := range listsModel {
 		fmt.Println(list)
-		lists = append(lists, *list.ToEntity([]entities.Movie{}, []entities.Combination{}, false))
+		lists = append(lists, *list.ToEntity([]interface{}{}, []entities.Combination{}, false))
 	}
 
 	for _, list := range lists {

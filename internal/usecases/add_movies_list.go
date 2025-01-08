@@ -3,6 +3,7 @@ package usecases
 import (
 	"fmt"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
@@ -90,17 +91,20 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	}
 
 	for _, movieID := range input.Movies.Movies {
-		for _, movie := range list.Movies {
-			if movie.ID == movieID {
-				problems = append(problems,
-					util.ProblemDetails{
-						Type:     "Validation Error",
-						Title:    "Movie already in list",
-						Status:   400,
-						Detail:   fmt.Sprintf("Movie with ID %s already exists in the list.", movieID),
-						Instance: util.RFC400,
-					},
-				)
+		for _, item := range list.Items {
+			switch item := item.(type) {
+			case entities.Movie:
+				if item.ID == movieID {
+					problems = append(problems,
+						util.ProblemDetails{
+							Type:     "Validation Error",
+							Title:    "Movie already in list",
+							Status:   400,
+							Detail:   fmt.Sprintf("Movie with ID %s already exists in the list.", movieID),
+							Instance: util.RFC400,
+						},
+					)
+				}
 			}
 		}
 	}
@@ -124,16 +128,21 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	movieIDs := []string{}
 
-	getOldMovieIDs, errGetMovieIDs := list.GetMovieIDs()
+	getOldMovieIDs, errGetMovieIDs := list.GetItemIDs()
 	if len(errGetMovieIDs) > 0 {
 		return AddMoviesListOutputDTO{}, problems
 	}
 
 	movieIDs = append(movieIDs, getOldMovieIDs...)
 
-	list.AddMovies(movies)
+	var items []interface{}
+	for _, movie := range movies {
+		items = append(items, movie)
+	}
 
-	getNewMovieIDs, errGetMovieIDs := list.GetMovieIDs()
+	list.AddItems(items)
+
+	getNewMovieIDs, errGetMovieIDs := list.GetItemIDs()
 	if len(errGetMovieIDs) > 0 {
 		return AddMoviesListOutputDTO{}, problems
 	}

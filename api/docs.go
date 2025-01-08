@@ -24,6 +24,63 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/brands": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Registers a new brand in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Brands"
+                ],
+                "summary": "Create a new brand",
+                "parameters": [
+                    {
+                        "description": "Brand data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecases.Brand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/usecases.CreateBrandOutputDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/util.ProblemDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/lists": {
             "get": {
                 "description": "Get a list of movies and numbers of votes",
@@ -519,11 +576,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "movies": {
+                "items": {
                     "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Movie"
-                    }
+                    "items": {}
                 },
                 "name": {
                     "type": "string"
@@ -595,6 +650,28 @@ const docTemplate = `{
             }
         },
         "usecases.AddMoviesListOutputDTO": {
+            "type": "object",
+            "properties": {
+                "content_message": {
+                    "type": "string"
+                },
+                "success_message": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecases.Brand": {
+            "type": "object",
+            "properties": {
+                "logo": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecases.CreateBrandOutputDTO": {
             "type": "object",
             "properties": {
                 "content_message": {
@@ -712,13 +789,16 @@ const docTemplate = `{
                 "cover": {
                     "type": "string"
                 },
-                "movies": {
+                "items": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
                 },
                 "name": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

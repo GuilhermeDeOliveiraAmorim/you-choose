@@ -8,12 +8,12 @@ import (
 )
 
 type MovieRepository struct {
-	gorm       *gorm.DB
+	gorm *gorm.DB
 }
 
 func NewMovieRepository(gorm *gorm.DB) *MovieRepository {
 	return &MovieRepository{
-		gorm:       gorm,
+		gorm: gorm,
 	}
 }
 

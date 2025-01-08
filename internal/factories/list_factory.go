@@ -20,8 +20,9 @@ func NewListFactory(input ImputFactory) *ListFactory {
 	combinationRepository := repositories_implementation.NewCombinationRepository(input.DB)
 	userResository := repositories_implementation.NewUserRepository(input.DB)
 	imageRepository := repositories_implementation.NewImageRepository(input.BucketName)
+	brandRepository := repositories_implementation.NewBrandRepository(input.DB)
 
-	createList := usecases.NewCreateListUseCase(listRepository, movieResository, userResository, imageRepository)
+	createList := usecases.NewCreateListUseCase(listRepository, movieResository, userResository, imageRepository, brandRepository)
 	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository, userResository)
 	GetListByUserID := usecases.NewGetListByUserIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
 	GetListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository)

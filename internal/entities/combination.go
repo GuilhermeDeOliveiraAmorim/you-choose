@@ -6,21 +6,21 @@ import (
 )
 
 type Combination struct {
-	ID            string `json:"id"`
-	ListID        string `json:"list_id"`
-	FirstMovieID  string `json:"first_movie"`
-	SecondMovieID string `json:"second_movie"`
+	ID           string `json:"id"`
+	ListID       string `json:"list_id"`
+	FirstItemID  string `json:"first_item_id"`
+	SecondItemID string `json:"second_item_id"`
 }
 
-func NewCombination(listId, firstMovie, secondMovie string) (*Combination, []util.ProblemDetails) {
+func NewCombination(listId, firstItem, secondItem string) (*Combination, []util.ProblemDetails) {
 	return &Combination{
-		ID:            ulid.Make().String(),
-		ListID:        listId,
-		FirstMovieID:  firstMovie,
-		SecondMovieID: secondMovie,
+		ID:           ulid.Make().String(),
+		ListID:       listId,
+		FirstItemID:  firstItem,
+		SecondItemID: secondItem,
 	}, nil
 }
 
 func (c *Combination) Equals(combination Combination) bool {
-	return c.FirstMovieID == combination.FirstMovieID && c.SecondMovieID == combination.SecondMovieID && c.ListID == combination.ListID
+	return c.FirstItemID == combination.FirstItemID && c.SecondItemID == combination.SecondItemID && c.ListID == combination.ListID
 }

@@ -6,15 +6,21 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
+const (
+	TYPE_MOVIE = "MOVIE"
+	TYPE_BRAND = "BRAND"
+)
+
 type List struct {
 	SharedEntity
 	Name         string        `json:"name"`
 	Cover        string        `json:"cover"`
-	Movies       []Movie       `json:"movies"`
+	TypeList     string        `json:"type_list"`
+	Items        []interface{} `json:"items"`
 	Combinations []Combination `json:"combinations"`
 }
 
-func NewList(name, cover string) (*List, []util.ProblemDetails) {
+func NewList(name string, cover string) (*List, []util.ProblemDetails) {
 	return &List{
 		SharedEntity: *NewSharedEntity(),
 		Name:         name,
@@ -22,31 +28,31 @@ func NewList(name, cover string) (*List, []util.ProblemDetails) {
 	}, nil
 }
 
-func (l *List) AddMovies(movies []Movie) {
-	if len(l.Movies) == 0 {
-		l.Movies = movies
+func (l *List) AddItems(items []interface{}) {
+	if len(l.Items) == 0 {
+		l.Items = items
 		return
 	}
 
-	uniqueMovies := []Movie{}
-	for _, newMovie := range movies {
+	uniqueItems := []interface{}{}
+	for _, newItem := range items {
 		exists := false
-		for _, existingMovie := range l.Movies {
-			if existingMovie.Equals(newMovie) {
+		for _, existingItem := range l.Items {
+			if existingItem == newItem {
 				exists = true
 				break
 			}
 		}
 		if !exists {
-			uniqueMovies = append(uniqueMovies, newMovie)
+			uniqueItems = append(uniqueItems, newItem)
 		}
 	}
 
-	l.Movies = uniqueMovies
+	l.Items = uniqueItems
 }
 
-func (l *List) ClearMovies() {
-	l.Movies = []Movie{}
+func (l *List) ClearItems() {
+	l.Items = []interface{}{}
 }
 
 func (l *List) AddCombinations(combinations []Combination) {
@@ -72,12 +78,12 @@ func (l *List) AddCombinations(combinations []Combination) {
 	l.Combinations = uniqueCombinations
 }
 
-func (l *List) GetCombinations(movies []string) ([]Combination, []util.ProblemDetails) {
+func (l *List) GetCombinations(itemIDs []string) ([]Combination, []util.ProblemDetails) {
 	var combinations []Combination
 
-	for i := 0; i < len(movies); i++ {
-		for j := i + 1; j < len(movies); j++ {
-			newCombination, errNewCombination := NewCombination(l.ID, movies[i], movies[j])
+	for i := 0; i < len(itemIDs); i++ {
+		for j := i + 1; j < len(itemIDs); j++ {
+			newCombination, errNewCombination := NewCombination(l.ID, itemIDs[i], itemIDs[j])
 			if errNewCombination != nil {
 				return []Combination{}, errNewCombination
 			}
@@ -89,14 +95,17 @@ func (l *List) GetCombinations(movies []string) ([]Combination, []util.ProblemDe
 	return combinations, nil
 }
 
-func (l *List) GetMovieIDs() ([]string, []util.ProblemDetails) {
-	movieIDs := []string{}
+func (l *List) GetItemIDs() ([]string, []util.ProblemDetails) {
+	itemIDs := []string{}
 
-	for _, movie := range l.Movies {
-		movieIDs = append(movieIDs, movie.ID)
+	for _, item := range l.Items {
+		switch item := item.(type) {
+		case Movie:
+			itemIDs = append(itemIDs, item.ID)
+		}
 	}
 
-	return movieIDs, nil
+	return itemIDs, nil
 }
 
 func (l *List) AddCover(cover string) {
@@ -108,4 +117,15 @@ func (l *List) UpdateCover(cover string) {
 	l.UpdatedAt = &timeNow
 
 	l.Cover = cover
+}
+
+func (l *List) AddType(typeList string) {
+	l.TypeList = typeList
+}
+
+func (l *List) GetTypes() []string {
+	return []string{
+		TYPE_MOVIE,
+		TYPE_BRAND,
+	}
 }
