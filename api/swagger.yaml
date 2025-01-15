@@ -2,13 +2,13 @@ basePath: /
 definitions:
   entities.Combination:
     properties:
-      first_movie:
+      first_item_id:
         type: string
       id:
         type: string
       list_id:
         type: string
-      second_movie:
+      second_item_id:
         type: string
     type: object
   entities.List:
@@ -30,6 +30,8 @@ definitions:
       items:
         items: {}
         type: array
+      list_type:
+        type: string
       name:
         type: string
       updated_at:
@@ -169,9 +171,9 @@ definitions:
         items:
           type: string
         type: array
-      name:
+      list_type:
         type: string
-      type:
+      name:
         type: string
     type: object
   usecases.LoginInputDto:

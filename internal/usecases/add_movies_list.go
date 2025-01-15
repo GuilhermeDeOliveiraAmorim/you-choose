@@ -88,6 +88,16 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 				Instance: util.RFC500,
 			},
 		}
+	} else if list.ListType != entities.MOVIE_TYPE {
+		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Validation Error",
+				Title:    "Invalid list type",
+				Status:   400,
+				Detail:   "List type must be 'movie'",
+				Instance: util.RFC400,
+			},
+		}
 	}
 
 	for _, movieID := range input.Movies.Movies {

@@ -10,10 +10,10 @@ import (
 )
 
 type List struct {
-	Name  string   `json:"name"`
-	Cover string   `json:"cover"`
-	Type  string   `json:"type"`
-	Items []string `json:"items"`
+	Name     string   `json:"name"`
+	Cover    string   `json:"cover"`
+	ListType string   `json:"list_type"`
+	Items    []string `json:"items"`
 }
 
 type CreateListInputDTO struct {
@@ -128,7 +128,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	isValidType := false
 
-	if contains(list.GetTypes(), input.List.Type) {
+	if contains(list.GetTypes(), input.List.ListType) {
 		isValidType = true
 	}
 
@@ -147,8 +147,8 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	var movies []entities.Movie
 	var brands []entities.Brand
 
-	if input.List.Type == entities.TYPE_MOVIE {
-		list.AddType(entities.TYPE_MOVIE)
+	if input.List.ListType == entities.MOVIE_TYPE {
+		list.AddType(entities.MOVIE_TYPE)
 
 		var errGetMoviesByID error
 
@@ -181,8 +181,8 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 
 		list.AddItems(items)
-	} else if input.List.Type == entities.TYPE_BRAND {
-		list.AddType(entities.TYPE_BRAND)
+	} else if input.List.ListType == entities.BRAND_TYPE {
+		list.AddType(entities.BRAND_TYPE)
 
 		var errGetBrandsByID error
 
@@ -239,7 +239,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	list.AddCover(cover)
 
-	fmt.Println("list.TypeList: ", list.TypeList)
+	fmt.Println("list.ListType: ", list.ListType)
 
 	errCreateList := u.ListRepository.CreateList(*list)
 	if errCreateList != nil {

@@ -538,7 +538,7 @@ const docTemplate = `{
         "entities.Combination": {
             "type": "object",
             "properties": {
-                "first_movie": {
+                "first_item_id": {
                     "type": "string"
                 },
                 "id": {
@@ -547,7 +547,7 @@ const docTemplate = `{
                 "list_id": {
                     "type": "string"
                 },
-                "second_movie": {
+                "second_item_id": {
                     "type": "string"
                 }
             }
@@ -579,6 +579,9 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {}
+                },
+                "list_type": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -795,10 +798,10 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
-                "name": {
+                "list_type": {
                     "type": "string"
                 },
-                "type": {
+                "name": {
                     "type": "string"
                 }
             }

@@ -36,7 +36,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		DeactivatedAt: list.DeactivatedAt,
 		Name:          list.Name,
 		Cover:         list.Cover,
-		TypeList:      list.TypeList,
+		ListType:      list.ListType,
 	}).Error; err != nil {
 		tx.Rollback()
 		return err

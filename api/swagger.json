@@ -535,7 +535,7 @@
         "entities.Combination": {
             "type": "object",
             "properties": {
-                "first_movie": {
+                "first_item_id": {
                     "type": "string"
                 },
                 "id": {
@@ -544,7 +544,7 @@
                 "list_id": {
                     "type": "string"
                 },
-                "second_movie": {
+                "second_item_id": {
                     "type": "string"
                 }
             }
@@ -576,6 +576,9 @@
                 "items": {
                     "type": "array",
                     "items": {}
+                },
+                "list_type": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -792,10 +795,10 @@
                         "type": "string"
                     }
                 },
-                "name": {
+                "list_type": {
                     "type": "string"
                 },
-                "type": {
+                "name": {
                     "type": "string"
                 }
             }

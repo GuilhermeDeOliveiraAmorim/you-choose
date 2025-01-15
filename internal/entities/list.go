@@ -7,15 +7,15 @@ import (
 )
 
 const (
-	TYPE_MOVIE = "MOVIE"
-	TYPE_BRAND = "BRAND"
+	MOVIE_TYPE = "MOVIE"
+	BRAND_TYPE = "BRAND"
 )
 
 type List struct {
 	SharedEntity
 	Name         string        `json:"name"`
 	Cover        string        `json:"cover"`
-	TypeList     string        `json:"type_list"`
+	ListType     string        `json:"list_type"`
 	Items        []interface{} `json:"items"`
 	Combinations []Combination `json:"combinations"`
 }
@@ -119,13 +119,13 @@ func (l *List) UpdateCover(cover string) {
 	l.Cover = cover
 }
 
-func (l *List) AddType(typeList string) {
-	l.TypeList = typeList
+func (l *List) AddType(ListType string) {
+	l.ListType = ListType
 }
 
 func (l *List) GetTypes() []string {
 	return []string{
-		TYPE_MOVIE,
-		TYPE_BRAND,
+		MOVIE_TYPE,
+		BRAND_TYPE,
 	}
 }

@@ -17,7 +17,7 @@ type Lists struct {
 	DeactivatedAt *time.Time `gorm:"default:NULL"`
 	Name          string     `gorm:"not null"`
 	Cover         string     `gorm:"not null"`
-	TypeList      string     `gorm:"not null"`
+	ListType      string     `gorm:"not null"`
 	Movies        []Movies   `gorm:"many2many:list_movies;"`
 	Brands        []Brands   `gorm:"many2many:list_brands;"`
 }
@@ -34,7 +34,7 @@ func (m *Lists) ToEntity(items []interface{}, combinations []entities.Combinatio
 			},
 			Name:         m.Name,
 			Cover:        m.Cover,
-			TypeList:     m.TypeList,
+			ListType:     m.ListType,
 			Items:        items,
 			Combinations: combinations,
 		}
@@ -50,7 +50,7 @@ func (m *Lists) ToEntity(items []interface{}, combinations []entities.Combinatio
 		},
 		Name:     m.Name,
 		Cover:    m.Cover,
-		TypeList: m.TypeList,
+		ListType: m.ListType,
 	}
 }
 
