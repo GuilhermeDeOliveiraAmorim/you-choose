@@ -77,11 +77,13 @@ func (m *Movies) ToEntity() *entities.Movie {
 			UpdatedAt:     m.UpdatedAt,
 			DeactivatedAt: m.DeactivatedAt,
 		},
+		Votable: entities.Votable{
+			VotesCount: m.VotesCount,
+		},
 		Name:       m.Name,
 		Year:       m.Year,
 		Poster:     m.Poster,
 		ExternalID: m.ExternalID,
-		VotesCount: m.VotesCount,
 	}
 }
 
@@ -139,11 +141,6 @@ type Users struct {
 }
 
 func (u *Users) ToEntity() *entities.User {
-	login := entities.Login{
-		Email:    u.Email,
-		Password: u.Password,
-	}
-
 	return &entities.User{
 		SharedEntity: entities.SharedEntity{
 			ID:            u.ID,
@@ -152,8 +149,11 @@ func (u *Users) ToEntity() *entities.User {
 			UpdatedAt:     u.UpdatedAt,
 			DeactivatedAt: u.DeactivatedAt,
 		},
-		Name:  u.Name,
-		Login: login,
+		Name: u.Name,
+		Login: entities.Login{
+			Email:    u.Email,
+			Password: u.Password,
+		},
 	}
 }
 
@@ -196,9 +196,11 @@ func (b *Brands) ToEntity() *entities.Brand {
 			UpdatedAt:     b.UpdatedAt,
 			DeactivatedAt: b.DeactivatedAt,
 		},
-		Name:       b.Name,
-		Logo:       b.Logo,
-		VotesCount: b.VotesCount,
+		Votable: entities.Votable{
+			VotesCount: b.VotesCount,
+		},
+		Name: b.Name,
+		Logo: b.Logo,
 	}
 }
 
