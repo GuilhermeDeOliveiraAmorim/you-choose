@@ -27,6 +27,7 @@ type VoteUseCase struct {
 	ListRepository  repositories.ListRepository
 	MovieRepository repositories.MovieRepository
 	UserRepository  repositories.UserRepository
+	BrandRepository repositories.BrandRepository
 }
 
 func NewVoteUseCase(
@@ -34,12 +35,14 @@ func NewVoteUseCase(
 	ListRepository repositories.ListRepository,
 	MovieRepository repositories.MovieRepository,
 	UserRepository repositories.UserRepository,
+	BrandRepository repositories.BrandRepository,
 ) *VoteUseCase {
 	return &VoteUseCase{
 		VoteRepository:  VoteRepository,
 		ListRepository:  ListRepository,
 		MovieRepository: MovieRepository,
 		UserRepository:  UserRepository,
+		BrandRepository: BrandRepository,
 	}
 }
 
@@ -67,45 +70,18 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		}
 	}
 
-	listExists, errGetList := u.ListRepository.ThisListExistByID(input.Vote.ListID)
-	if errGetList != nil {
+	list, errGetListByID := u.ListRepository.GetListByID(input.Vote.ListID)
+	if errGetListByID != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
 				Status:   500,
-				Detail:   errGetList.Error(),
+				Detail:   errGetListByID.Error(),
 				Instance: util.RFC500,
 			},
 		}
 	}
-
-	if !listExists {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Validation Error",
-				Title:    "Not Found",
-				Status:   404,
-				Detail:   "List not found.",
-				Instance: util.RFC404,
-			},
-		}
-	}
-
-	winner, errGetWinner := u.MovieRepository.GetMovieByID(input.Vote.WinnerID)
-	if errGetWinner != nil {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching winner movie",
-				Status:   500,
-				Detail:   errGetWinner.Error(),
-				Instance: util.RFC500,
-			},
-		}
-	}
-
-	winner.IncrementVotesCount()
 
 	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.Vote.CombinationID)
 	if (errVoteAlreadyRegistered != nil) || voteAlreadyRegistered {
@@ -125,6 +101,66 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 		return VoteOutputDTO{}, newVoteErr
 	}
 
+	switch list.ListType {
+	case entities.MOVIE_TYPE:
+		movie, errGetMovie := u.MovieRepository.GetMovieByID(input.Vote.WinnerID)
+		if errGetMovie != nil {
+			return VoteOutputDTO{}, []util.ProblemDetails{
+				{
+					Type:     "Internal Server Error",
+					Title:    "Error fetching winner movie",
+					Status:   500,
+					Detail:   errGetMovie.Error(),
+					Instance: util.RFC500,
+				},
+			}
+		}
+
+		movie.IncrementVotesCount()
+
+		errUpdateWinner := u.MovieRepository.UpdadeMovie(movie)
+		if errUpdateWinner != nil {
+			return VoteOutputDTO{}, []util.ProblemDetails{
+				{
+					Type:     "Internal Server Error",
+					Title:    "Error updating winner movie",
+					Status:   500,
+					Detail:   errUpdateWinner.Error(),
+					Instance: util.RFC500,
+				},
+			}
+		}
+
+	case entities.BRAND_TYPE:
+		brand, errGetBrand := u.BrandRepository.GetBrandByID(input.Vote.WinnerID)
+		if errGetBrand != nil {
+			return VoteOutputDTO{}, []util.ProblemDetails{
+				{
+					Type:     "Internal Server Error",
+					Title:    "Error fetching winner brand",
+					Status:   500,
+					Detail:   errGetBrand.Error(),
+					Instance: util.RFC500,
+				},
+			}
+		}
+
+		brand.IncrementVotesCount()
+
+		errUpdateWinner := u.BrandRepository.UpdadeBrand(brand)
+		if errUpdateWinner != nil {
+			return VoteOutputDTO{}, []util.ProblemDetails{
+				{
+					Type:     "Internal Server Error",
+					Title:    "Error updating winner brand",
+					Status:   500,
+					Detail:   errUpdateWinner.Error(),
+					Instance: util.RFC500,
+				},
+			}
+		}
+	}
+
 	errVote := u.VoteRepository.CreateVote(*newVote)
 	if errVote != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
@@ -133,19 +169,6 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 				Title:    "Error creating vote",
 				Status:   500,
 				Detail:   errVote.Error(),
-				Instance: util.RFC500,
-			},
-		}
-	}
-
-	errUpdateWinner := u.MovieRepository.UpdadeMovie(winner)
-	if errUpdateWinner != nil {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error updating winner movie",
-				Status:   500,
-				Detail:   errUpdateWinner.Error(),
 				Instance: util.RFC500,
 			},
 		}
