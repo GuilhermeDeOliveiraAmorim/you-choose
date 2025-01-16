@@ -37,29 +37,6 @@ definitions:
       updated_at:
         type: string
     type: object
-  entities.Movie:
-    properties:
-      active:
-        type: boolean
-      created_at:
-        type: string
-      deactivated_at:
-        type: string
-      external_id:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      poster:
-        type: string
-      updated_at:
-        type: string
-      votes_count:
-        type: integer
-      year:
-        type: integer
-    type: object
   entities.Vote:
     properties:
       active:
@@ -136,10 +113,7 @@ definitions:
         $ref: '#/definitions/entities.List'
       number_of_votes:
         type: integer
-      rank_movies:
-        items:
-          $ref: '#/definitions/entities.Movie'
-        type: array
+      ranking: {}
     type: object
   usecases.GetListByUserIDOutputDTO:
     properties:
@@ -147,10 +121,7 @@ definitions:
         $ref: '#/definitions/entities.List'
       number_of_votes:
         type: integer
-      rank_movies:
-        items:
-          $ref: '#/definitions/entities.Movie'
-        type: array
+      ranking: {}
       votes:
         items:
           $ref: '#/definitions/entities.Vote'
@@ -225,6 +196,8 @@ definitions:
       deactivated_at:
         type: string
       id:
+        type: string
+      list_type:
         type: string
       name:
         type: string

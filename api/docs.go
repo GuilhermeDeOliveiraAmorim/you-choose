@@ -591,41 +591,6 @@ const docTemplate = `{
                 }
             }
         },
-        "entities.Movie": {
-            "type": "object",
-            "properties": {
-                "active": {
-                    "type": "boolean"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "deactivated_at": {
-                    "type": "string"
-                },
-                "external_id": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "poster": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "votes_count": {
-                    "type": "integer"
-                },
-                "year": {
-                    "type": "integer"
-                }
-            }
-        },
         "entities.Vote": {
             "type": "object",
             "properties": {
@@ -744,12 +709,7 @@ const docTemplate = `{
                 "number_of_votes": {
                     "type": "integer"
                 },
-                "rank_movies": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Movie"
-                    }
-                }
+                "ranking": {}
             }
         },
         "usecases.GetListByUserIDOutputDTO": {
@@ -761,12 +721,7 @@ const docTemplate = `{
                 "number_of_votes": {
                     "type": "integer"
                 },
-                "rank_movies": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Movie"
-                    }
-                },
+                "ranking": {},
                 "votes": {
                     "type": "array",
                     "items": {
@@ -881,6 +836,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "list_type": {
                     "type": "string"
                 },
                 "name": {
