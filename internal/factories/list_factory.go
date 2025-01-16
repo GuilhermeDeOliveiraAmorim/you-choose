@@ -11,6 +11,7 @@ type ListFactory struct {
 	GetListByUserID *usecases.GetListByUserIDUseCase
 	GetListByID     *usecases.GetListByIDUseCase
 	GetLists        *usecases.GetListsUseCase
+	AddBrandsList   *usecases.AddBrandsListUseCase
 }
 
 func NewListFactory(input ImputFactory) *ListFactory {
@@ -24,15 +25,17 @@ func NewListFactory(input ImputFactory) *ListFactory {
 
 	createList := usecases.NewCreateListUseCase(listRepository, movieResository, userResository, imageRepository, brandRepository)
 	addMoviesList := usecases.NewAddMoviesListUseCase(listRepository, movieResository, userResository)
-	GetListByUserID := usecases.NewGetListByUserIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
-	GetListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository)
-	GetLists := usecases.NewGetListsUseCase(listRepository)
+	getListByUserID := usecases.NewGetListByUserIDUseCase(listRepository, voteRepository, combinationRepository, userResository)
+	getListByID := usecases.NewGetListByIDUseCase(listRepository, voteRepository)
+	getLists := usecases.NewGetListsUseCase(listRepository)
+	addBrandsList := usecases.NewAddBrandsListUseCase(listRepository, brandRepository, userResository)
 
 	return &ListFactory{
 		CreateList:      createList,
 		AddMoviesList:   addMoviesList,
-		GetListByUserID: GetListByUserID,
-		GetListByID:     GetListByID,
-		GetLists:        GetLists,
+		GetListByUserID: getListByUserID,
+		GetListByID:     getListByID,
+		GetLists:        getLists,
+		AddBrandsList:   addBrandsList,
 	}
 }

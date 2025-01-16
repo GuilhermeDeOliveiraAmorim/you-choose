@@ -192,3 +192,48 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, output)
 }
+
+// @Summary Add brands to list
+// @Description Add new brands to list
+// @Tags Lists
+// @Accept json
+// @Produce json
+// @Param request body usecases.Brands true "AddBrandsList data"
+// @Success 201 {object} usecases.AddBrandsListOutputDTO
+// @Failure 400 {object} util.ProblemDetails "Bad Request"
+// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Security BearerAuth
+// @Router /lists/brands [post]
+func (h *ListHandler) AddBrandsList(c *gin.Context) {
+	userID, err := getUserID(c)
+	if err != nil {
+		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+		return
+	}
+
+	var brands usecases.Brands
+	if err := c.ShouldBindJSON(&brands); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
+			Type:     "Bad Request",
+			Title:    "Did not bind JSON",
+			Status:   http.StatusBadRequest,
+			Detail:   err.Error(),
+			Instance: util.RFC400,
+		}})
+		return
+	}
+
+	input := usecases.AddBrandsListInputDTO{
+		UserID: userID,
+		Brands: brands,
+	}
+
+	output, errs := h.listFactory.AddBrandsList.Execute(input)
+	if len(errs) > 0 {
+		handleErrors(c, errs)
+		return
+	}
+
+	c.JSON(http.StatusCreated, output)
+}

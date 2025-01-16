@@ -21,7 +21,7 @@ func NewBrandHandler(factory *factories.BrandFactory) *BrandHandler {
 
 // @Summary Create a new brand
 // @Description Registers a new brand in the system
-// @Tags Brands
+// @Tags Items
 // @Accept json
 // @Produce json
 // @Param request body usecases.Brand true "Brand data"
@@ -30,7 +30,7 @@ func NewBrandHandler(factory *factories.BrandFactory) *BrandHandler {
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
 // @Security BearerAuth
-// @Router /brands [post]
+// @Router /items/brands [post]
 func (h *BrandHandler) CreateBrand(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {

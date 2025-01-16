@@ -21,7 +21,7 @@ func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
 
 // @Summary Create a new movie
 // @Description Registers a new movie in the system
-// @Tags Movies
+// @Tags Items
 // @Accept json
 // @Produce json
 // @Param request body usecases.Movie true "Movie data"
@@ -30,7 +30,7 @@ func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
 // @Security BearerAuth
-// @Router /movies [post]
+// @Router /items/movies [post]
 func (h *MovieHandler) CreateMovie(c *gin.Context) {
 	userID, err := getUserID(c)
 	if err != nil {

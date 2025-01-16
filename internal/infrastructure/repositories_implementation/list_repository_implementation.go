@@ -222,3 +222,32 @@ func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interf
 
 	return items, nil
 }
+
+func (c *ListRepository) AddBrands(list entities.List) error {
+	tx := c.gorm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+	}()
+
+	for _, item := range list.Items {
+		switch item := item.(type) {
+		case entities.Brand:
+			if err := tx.Exec("INSERT INTO list_brands (list_id, brand_id, created_at) VALUES (?, ?, ?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		}
+	}
+
+	for _, combination := range list.Combinations {
+		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_item_id, second_item_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstItemID, combination.SecondItemID).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
+}

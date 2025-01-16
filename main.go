@@ -87,10 +87,11 @@ func main() {
 	{
 		protected.POST("lists", listHandler.CreateList)
 		protected.POST("lists/movies", listHandler.AddMoviesList)
+		protected.POST("lists/brands", listHandler.AddBrandsList)
 		protected.GET("lists/users", listHandler.GetListByUserID)
 
-		protected.POST("movies", movieHandler.CreateMovie)
-		protected.POST("brands", brandHandler.CreateBrand)
+		protected.POST("items/movies", movieHandler.CreateMovie)
+		protected.POST("items/brands", brandHandler.CreateBrand)
 
 		protected.POST("votes", voteHandler.Vote)
 	}

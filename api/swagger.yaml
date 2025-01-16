@@ -54,6 +54,13 @@ definitions:
       winner_id:
         type: string
     type: object
+  usecases.AddBrandsListOutputDTO:
+    properties:
+      content_message:
+        type: string
+      success_message:
+        type: string
+    type: object
   usecases.AddMoviesListOutputDTO:
     properties:
       content_message:
@@ -66,6 +73,15 @@ definitions:
       logo:
         type: string
       name:
+        type: string
+    type: object
+  usecases.Brands:
+    properties:
+      brands:
+        items:
+          type: string
+        type: array
+      list_id:
         type: string
     type: object
   usecases.CreateBrandOutputDTO:
@@ -247,7 +263,7 @@ info:
   title: You Choose API
   version: "1.0"
 paths:
-  /brands:
+  /items/brands:
     post:
       consumes:
       - application/json
@@ -282,7 +298,43 @@ paths:
       - BearerAuth: []
       summary: Create a new brand
       tags:
-      - Brands
+      - Items
+  /items/movies:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new movie in the system
+      parameters:
+      - description: Movie data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.Movie'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.CreateMovieOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      security:
+      - BearerAuth: []
+      summary: Create a new movie
+      tags:
+      - Items
   /lists:
     get:
       consumes:
@@ -376,6 +428,42 @@ paths:
           schema:
             $ref: '#/definitions/util.ProblemDetails'
       summary: Get Lists
+      tags:
+      - Lists
+  /lists/brands:
+    post:
+      consumes:
+      - application/json
+      description: Add new brands to list
+      parameters:
+      - description: AddBrandsList data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecases.Brands'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.AddBrandsListOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      security:
+      - BearerAuth: []
+      summary: Add brands to list
       tags:
       - Lists
   /lists/movies:
@@ -475,42 +563,6 @@ paths:
       summary: Login a user
       tags:
       - Authentication
-  /movies:
-    post:
-      consumes:
-      - application/json
-      description: Registers a new movie in the system
-      parameters:
-      - description: Movie data
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/usecases.Movie'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/usecases.CreateMovieOutputDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/util.ProblemDetails'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/util.ProblemDetails'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/util.ProblemDetails'
-      security:
-      - BearerAuth: []
-      summary: Create a new movie
-      tags:
-      - Movies
   /signup:
     post:
       consumes:
