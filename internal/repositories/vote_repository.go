@@ -9,5 +9,5 @@ type VoteRepository interface {
 	GetVotesByUserIDAndListID(userID, listID string) ([]entities.Vote, error)
 	GetNumberOfVotesByListID(listID string) (int, error)
 	VoteAlreadyRegistered(userID, combinationID string) (bool, error)
-	RankMoviesByVotes(listID string) ([]entities.Movie, error)
+	RankItemsByVotes(listID, listType string) ([]interface{}, error)
 }

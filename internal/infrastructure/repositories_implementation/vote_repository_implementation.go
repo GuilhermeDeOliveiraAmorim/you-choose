@@ -89,14 +89,13 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 	return int(count), nil
 }
 
-func (c *VoteRepository) RankMoviesByVotes(listID string) ([]entities.Movie, error) {
+func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{}, error) {
 	var combinations []Combinations
 	if err := c.gorm.Where("list_id = ?", listID).Find(&combinations).Error; err != nil {
 		return nil, errors.New(err.Error())
 	}
 
 	voteCounts := make(map[string]int)
-
 	for _, combination := range combinations {
 		var votes []Votes
 		if err := c.gorm.Where("combination_id = ?", combination.ID).Find(&votes).Error; err != nil {
@@ -108,19 +107,60 @@ func (c *VoteRepository) RankMoviesByVotes(listID string) ([]entities.Movie, err
 		}
 	}
 
-	var movies []entities.Movie
+	switch listType {
+	case entities.MOVIE_TYPE:
+		return c.rankMoviesByVotes(voteCounts)
+	case entities.BRAND_TYPE:
+		return c.rankBrandsByVotes(voteCounts)
+	default:
+		return nil, errors.New("invalid list type")
+	}
+}
+
+func (c *VoteRepository) rankMoviesByVotes(voteCounts map[string]int) ([]interface{}, error) {
+	var movies []Movies
+
 	for movieID, count := range voteCounts {
 		var movie Movies
 		if err := c.gorm.First(&movie, "id = ?", movieID).Error; err != nil {
 			return nil, errors.New(err.Error())
 		}
 		movie.VotesCount = count
-		movies = append(movies, *movie.ToEntity())
+		movies = append(movies, movie)
 	}
 
 	sort.Slice(movies, func(i, j int) bool {
 		return movies[i].VotesCount > movies[j].VotesCount
 	})
 
-	return movies, nil
+	var result []interface{}
+	for _, movie := range movies {
+		result = append(result, *movie.ToEntity())
+	}
+
+	return result, nil
+}
+
+func (c *VoteRepository) rankBrandsByVotes(voteCounts map[string]int) ([]interface{}, error) {
+	var brands []Brands
+
+	for brandID, count := range voteCounts {
+		var brand Brands
+		if err := c.gorm.First(&brand, "id = ?", brandID).Error; err != nil {
+			return nil, errors.New(err.Error())
+		}
+		brand.VotesCount = count
+		brands = append(brands, brand)
+	}
+
+	sort.Slice(brands, func(i, j int) bool {
+		return brands[i].VotesCount > brands[j].VotesCount
+	})
+
+	var result []interface{}
+	for _, brand := range brands {
+		result = append(result, *brand.ToEntity())
+	}
+
+	return result, nil
 }

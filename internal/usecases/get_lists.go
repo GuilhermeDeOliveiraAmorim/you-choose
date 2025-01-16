@@ -8,8 +8,9 @@ import (
 
 type SimpleList struct {
 	entities.SharedEntity
-	Name  string `json:"name"`
-	Cover string `json:"cover"`
+	Name     string `json:"name"`
+	Cover    string `json:"cover"`
+	ListType string `json:"list_type"`
 }
 
 type GetListsInputDTO struct{}
@@ -51,6 +52,7 @@ func (u *GetListsUseCase) Execute(input GetListsInputDTO) (GetListsOutputDTO, []
 			SharedEntity: list.SharedEntity,
 			Name:         list.Name,
 			Cover:        list.Cover,
+			ListType:     list.ListType,
 		})
 	}
 

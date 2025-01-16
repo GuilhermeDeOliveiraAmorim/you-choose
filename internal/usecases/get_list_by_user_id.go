@@ -12,10 +12,10 @@ type GetListByUserIDInputDTO struct {
 }
 
 type GetListByUserIDOutputDTO struct {
-	List          entities.List    `json:"list"`
-	NumberOfVotes int              `json:"number_of_votes"`
-	RankMovies    []entities.Movie `json:"rank_movies"`
-	Votes         []entities.Vote  `json:"votes"`
+	List          entities.List   `json:"list"`
+	NumberOfVotes int             `json:"number_of_votes"`
+	Ranking       interface{}     `json:"ranking"`
+	Votes         []entities.Vote `json:"votes"`
 }
 
 type GetListByUserIDUseCase struct {
@@ -102,15 +102,28 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 		}
 	}
 
-	rankMovies, errGetRankMoviesByVotes := u.VoteRepository.RankMoviesByVotes(input.ListID)
-	if errGetRankMoviesByVotes != nil {
+	rankItems, errGetRankItemsByVotes := u.VoteRepository.RankItemsByVotes(input.ListID, list.ListType)
+	if errGetRankItemsByVotes != nil {
 		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error fetching ranked movies",
+				Title:    "Error fetching ranked items",
 				Status:   500,
-				Detail:   errGetRankMoviesByVotes.Error(),
+				Detail:   errGetRankItemsByVotes.Error(),
 				Instance: util.RFC500,
+			},
+		}
+	}
+
+	outputRanking, err := list.FormatRanking(rankItems)
+	if err != nil {
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Invalid Input",
+				Title:    "Invalid list type",
+				Status:   400,
+				Detail:   err.Error(),
+				Instance: util.RFC400,
 			},
 		}
 	}
@@ -118,7 +131,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 	return GetListByUserIDOutputDTO{
 		List:          list,
 		NumberOfVotes: numberOfVotes,
-		RankMovies:    rankMovies,
+		Ranking:       outputRanking,
 		Votes:         votes,
 	}, nil
 }

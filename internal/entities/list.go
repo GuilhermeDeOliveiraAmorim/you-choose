@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"errors"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
@@ -127,5 +128,32 @@ func (l *List) GetTypes() []string {
 	return []string{
 		MOVIE_TYPE,
 		BRAND_TYPE,
+	}
+}
+
+func (l *List) FormatRanking(rankItems []interface{}) (interface{}, error) {
+	switch l.ListType {
+	case MOVIE_TYPE:
+		movies := make([]Movie, len(rankItems))
+		for i, item := range rankItems {
+			movie, ok := item.(Movie)
+			if !ok {
+				return nil, errors.New("failed to cast item to Movie")
+			}
+			movies[i] = movie
+		}
+		return movies, nil
+	case BRAND_TYPE:
+		brands := make([]Brand, len(rankItems))
+		for i, item := range rankItems {
+			brand, ok := item.(Brand)
+			if !ok {
+				return nil, errors.New("failed to cast item to Brand")
+			}
+			brands[i] = brand
+		}
+		return brands, nil
+	default:
+		return nil, errors.New("unsupported list type")
 	}
 }

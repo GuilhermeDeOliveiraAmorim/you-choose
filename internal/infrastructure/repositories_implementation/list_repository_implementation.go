@@ -129,48 +129,26 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 		return entities.List{}, errors.New(resultListModel.Error.Error())
 	}
 
-	var moviesModel []Movies
-
-	resultMoviesModel := c.gorm.Table("movies").
-		Select("movies.*").
-		Joins("JOIN list_movies ON list_movies.movie_id = movies.id").
-		Where("list_movies.list_id = ?", listID).
-		Find(&moviesModel)
-	if resultMoviesModel.Error != nil {
-		if errors.Is(resultMoviesModel.Error, gorm.ErrRecordNotFound) {
-			return entities.List{}, errors.New("list not found")
-		}
-		return entities.List{}, errors.New(resultMoviesModel.Error.Error())
-	}
-
-	var movies []entities.Movie
-
-	for _, movie := range moviesModel {
-		movies = append(movies, *movie.ToEntity())
+	items, err := c.fetchItemsByListType(listID, listModel.ListType)
+	if err != nil {
+		return entities.List{}, err
 	}
 
 	var combinationsModel []Combinations
-
 	result := c.gorm.Table("combinations").
 		Select("combinations.*").
 		Where("list_id = ?", listID).
 		Find(&combinationsModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return entities.List{}, errors.New("list not found")
+			return entities.List{}, errors.New("combinations not found")
 		}
 		return entities.List{}, errors.New(result.Error.Error())
 	}
 
 	var combinations []entities.Combination
-
 	for _, combination := range combinationsModel {
 		combinations = append(combinations, *combination.ToEntity())
-	}
-
-	var items []interface{}
-	for _, movie := range movies {
-		items = append(items, movie)
 	}
 
 	return *listModel.ToEntity(items, combinations, true), nil
@@ -196,4 +174,51 @@ func (c *ListRepository) GetLists() ([]entities.List, error) {
 	}
 
 	return lists, nil
+}
+
+func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interface{}, error) {
+	var items []interface{}
+
+	switch listType {
+	case entities.MOVIE_TYPE:
+		var moviesModel []Movies
+		resultMoviesModel := c.gorm.Table("movies").
+			Select("movies.*").
+			Joins("JOIN list_movies ON list_movies.movie_id = movies.id").
+			Where("list_movies.list_id = ?", listID).
+			Find(&moviesModel)
+		if resultMoviesModel.Error != nil {
+			if errors.Is(resultMoviesModel.Error, gorm.ErrRecordNotFound) {
+				return nil, errors.New("movies not found")
+			}
+			return nil, errors.New(resultMoviesModel.Error.Error())
+		}
+
+		for _, movie := range moviesModel {
+			items = append(items, *movie.ToEntity())
+		}
+
+	case entities.BRAND_TYPE:
+		var brandsModel []Brands
+		resultBrandsModel := c.gorm.Table("brands").
+			Select("brands.*").
+			Joins("JOIN list_brands ON list_brands.brand_id = brands.id").
+			Where("list_brands.list_id = ?", listID).
+			Find(&brandsModel)
+		if resultBrandsModel.Error != nil {
+			if errors.Is(resultBrandsModel.Error, gorm.ErrRecordNotFound) {
+				return nil, errors.New("brands not found")
+			}
+			return nil, errors.New(resultBrandsModel.Error.Error())
+		}
+
+		for _, brand := range brandsModel {
+			items = append(items, *brand.ToEntity())
+		}
+
+	default:
+		return nil, errors.New("invalid list type")
+	}
+
+	return items, nil
 }
