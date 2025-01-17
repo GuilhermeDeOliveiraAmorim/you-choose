@@ -804,6 +804,18 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "ranking": {},
+                "unvoted_combinations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Combination"
+                    }
+                },
+                "voted_combinations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Combination"
+                    }
+                },
                 "votes": {
                     "type": "array",
                     "items": {

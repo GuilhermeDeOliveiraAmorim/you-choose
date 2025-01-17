@@ -138,6 +138,14 @@ definitions:
       number_of_votes:
         type: integer
       ranking: {}
+      unvoted_combinations:
+        items:
+          $ref: '#/definitions/entities.Combination'
+        type: array
+      voted_combinations:
+        items:
+          $ref: '#/definitions/entities.Combination'
+        type: array
       votes:
         items:
           $ref: '#/definitions/entities.Vote'

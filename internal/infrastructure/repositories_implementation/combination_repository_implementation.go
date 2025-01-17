@@ -34,3 +34,24 @@ func (c *CombinationRepository) GetCombinationsByListID(listID string) ([]entiti
 
 	return combinations, nil
 }
+
+func (c *CombinationRepository) GetCombinationsAlreadyVoted(listID string) ([]entities.Combination, error) {
+	var combinationsModel []Combinations
+
+    result := c.gorm.Table("combinations").
+        Select("combinations.*").
+        Joins("JOIN votes ON combinations.id = votes.combination_id").
+        Where("list_id =?", listID).
+        Find(&combinationsModel)
+    if result.Error!= nil {
+        return nil, result.Error
+    }
+
+    var combinations []entities.Combination
+
+    for _, combination := range combinationsModel {
+        combinations = append(combinations, *combination.ToEntity())
+    }
+
+    return combinations, nil
+}

@@ -7,7 +7,7 @@ import (
 )
 
 type GetListByIDInputDTO struct {
-	ListID   string `json:"list_id"`
+	ListID string `json:"list_id"`
 }
 
 type GetListByIDOutputDTO struct {

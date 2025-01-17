@@ -12,10 +12,12 @@ type GetListByUserIDInputDTO struct {
 }
 
 type GetListByUserIDOutputDTO struct {
-	List          entities.List   `json:"list"`
-	NumberOfVotes int             `json:"number_of_votes"`
-	Ranking       interface{}     `json:"ranking"`
-	Votes         []entities.Vote `json:"votes"`
+	List                entities.List          `json:"list"`
+	NumberOfVotes       int                    `json:"number_of_votes"`
+	Ranking             interface{}            `json:"ranking"`
+	VotedCombinations   []entities.Combination `json:"voted_combinations"`
+	UnvotedCombinations []entities.Combination `json:"unvoted_combinations"`
+	Votes               []entities.Vote        `json:"votes"`
 }
 
 type GetListByUserIDUseCase struct {
@@ -128,10 +130,41 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 		}
 	}
 
+	combinationsAlreadyVoted, errGetCombinationsAlreadyVoted := u.CombinationRepository.GetCombinationsAlreadyVoted(input.ListID)
+	if errGetCombinationsAlreadyVoted != nil {
+		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error fetching combinations already voted",
+				Status:   500,
+				Detail:   errGetCombinationsAlreadyVoted.Error(),
+				Instance: util.RFC500,
+			},
+		}
+	}
+
+	var unvotedCombinations []entities.Combination
+
+	for _, combination := range list.Combinations {
+		isVoted := false
+		for _, votedCombination := range combinationsAlreadyVoted {
+			if combination.ID == votedCombination.ID {
+				isVoted = true
+				break
+			}
+		}
+
+		if !isVoted {
+			unvotedCombinations = append(unvotedCombinations, combination)
+		}
+	}
+
 	return GetListByUserIDOutputDTO{
-		List:          list,
-		NumberOfVotes: numberOfVotes,
-		Ranking:       outputRanking,
-		Votes:         votes,
+		List:                list,
+		NumberOfVotes:       numberOfVotes,
+		Ranking:             outputRanking,
+		VotedCombinations:   combinationsAlreadyVoted,
+		UnvotedCombinations: unvotedCombinations,
+		Votes:               votes,
 	}, nil
 }
