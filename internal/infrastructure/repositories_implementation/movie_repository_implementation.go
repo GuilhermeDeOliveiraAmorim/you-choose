@@ -114,3 +114,19 @@ func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
 
 	return tx.Commit().Error
 }
+
+func (c *MovieRepository) GetMovies() ([]entities.Movie, error) {
+	var moviesModel []Movies
+
+	result := c.gorm.Model(&Movies{}).Where("active =?", true).Find(&moviesModel)
+	if result.Error != nil {
+		return nil, errors.New(result.Error.Error())
+	}
+
+	var movies []entities.Movie
+	for _, movieModel := range moviesModel {
+		movies = append(movies, *movieModel.ToEntity())
+	}
+
+	return movies, nil
+}

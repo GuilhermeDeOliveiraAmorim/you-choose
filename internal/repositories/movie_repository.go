@@ -8,4 +8,5 @@ type MovieRepository interface {
 	ThisMovieExist(movieExternalID string) (bool, error)
 	GetMoviesByIDs(moviesIDs []string) ([]entities.Movie, error)
 	UpdadeMovie(movie entities.Movie) error
+	GetMovies() ([]entities.Movie, error)
 }

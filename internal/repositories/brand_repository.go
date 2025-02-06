@@ -8,4 +8,5 @@ type BrandRepository interface {
 	ThisBrandExist(brandName string) (bool, error)
 	GetBrandsByIDs(brandsIDs []string) ([]entities.Brand, error)
 	UpdadeBrand(brand entities.Brand) error
+	GetBrands() ([]entities.Brand, error)
 }

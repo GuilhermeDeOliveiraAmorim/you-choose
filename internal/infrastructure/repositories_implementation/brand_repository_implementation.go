@@ -110,3 +110,19 @@ func (c *BrandRepository) UpdadeBrand(brand entities.Brand) error {
 
 	return tx.Commit().Error
 }
+
+func (c *BrandRepository) GetBrands() ([]entities.Brand, error) {
+	var brandsModel []Brands
+
+	result := c.gorm.Model(&Brands{}).Where("active =?", true).Find(&brandsModel)
+	if result.Error != nil {
+		return nil, errors.New(result.Error.Error())
+	}
+
+	var brands []entities.Brand
+	for _, brandModel := range brandsModel {
+		brands = append(brands, *brandModel.ToEntity())
+	}
+
+	return brands, nil
+}
