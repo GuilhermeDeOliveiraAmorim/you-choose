@@ -281,7 +281,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Add new brands to list
+      description: List items sorted by number of votes
       parameters:
       - description: List Type (MOVIE or BRAND)
         in: query
@@ -307,7 +307,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/util.ProblemDetails'
-      summary: Show items type
+      summary: Sort items by type
       tags:
       - Items
   /items/brands:

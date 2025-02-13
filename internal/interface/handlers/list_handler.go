@@ -238,8 +238,8 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 	c.JSON(http.StatusCreated, output)
 }
 
-// @Summary Show items type
-// @Description Add new brands to list
+// @Summary Sort items by type
+// @Description List items sorted by number of votes
 // @Tags Items
 // @Accept json
 // @Produce json

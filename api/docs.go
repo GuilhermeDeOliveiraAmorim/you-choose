@@ -26,7 +26,7 @@ const docTemplate = `{
     "paths": {
         "/items": {
             "get": {
-                "description": "Add new brands to list",
+                "description": "List items sorted by number of votes",
                 "consumes": [
                     "application/json"
                 ],
@@ -36,7 +36,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Show items type",
+                "summary": "Sort items by type",
                 "parameters": [
                     {
                         "type": "string",
