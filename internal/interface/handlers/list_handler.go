@@ -237,3 +237,30 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, output)
 }
+
+// @Summary Show items type
+// @Description Add new brands to list
+// @Tags Items
+// @Accept json
+// @Produce json
+// @Param list_type query string true "List Type (MOVIE or BRAND)"
+// @Success 201 {object} usecases.ShowsRankingItemsOutputDTO
+// @Failure 400 {object} util.ProblemDetails "Bad Request"
+// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Router /items [get]
+func (h *ListHandler) ShowsRankingItems(c *gin.Context) {
+	listType := c.Query("list_type")
+
+	input := usecases.ShowsRankingItemsInputDTO{
+		ListType: listType,
+	}
+
+	output, errs := h.listFactory.ShowsRankingItems.Execute(input)
+	if len(errs) > 0 {
+		handleErrors(c, errs)
+		return
+	}
+
+	c.JSON(http.StatusCreated, output)
+}

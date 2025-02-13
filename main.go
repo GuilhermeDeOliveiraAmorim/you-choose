@@ -81,6 +81,7 @@ func main() {
 		public.POST("login", userHandler.Login)
 		public.GET("lists", listHandler.GetListByID)
 		public.GET("lists/all", listHandler.GetLists)
+		public.GET("items", listHandler.ShowsRankingItems)
 	}
 
 	protected := r.Group("/").Use(util.AuthMiddleware())

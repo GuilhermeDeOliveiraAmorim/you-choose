@@ -209,6 +209,12 @@ definitions:
           type: string
         type: array
     type: object
+  usecases.ShowsRankingItemsOutputDTO:
+    properties:
+      ranking:
+        items: {}
+        type: array
+    type: object
   usecases.SimpleList:
     properties:
       active:
@@ -271,6 +277,39 @@ info:
   title: You Choose API
   version: "1.0"
 paths:
+  /items:
+    get:
+      consumes:
+      - application/json
+      description: Add new brands to list
+      parameters:
+      - description: List Type (MOVIE or BRAND)
+        in: query
+        name: list_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/usecases.ShowsRankingItemsOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/util.ProblemDetails'
+      summary: Show items type
+      tags:
+      - Items
   /items/brands:
     post:
       consumes:

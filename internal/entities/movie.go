@@ -13,7 +13,6 @@ type Movie struct {
 	Year       int64  `json:"year"`
 	Poster     string `json:"poster"`
 	ExternalID string `json:"external_id"`
-	VotesCount int    `json:"votes_count"`
 }
 
 func NewMovie(name string, year int64, externalID string) (*Movie, []util.ProblemDetails) {
