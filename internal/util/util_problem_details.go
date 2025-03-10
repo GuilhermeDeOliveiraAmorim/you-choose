@@ -37,61 +37,61 @@ func (pd *ProblemDetails) Validate() error {
 	if pd.Type == "" || len(pd.Type) > 100 {
 		NewLoggerError(
 			http.StatusBadRequest,
-			"O tipo deve ser não vazio e ter no máximo 100 caracteres",
+			"The type must be non-empty and have a maximum of 100 characters",
 			"NewProblemDetails",
 			"Entities",
 			"Error",
 		)
 
-		return errors.New("type deve ser não vazio e ter no máximo 100 caracteres")
+		return errors.New("type must be non-empty and have a maximum of 100 characters")
 	}
 
 	if pd.Title == "" || len(pd.Title) > 100 {
 		NewLoggerError(
 			http.StatusBadRequest,
-			"O título deve ser não vazio e ter no máximo 100 caracteres",
+			"The title must be non-empty and have a maximum of 100 characters",
 			"NewProblemDetails",
 			"Entities",
 			"Error",
 		)
 
-		return errors.New("title deve ser não vazio e ter no máximo 100 caracteres")
+		return errors.New("title must be non-empty and have a maximum of 100 characters")
 	}
 
 	if pd.Status < 100 || pd.Status >= 600 {
 		NewLoggerError(
 			http.StatusBadRequest,
-			"O status deve ser um código HTTP válido",
+			"Status must be a valid HTTP code",
 			"NewProblemDetails",
 			"Entities",
 			"Error",
 		)
 
-		return errors.New("status deve ser um código HTTP válido")
+		return errors.New("status must be a valid HTTP code")
 	}
 
 	if pd.Detail == "" || len(pd.Detail) > 255 {
 		NewLoggerError(
 			http.StatusBadRequest,
-			"O detalhe deve ser não vazio e ter no máximo 255 caracteres",
+			"The detail must be non-empty and have a maximum of 255 characters",
 			"NewProblemDetails",
 			"Entities",
 			"Error",
 		)
 
-		return errors.New("detail deve ser não vazio e ter no máximo 255 caracteres")
+		return errors.New("detail must be non-empty and have a maximum of 255 characters")
 	}
 
 	if len(pd.Instance) > 255 {
 		NewLoggerError(
 			http.StatusBadRequest,
-			"A instância não deve ter mais do que 255 caracteres",
+			"The instance must not be longer than 255 characters",
 			"NewProblemDetails",
 			"Entities",
 			"Error",
 		)
 
-		return errors.New("instance não deve ter mais do que 255 caracteres")
+		return errors.New("instance must not be longer than 255 characters")
 	}
 
 	return nil
