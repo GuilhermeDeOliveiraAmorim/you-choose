@@ -8,17 +8,12 @@ import (
 )
 
 func handleErrors(c *gin.Context, errs []util.ProblemDetails) {
-	if len(errs) > 0 {
-		for _, err := range errs {
-			if err.Status == 500 {
-				c.JSON(err.Status, gin.H{"error": err})
-				return
-			} else {
-				c.JSON(err.Status, gin.H{"error": err})
-				return
-			}
-		}
+	if len(errs) == 0 {
+		return
 	}
+
+	status := errs[0].Status
+	c.JSON(status, gin.H{"errors": errs})
 }
 
 func getUserID(c *gin.Context) (string, *util.ProblemDetails) {
