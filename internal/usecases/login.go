@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
@@ -41,12 +43,24 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 
 	user, getUserByEmailErr := c.UserRepository.GetUserByEmail(email)
 	if getUserByEmailErr != nil {
+		if strings.Compare(getUserByEmailErr.Error(), "user not found") == 0 {
+			return LoginOutputDto{}, []util.ProblemDetails{
+				{
+					Type:     "Forbidden",
+					Title:    util.GetErrorMessage("LoginUseCase", "UserNotFound", "Title"),
+					Status:   403,
+					Detail:   util.GetErrorMessage("LoginUseCase", "UserNotFound", "Detail"),
+					Instance: util.RFC403,
+				},
+			}
+		}
+
 		return LoginOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error getting user",
+				Title:    util.GetErrorMessage("LoginUseCase", "ErrorGettingUser", "Title"),
 				Status:   500,
-				Detail:   getUserByEmailErr.Error(),
+				Detail:   util.GetErrorMessage("LoginUseCase", "ErrorGettingUser", "Detail"),
 				Instance: util.RFC500,
 			},
 		}
@@ -54,9 +68,9 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 		return LoginOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
-				Title:    "User is not active",
+				Title:    util.GetErrorMessage("LoginUseCase", "UserNotActive", "Title"),
 				Status:   403,
-				Detail:   "User is not active",
+				Detail:   util.GetErrorMessage("LoginUseCase", "UserNotActive", "Detail"),
 				Instance: util.RFC403,
 			},
 		}
@@ -66,9 +80,9 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 		return LoginOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Unauthorized",
-				Title:    "Invalid email or password",
+				Title:    util.GetErrorMessage("LoginUseCase", "InvalidCredentials", "Title"),
 				Status:   401,
-				Detail:   "Invalid email or password",
+				Detail:   util.GetErrorMessage("LoginUseCase", "InvalidCredentials", "Detail"),
 				Instance: util.RFC401,
 			},
 		}
@@ -89,9 +103,9 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 		return LoginOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "JWT token Error",
+				Title:    util.GetErrorMessage("LoginUseCase", "JWTError", "Title"),
 				Status:   500,
-				Detail:   "Error creating JWT token",
+				Detail:   err.Error(),
 				Instance: util.RFC500,
 			},
 		}
