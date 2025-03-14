@@ -57,6 +57,40 @@ var (
 					"Detail": "An error occurred while adding the brands to the list.",
 				},
 			},
+			"AddMoviesListUseCase": {
+				"UserNotFound": {
+					"Title":  "User Not Found",
+					"Detail": "The user with the provided ID could not be found.",
+				},
+				"UserNotActive": {
+					"Title":  "User Not Active",
+					"Detail": "The user's account is not active. Please contact support.",
+				},
+				"UserNotAdmin": {
+					"Title":  "Access Denied",
+					"Detail": "The user does not have admin privileges.",
+				},
+				"ListNotFound": {
+					"Title":  "List Not Found",
+					"Detail": "The list with the provided ID could not be retrieved.",
+				},
+				"InvalidListType": {
+					"Title":  "Invalid List Type",
+					"Detail": "The list type must be 'movie'.",
+				},
+				"MovieAlreadyInList": {
+					"Title":  "Movie Already in List",
+					"Detail": "The movie is already present in the list.",
+				},
+				"ErrorFetchingMovies": {
+					"Title":  "Error Fetching Movies",
+					"Detail": "An error occurred while fetching movies with the provided IDs.",
+				},
+				"ErrorAddingMovies": {
+					"Title":  "Error Adding Movies",
+					"Detail": "An error occurred while adding movies to the list.",
+				},
+			},
 		},
 		"pt-BR": {
 			"LoginUseCase": {
@@ -113,6 +147,40 @@ var (
 				"ErrorFetchingCombinations": {
 					"Title":  "Erro ao Buscar Combinações",
 					"Detail": "Ocorreu um erro ao buscar as combinações para a lista.",
+				},
+			},
+			"AddMoviesListUseCase": {
+				"UserNotFound": {
+					"Title":  "Usuário não encontrado",
+					"Detail": "Não foi possível encontrar o usuário com o ID fornecido.",
+				},
+				"UserNotActive": {
+					"Title":  "Usuário não ativo",
+					"Detail": "O usuário não está ativo. Por favor, entre em contato com o suporte.",
+				},
+				"UserNotAdmin": {
+					"Title":  "Usuário não é administrador",
+					"Detail": "O usuário não tem permissões de administrador para adicionar filmes à lista.",
+				},
+				"ErrorFetchingList": {
+					"Title":  "Erro ao buscar lista",
+					"Detail": "Ocorreu um erro ao tentar recuperar a lista com o ID fornecido.",
+				},
+				"InvalidListType": {
+					"Title":  "Tipo de lista inválido",
+					"Detail": "O tipo da lista deve ser 'movie'.",
+				},
+				"MovieAlreadyInList": {
+					"Title":  "Filme já na lista",
+					"Detail": "O filme com o ID fornecido já está presente na lista.",
+				},
+				"ErrorFetchingMovies": {
+					"Title":  "Erro ao buscar filmes",
+					"Detail": "Ocorreu um erro ao tentar buscar os filmes com os IDs fornecidos.",
+				},
+				"ErrorAddingMovies": {
+					"Title":  "Erro ao adicionar filmes",
+					"Detail": "Ocorreu um erro ao tentar adicionar os filmes à lista.",
 				},
 			},
 		},
@@ -173,6 +241,40 @@ var (
 					"Detail": "Une erreur s'est produite lors de la récupération des combinaisons pour la liste.",
 				},
 			},
+			"AddMoviesListUseCase": {
+				"UserNotFound": {
+					"Title":  "Utilisateur non trouvé",
+					"Detail": "L'utilisateur avec l'ID fourni n'a pas pu être trouvé.",
+				},
+				"UserNotActive": {
+					"Title":  "Utilisateur inactif",
+					"Detail": "Le compte de l'utilisateur n'est pas actif. Veuillez contacter le support.",
+				},
+				"UserNotAdmin": {
+					"Title":  "Accès refusé",
+					"Detail": "L'utilisateur ne possède pas les privilèges d'administrateur.",
+				},
+				"ListNotFound": {
+					"Title":  "Liste non trouvée",
+					"Detail": "La liste avec l'ID fourni n'a pas pu être récupérée.",
+				},
+				"InvalidListType": {
+					"Title":  "Type de liste invalide",
+					"Detail": "Le type de liste doit être 'film'.",
+				},
+				"MovieAlreadyInList": {
+					"Title":  "Film déjà dans la liste",
+					"Detail": "Le film est déjà présent dans la liste.",
+				},
+				"ErrorFetchingMovies": {
+					"Title":  "Erreur lors de la récupération des films",
+					"Detail": "Une erreur est survenue lors de la récupération des films avec les ID fournis.",
+				},
+				"ErrorAddingMovies": {
+					"Title":  "Erreur lors de l'ajout des films",
+					"Detail": "Une erreur est survenue lors de l'ajout des films à la liste.",
+				},
+			},
 		},
 		"es-ES": {
 			"LoginUseCase": {
@@ -231,6 +333,40 @@ var (
 					"Detail": "Ocurrió un error al obtener las combinaciones para la lista.",
 				},
 			},
+			"AddMoviesListUseCase": {
+				"UserNotFound": {
+					"Title":  "Usuario no encontrado",
+					"Detail": "No se pudo encontrar el usuario con el ID proporcionado.",
+				},
+				"UserNotActive": {
+					"Title":  "Usuario no activo",
+					"Detail": "La cuenta del usuario no está activa. Contacta con el soporte.",
+				},
+				"UserNotAdmin": {
+					"Title":  "Acceso denegado",
+					"Detail": "El usuario no tiene privilegios de administrador.",
+				},
+				"ListNotFound": {
+					"Title":  "Lista no encontrada",
+					"Detail": "No se pudo recuperar la lista con el ID proporcionado.",
+				},
+				"InvalidListType": {
+					"Title":  "Tipo de lista no válido",
+					"Detail": "El tipo de lista debe ser 'película'.",
+				},
+				"MovieAlreadyInList": {
+					"Title":  "Película ya en la lista",
+					"Detail": "La película ya está presente en la lista.",
+				},
+				"ErrorFetchingMovies": {
+					"Title":  "Error al obtener películas",
+					"Detail": "Ocurrió un error al obtener las películas con los IDs proporcionados.",
+				},
+				"ErrorAddingMovies": {
+					"Title":  "Error al agregar películas",
+					"Detail": "Ocurrió un error al agregar películas a la lista.",
+				},
+			},
 		},
 		"zh-CN": {
 			"LoginUseCase": {
@@ -287,6 +423,40 @@ var (
 				"ErrorFetchingCombinations": {
 					"Title":  "获取组合时出错",
 					"Detail": "获取列表组合时发生错误。",
+				},
+			},
+			"AddMoviesListUseCase": {
+				"UserNotFound": {
+					"Title":  "用户未找到",
+					"Detail": "无法找到提供的用户ID。",
+				},
+				"UserNotActive": {
+					"Title":  "用户未激活",
+					"Detail": "用户账户未激活，请联系支持。",
+				},
+				"UserNotAdmin": {
+					"Title":  "拒绝访问",
+					"Detail": "用户没有管理员权限。",
+				},
+				"ListNotFound": {
+					"Title":  "列表未找到",
+					"Detail": "无法检索提供ID的列表。",
+				},
+				"InvalidListType": {
+					"Title":  "无效的列表类型",
+					"Detail": "列表类型必须为 '电影'。",
+				},
+				"MovieAlreadyInList": {
+					"Title":  "电影已在列表中",
+					"Detail": "的电影已在列表中。",
+				},
+				"ErrorFetchingMovies": {
+					"Title":  "获取电影时出错",
+					"Detail": "获取提供的电影ID时发生了错误。",
+				},
+				"ErrorAddingMovies": {
+					"Title":  "添加电影时出错",
+					"Detail": "将电影添加到列表时发生了错误。",
 				},
 			},
 		},

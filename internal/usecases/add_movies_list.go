@@ -1,7 +1,7 @@
 package usecases
 
 import (
-	"fmt"
+	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
@@ -44,12 +44,24 @@ func NewAddMoviesListUseCase(
 func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesListOutputDTO, []util.ProblemDetails) {
 	user, err := u.UserRepository.GetUser(input.UserID)
 	if err != nil {
+		if strings.Compare(err.Error(), "user not found") == 0 {
+			return AddMoviesListOutputDTO{}, []util.ProblemDetails{
+				{
+					Type:     "Not Found",
+					Title:    util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Title"),
+					Status:   403,
+					Detail:   util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Detail"),
+					Instance: util.RFC403,
+				},
+			}
+		}
+
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Not Found",
-				Title:    "User not found",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Title"),
 				Status:   404,
-				Detail:   err.Error(),
+				Detail:   util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Detail"),
 				Instance: util.RFC404,
 			},
 		}
@@ -57,9 +69,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
-				Title:    "User is not active",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "UserNotActive", "Title"),
 				Status:   403,
-				Detail:   "User is not active",
+				Detail:   util.GetErrorMessage("AddMoviesListUseCase", "UserNotActive", "Detail"),
 				Instance: util.RFC403,
 			},
 		}
@@ -67,9 +79,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
-				Title:    "User is not an admin",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "UserNotAdmin", "Title"),
 				Status:   403,
-				Detail:   "User is not an admin",
+				Detail:   util.GetErrorMessage("AddMoviesListUseCase", "UserNotAdmin", "Detail"),
 				Instance: util.RFC403,
 			},
 		}
@@ -82,7 +94,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error fetching list",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "ListNotFound", "Title"),
 				Status:   500,
 				Detail:   errGetList.Error(),
 				Instance: util.RFC500,
@@ -92,9 +104,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Validation Error",
-				Title:    "Invalid list type",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType", "Title"),
 				Status:   400,
-				Detail:   "List type must be 'movie'",
+				Detail:   util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType", "Detail"),
 				Instance: util.RFC400,
 			},
 		}
@@ -108,9 +120,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 					problems = append(problems,
 						util.ProblemDetails{
 							Type:     "Validation Error",
-							Title:    "Movie already in list",
+							Title:    util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList", "Title"),
 							Status:   400,
-							Detail:   fmt.Sprintf("Movie with ID %s already exists in the list.", movieID),
+							Detail:   util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList", "Detail"),
 							Instance: util.RFC400,
 						},
 					)
@@ -128,7 +140,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error fetching movies",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies", "Title"),
 				Status:   500,
 				Detail:   errGetMoviesByID.Error(),
 				Instance: util.RFC500,
@@ -140,7 +152,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	getOldMovieIDs, errGetMovieIDs := list.GetItemIDs()
 	if len(errGetMovieIDs) > 0 {
-		return AddMoviesListOutputDTO{}, problems
+		return AddMoviesListOutputDTO{}, errGetMovieIDs
 	}
 
 	movieIDs = append(movieIDs, getOldMovieIDs...)
@@ -154,7 +166,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	getNewMovieIDs, errGetMovieIDs := list.GetItemIDs()
 	if len(errGetMovieIDs) > 0 {
-		return AddMoviesListOutputDTO{}, problems
+		return AddMoviesListOutputDTO{}, errGetMovieIDs
 	}
 
 	movieIDs = append(movieIDs, getNewMovieIDs...)
@@ -171,7 +183,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error adding movies to list",
+				Title:    util.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies", "Title"),
 				Status:   500,
 				Detail:   errAddMovies.Error(),
 				Instance: util.RFC500,
