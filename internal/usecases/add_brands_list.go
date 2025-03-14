@@ -1,8 +1,6 @@
 package usecases
 
 import (
-	"fmt"
-
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
@@ -47,7 +45,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Not Found",
-				Title:    "User not found",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "UserNotFound", "Title"),
 				Status:   404,
 				Detail:   err.Error(),
 				Instance: util.RFC404,
@@ -57,9 +55,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
-				Title:    "User is not active",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "UserNotActive", "Title"),
 				Status:   403,
-				Detail:   "User is not active",
+				Detail:   util.GetErrorMessage("AddBrandsListUseCase", "UserNotActive", "Detail"),
 				Instance: util.RFC403,
 			},
 		}
@@ -67,9 +65,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
-				Title:    "User is not an admin",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "UserNotAdmin", "Title"),
 				Status:   403,
-				Detail:   "User is not an admin",
+				Detail:   util.GetErrorMessage("AddBrandsListUseCase", "UserNotAdmin", "Detail"),
 				Instance: util.RFC403,
 			},
 		}
@@ -82,7 +80,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error fetching list",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "ListNotFound", "Title"),
 				Status:   500,
 				Detail:   errGetList.Error(),
 				Instance: util.RFC500,
@@ -92,9 +90,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Validation Error",
-				Title:    "Invalid list type",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType", "Title"),
 				Status:   400,
-				Detail:   "List type must be 'brand'",
+				Detail:   util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType", "Detail"),
 				Instance: util.RFC400,
 			},
 		}
@@ -108,9 +106,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 					problems = append(problems,
 						util.ProblemDetails{
 							Type:     "Validation Error",
-							Title:    "Brand already in list",
+							Title:    util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList", "Title"),
 							Status:   400,
-							Detail:   fmt.Sprintf("Brand with ID %s already exists in the list.", brandID),
+							Detail:   util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList", "Detail"),
 							Instance: util.RFC400,
 						},
 					)
@@ -128,7 +126,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error fetching brands",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands", "Title"),
 				Status:   500,
 				Detail:   errGetBrandsByID.Error(),
 				Instance: util.RFC500,
@@ -171,7 +169,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
-				Title:    "Error adding brands to list",
+				Title:    util.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands", "Title"),
 				Status:   500,
 				Detail:   errAddBrands.Error(),
 				Instance: util.RFC500,

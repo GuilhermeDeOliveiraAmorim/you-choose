@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
