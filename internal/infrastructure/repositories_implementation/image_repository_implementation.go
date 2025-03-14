@@ -2,7 +2,6 @@ package repositories_implementation
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -26,19 +25,19 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		return "", fmt.Errorf("failed to create storage client: %v", err)
+		return "", err
 	}
 	defer client.Close()
 
 	resp, err := http.Get(image)
 	if err != nil {
-		return "", fmt.Errorf("failed to download image: %v", err)
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	imageData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read image data: %v", err)
+		return "", err
 	}
 
 	objectName := ulid.Make().String()
@@ -51,11 +50,11 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 
 	if _, err := writer.Write(imageData); err != nil {
 		writer.Close()
-		return "", fmt.Errorf("failed to upload image to bucket: %v", err)
+		return "", err
 	}
 
 	if err := writer.Close(); err != nil {
-		return "", fmt.Errorf("failed to finalize upload to bucket: %v", err)
+		return "", err
 	}
 
 	return objectName, nil

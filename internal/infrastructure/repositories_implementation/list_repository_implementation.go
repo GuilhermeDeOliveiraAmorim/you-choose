@@ -2,7 +2,6 @@ package repositories_implementation
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
@@ -165,12 +164,7 @@ func (c *ListRepository) GetLists() ([]entities.List, error) {
 	var lists []entities.List
 
 	for _, list := range listsModel {
-		fmt.Println(list)
 		lists = append(lists, *list.ToEntity([]interface{}{}, []entities.Combination{}, false))
-	}
-
-	for _, list := range lists {
-		fmt.Println(list)
 	}
 
 	return lists, nil

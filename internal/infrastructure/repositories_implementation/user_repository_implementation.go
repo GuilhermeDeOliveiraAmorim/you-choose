@@ -64,7 +64,7 @@ func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
 	result := u.gorm.Model(&Users{}).Where("email = ?", userEmail).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return false, errors.New("not found")
+			return false, errors.New("email not found")
 		}
 		return false, errors.New(result.Error.Error())
 	}
@@ -78,7 +78,7 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 	result := u.gorm.Model(&Users{}).Where("name = ?", userName).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return false, errors.New("not found")
+			return false, errors.New("user not found")
 		}
 		return false, errors.New(result.Error.Error())
 	}
