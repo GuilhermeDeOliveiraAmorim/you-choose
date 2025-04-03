@@ -17,29 +17,38 @@ func AuthMiddleware() gin.HandlerFunc {
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
-				Title:    "Missing Authorization Header",
+				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Title"),
+				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Detail"),
 				Status:   http.StatusUnauthorized,
-				Detail:   "Authorization header is required",
 				Instance: RFC401,
 			}})
 			return
 		}
 
-		tokenString := strings.Split(authHeader, "Bearer ")
-		if len(tokenString) != 2 {
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
-				Title:    "Invalid Authorization Format",
+				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Title"),
+				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Detail"),
 				Status:   http.StatusUnauthorized,
-				Detail:   "Authorization header must be in the format 'Bearer <token>'",
 				Instance: RFC401,
 			}})
 			return
 		}
 
-		token, err := jwt.Parse(tokenString[1], func(token *jwt.Token) (interface{}, error) {
+		tokenString := parts[1]
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
+					Type:     "Unauthorized",
+					Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Title"),
+					Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Detail"),
+					Status:   http.StatusUnauthorized,
+					Instance: RFC401,
+				}})
+				return nil, fmt.Errorf("unexpected signing method")
 			}
 			return []byte(config.SECRETS_VAR.JWT_SECRET), nil
 		})
@@ -47,9 +56,9 @@ func AuthMiddleware() gin.HandlerFunc {
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
-				Title:    "Invalid Token",
+				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Title"),
+				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Detail"),
 				Status:   http.StatusUnauthorized,
-				Detail:   "Token could not be parsed or is invalid",
 				Instance: RFC401,
 			}})
 			return
@@ -58,9 +67,9 @@ func AuthMiddleware() gin.HandlerFunc {
 		if !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
-				Title:    "Invalid Token",
+				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedToken", "Title"),
+				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedToken", "Detail"),
 				Status:   http.StatusUnauthorized,
-				Detail:   "Token is not valid",
 				Instance: RFC401,
 			}})
 			return

@@ -91,6 +91,28 @@ var (
 					"Detail": "An error occurred while adding movies to the list.",
 				},
 			},
+			"AuthMiddleware": {
+				"UnauthorizedHeader": {
+					"Title":  "Missing Authorization Header",
+					"Detail": "Authorization header is required",
+				},
+				"UnauthorizedBearer": {
+					"Title":  "Invalid Authorization Format",
+					"Detail": "Authorization header must be in the format 'Bearer <token>'",
+				},
+				"UnauthorizedTokenParse": {
+					"Title":  "Unexpected signing method",
+					"Detail": "Unexpected signing method",
+				},
+				"UnauthorizedInvalidToken": {
+					"Title":  "Invalid Token",
+					"Detail": "Token could not be parsed or is invalid",
+				},
+				"UnauthorizedToken": {
+					"Title":  "Invalid Token",
+					"Detail": "Token is not valid",
+				},
+			},
 		},
 		"pt-BR": {
 			"LoginUseCase": {
@@ -181,6 +203,28 @@ var (
 				"ErrorAddingMovies": {
 					"Title":  "Erro ao adicionar filmes",
 					"Detail": "Ocorreu um erro ao tentar adicionar os filmes à lista.",
+				},
+			},
+			"AuthMiddleware": {
+				"UnauthorizedHeader": {
+					"Title":  "Cabeçalho de Autorização Ausente",
+					"Detail": "O cabeçalho de autorização é obrigatório",
+				},
+				"UnauthorizedBearer": {
+					"Title":  "Formato de Autorização Inválido",
+					"Detail": "O cabeçalho de autorização deve estar no formato 'Bearer <token>'",
+				},
+				"UnauthorizedTokenParse": {
+					"Title":  "Método de Assinatura Inesperado",
+					"Detail": "Método de assinatura inesperado",
+				},
+				"UnauthorizedInvalidToken": {
+					"Title":  "Token Inválido",
+					"Detail": "O token não pôde ser analisado ou é inválido",
+				},
+				"UnauthorizedToken": {
+					"Title":  "Token Inválido",
+					"Detail": "O token não é válido",
 				},
 			},
 		},
@@ -275,6 +319,28 @@ var (
 					"Detail": "Une erreur est survenue lors de l'ajout des films à la liste.",
 				},
 			},
+			"AuthMiddleware": {
+				"UnauthorizedHeader": {
+					"Title":  "En-tête d’Autorisation Manquant",
+					"Detail": "L’en-tête d’autorisation est requis",
+				},
+				"UnauthorizedBearer": {
+					"Title":  "Format d’Autorisation Invalide",
+					"Detail": "L’en-tête d’autorisation doit être au format 'Bearer <token>'",
+				},
+				"UnauthorizedTokenParse": {
+					"Title":  "Méthode de Signature Inattendue",
+					"Detail": "Méthode de signature inattendue",
+				},
+				"UnauthorizedInvalidToken": {
+					"Title":  "Jeton Invalide",
+					"Detail": "Le jeton n'a pas pu être analysé ou est invalide",
+				},
+				"UnauthorizedToken": {
+					"Title":  "Jeton Invalide",
+					"Detail": "Le jeton n'est pas valide",
+				},
+			},
 		},
 		"es-ES": {
 			"LoginUseCase": {
@@ -367,6 +433,28 @@ var (
 					"Detail": "Ocurrió un error al agregar películas a la lista.",
 				},
 			},
+			"AuthMiddleware": {
+				"UnauthorizedHeader": {
+					"Title":  "Falta el Encabezado de Autorización",
+					"Detail": "El encabezado de autorización es obligatorio",
+				},
+				"UnauthorizedBearer": {
+					"Title":  "Formato de Autorización Inválido",
+					"Detail": "El encabezado de autorización debe estar en el formato 'Bearer <token>'",
+				},
+				"UnauthorizedTokenParse": {
+					"Title":  "Método de Firma Inesperado",
+					"Detail": "Método de firma inesperado",
+				},
+				"UnauthorizedInvalidToken": {
+					"Title":  "Token Inválido",
+					"Detail": "El token no pudo ser analizado o es inválido",
+				},
+				"UnauthorizedToken": {
+					"Title":  "Token Inválido",
+					"Detail": "El token no es válido",
+				},
+			},
 		},
 		"zh-CN": {
 			"LoginUseCase": {
@@ -457,6 +545,28 @@ var (
 				"ErrorAddingMovies": {
 					"Title":  "添加电影时出错",
 					"Detail": "将电影添加到列表时发生了错误。",
+				},
+			},
+			"AuthMiddleware": {
+				"UnauthorizedHeader": {
+					"Title":  "缺少授权标头",
+					"Detail": "授权标头是必需的",
+				},
+				"UnauthorizedBearer": {
+					"Title":  "无效的授权格式",
+					"Detail": "授权标头必须采用 'Bearer <token>' 格式",
+				},
+				"UnauthorizedTokenParse": {
+					"Title":  "意外的签名方法",
+					"Detail": "意外的签名方法",
+				},
+				"UnauthorizedInvalidToken": {
+					"Title":  "无效的令牌",
+					"Detail": "令牌无法解析或无效",
+				},
+				"UnauthorizedToken": {
+					"Title":  "无效的令牌",
+					"Detail": "令牌无效",
 				},
 			},
 		},
