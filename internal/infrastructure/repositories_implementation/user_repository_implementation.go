@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -37,6 +38,12 @@ func (u *UserRepository) CreateUser(user entities.User) error {
 		Password:      user.Login.Password,
 		IsAdmin:       user.IsAdmin,
 	}).Error; err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "CreateUser",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		tx.Rollback()
 		return err
 	}
@@ -52,6 +59,12 @@ func (u *UserRepository) GetUserByEmail(userEmail string) (entities.User, error)
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.User{}, errors.New("user not found")
 		}
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetUserByEmail",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return entities.User{}, errors.New(result.Error.Error())
 	}
 
@@ -66,6 +79,12 @@ func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, errors.New("email not found")
 		}
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "ThisUserEmailExists",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return false, errors.New(result.Error.Error())
 	}
 
@@ -80,6 +99,12 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, errors.New("user not found")
 		}
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "ThisUserNameExists",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return false, errors.New(result.Error.Error())
 	}
 
@@ -94,6 +119,12 @@ func (u *UserRepository) GetUser(userID string) (entities.User, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.User{}, errors.New("user not found")
 		}
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetUser",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return entities.User{}, errors.New(result.Error.Error())
 	}
 

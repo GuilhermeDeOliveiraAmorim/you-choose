@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -36,6 +37,12 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 		CombinationID: vote.CombinationID,
 		WinnerID:      vote.WinnerID,
 	}).Error; err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "CreateVote",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		tx.Rollback()
 		return err
 	}
@@ -56,6 +63,12 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("votes not found")
 		}
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetVotesByUserIDAndListID",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return nil, errors.New(result.Error.Error())
 	}
 
@@ -72,6 +85,12 @@ func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bo
 
 	result := c.gorm.Model(&Votes{}).Where("user_id =? AND combination_id =?", userID, combinationID).Count(&count)
 	if result.Error != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "VoteAlreadyRegistered",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return false, result.Error
 	}
 
@@ -83,6 +102,12 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 
 	result := c.gorm.Model(&Votes{}).Where("combination_id IN (SELECT id FROM combinations WHERE list_id =? AND active =?)", listID, true).Count(&count)
 	if result.Error != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetNumberOfVotesByListID",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return 0, result.Error
 	}
 
@@ -99,6 +124,12 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 	for _, combination := range combinations {
 		var votes []Votes
 		if err := c.gorm.Where("combination_id = ?", combination.ID).Find(&votes).Error; err != nil {
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: err.Error(),
+				From:    "RankItemsByVotes",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
 			return nil, errors.New(err.Error())
 		}
 
@@ -109,20 +140,26 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 
 	switch listType {
 	case entities.MOVIE_TYPE:
-		return c.rankMoviesByVotes(voteCounts)
+		return c.RankMoviesByVotes(voteCounts)
 	case entities.BRAND_TYPE:
-		return c.rankBrandsByVotes(voteCounts)
+		return c.RankBrandsByVotes(voteCounts)
 	default:
 		return nil, errors.New("invalid list type")
 	}
 }
 
-func (c *VoteRepository) rankMoviesByVotes(voteCounts map[string]int) ([]interface{}, error) {
+func (c *VoteRepository) RankMoviesByVotes(voteCounts map[string]int) ([]interface{}, error) {
 	var movies []Movies
 
 	for movieID, count := range voteCounts {
 		var movie Movies
 		if err := c.gorm.First(&movie, "id = ?", movieID).Error; err != nil {
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: err.Error(),
+				From:    "RankMoviesByVotes",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
 			return nil, errors.New(err.Error())
 		}
 		movie.VotesCount = count
@@ -141,12 +178,18 @@ func (c *VoteRepository) rankMoviesByVotes(voteCounts map[string]int) ([]interfa
 	return result, nil
 }
 
-func (c *VoteRepository) rankBrandsByVotes(voteCounts map[string]int) ([]interface{}, error) {
+func (c *VoteRepository) RankBrandsByVotes(voteCounts map[string]int) ([]interface{}, error) {
 	var brands []Brands
 
 	for brandID, count := range voteCounts {
 		var brand Brands
 		if err := c.gorm.First(&brand, "id = ?", brandID).Error; err != nil {
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: err.Error(),
+				From:    "RankBrandsByVotes",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
 			return nil, errors.New(err.Error())
 		}
 		brand.VotesCount = count

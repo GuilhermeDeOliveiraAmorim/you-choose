@@ -5,6 +5,22 @@ import (
 	"os"
 )
 
+type Layer struct {
+	ENTITY_LAYER                               string
+	FACTORIES                                  string
+	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION string
+	INTERFACE_HANDLERS                         string
+	USE_CASES                                  string
+}
+
+var LoggerLayers = Layer{
+	ENTITY_LAYER: "ENTITY_LAYER",
+	FACTORIES:    "FACTORIES",
+	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION: "INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION",
+	INTERFACE_HANDLERS:                         "INTERFACE_HANDLERS",
+	USE_CASES:                                  "USE_CASES",
+}
+
 type Logger struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -24,7 +40,6 @@ func NewLogger(log Logger) {
 			"message:", log.Message,
 			"from:", log.From,
 			"layer:", log.Layer,
-			"type:", log.TypeLog,
 		)
 	case "INFO":
 		logger.Info(
@@ -33,7 +48,6 @@ func NewLogger(log Logger) {
 			"message:", log.Message,
 			"from:", log.From,
 			"layer:", log.Layer,
-			"type:", log.TypeLog,
 		)
 	case "WARNING":
 		logger.Warn(
@@ -42,7 +56,6 @@ func NewLogger(log Logger) {
 			"message:", log.Message,
 			"from:", log.From,
 			"layer:", log.Layer,
-			"type:", log.TypeLog,
 		)
 	}
 }

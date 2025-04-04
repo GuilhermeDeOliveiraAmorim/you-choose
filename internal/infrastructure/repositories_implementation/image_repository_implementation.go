@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/oklog/ulid/v2"
 
 	"cloud.google.com/go/storage"
@@ -49,11 +50,23 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 	writer.ContentType = http.DetectContentType(imageData)
 
 	if _, err := writer.Write(imageData); err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "SaveImage",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		writer.Close()
 		return "", err
 	}
 
 	if err := writer.Close(); err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "SaveImage",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return "", err
 	}
 
