@@ -47,8 +47,8 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 				{
 					Type:     "Forbidden",
 					Title:    util.GetErrorMessage("LoginUseCase", "UserNotFound", "Title"),
-					Status:   403,
 					Detail:   util.GetErrorMessage("LoginUseCase", "UserNotFound", "Detail"),
+					Status:   403,
 					Instance: util.RFC403,
 				},
 			}
@@ -58,8 +58,8 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 			{
 				Type:     "Internal Server Error",
 				Title:    util.GetErrorMessage("LoginUseCase", "ErrorGettingUser", "Title"),
-				Status:   500,
 				Detail:   util.GetErrorMessage("LoginUseCase", "ErrorGettingUser", "Detail"),
+				Status:   500,
 				Instance: util.RFC500,
 			},
 		}
@@ -68,8 +68,8 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 			{
 				Type:     "Forbidden",
 				Title:    util.GetErrorMessage("LoginUseCase", "UserNotActive", "Title"),
-				Status:   403,
 				Detail:   util.GetErrorMessage("LoginUseCase", "UserNotActive", "Detail"),
+				Status:   403,
 				Instance: util.RFC403,
 			},
 		}
@@ -80,8 +80,8 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 			{
 				Type:     "Unauthorized",
 				Title:    util.GetErrorMessage("LoginUseCase", "InvalidCredentials", "Title"),
-				Status:   401,
 				Detail:   util.GetErrorMessage("LoginUseCase", "InvalidCredentials", "Detail"),
+				Status:   401,
 				Instance: util.RFC401,
 			},
 		}
@@ -103,8 +103,8 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 			{
 				Type:     "Internal Server Error",
 				Title:    util.GetErrorMessage("LoginUseCase", "JWTError", "Title"),
-				Status:   500,
 				Detail:   err.Error(),
+				Status:   500,
 				Instance: util.RFC500,
 			},
 		}

@@ -15,6 +15,13 @@ func AuthMiddleware() gin.HandlerFunc {
 		authHeader := c.GetHeader("Authorization")
 
 		if authHeader == "" {
+			NewLogger(Logger{
+				Code:    401,
+				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Detail"),
+				From:    "AuthMiddleware",
+				Layer:   "Infra",
+				TypeLog: "ERROR",
+			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
 				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Title"),
@@ -27,6 +34,13 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
+			NewLogger(Logger{
+				Code:    401,
+				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Detail"),
+				From:    "AuthMiddleware",
+				Layer:   "Infra",
+				TypeLog: "ERROR",
+			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
 				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Title"),
@@ -41,6 +55,13 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				NewLogger(Logger{
+					Code:    401,
+					Message: GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Detail"),
+					From:    "AuthMiddleware",
+					Layer:   "Infra",
+					TypeLog: "ERROR",
+				})
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 					Type:     "Unauthorized",
 					Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Title"),
@@ -54,6 +75,13 @@ func AuthMiddleware() gin.HandlerFunc {
 		})
 
 		if err != nil {
+			NewLogger(Logger{
+				Code:    401,
+				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Detail"),
+				From:    "AuthMiddleware",
+				Layer:   "Infra",
+				TypeLog: "ERROR",
+			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
 				Type:     "Unauthorized",
 				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Title"),

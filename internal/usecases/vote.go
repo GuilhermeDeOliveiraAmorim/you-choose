@@ -53,8 +53,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 			{
 				Type:     "Not Found",
 				Title:    "User not found",
-				Status:   404,
 				Detail:   err.Error(),
+				Status:   404,
 				Instance: util.RFC404,
 			},
 		}
@@ -63,8 +63,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 			{
 				Type:     "Forbidden",
 				Title:    "User is not active",
-				Status:   403,
 				Detail:   "User is not active",
+				Status:   403,
 				Instance: util.RFC403,
 			},
 		}
@@ -76,8 +76,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
-				Status:   500,
 				Detail:   errGetListByID.Error(),
+				Status:   500,
 				Instance: util.RFC500,
 			},
 		}
@@ -89,8 +89,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 			{
 				Type:     "Validation Error",
 				Title:    "Conflict",
+				Detail:   "Vote already registered for this combination",
 				Status:   409,
-				Detail:   "Vote already registered for this combination.",
 				Instance: util.RFC409,
 			},
 		}
@@ -109,8 +109,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching winner movie",
-					Status:   500,
 					Detail:   errGetMovie.Error(),
+					Status:   500,
 					Instance: util.RFC500,
 				},
 			}
@@ -124,8 +124,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error updating winner movie",
-					Status:   500,
 					Detail:   errUpdateWinner.Error(),
+					Status:   500,
 					Instance: util.RFC500,
 				},
 			}
@@ -138,8 +138,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching winner brand",
-					Status:   500,
 					Detail:   errGetBrand.Error(),
+					Status:   500,
 					Instance: util.RFC500,
 				},
 			}
@@ -153,8 +153,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error updating winner brand",
-					Status:   500,
 					Detail:   errUpdateWinner.Error(),
+					Status:   500,
 					Instance: util.RFC500,
 				},
 			}
@@ -167,8 +167,8 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.Problem
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating vote",
-				Status:   500,
 				Detail:   errVote.Error(),
+				Status:   500,
 				Instance: util.RFC500,
 			},
 		}

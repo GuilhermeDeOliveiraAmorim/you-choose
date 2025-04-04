@@ -13,41 +13,36 @@ type Logger struct {
 	TypeLog string `json:"type_log"`
 }
 
-func NewLoggerError(code int, message, from, layer, typeLog string) {
+func NewLogger(log Logger) {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	logger.Error(
-		"ERROR",
-		"code:", code,
-		"message:", message,
-		"from:", from,
-		"layer:", layer,
-		"type:", typeLog,
-	)
-}
-
-func NewLoggerInfo(code int, message, from, layer, typeLog string) {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-
-	logger.Info(
-		"INFO",
-		"code:", code,
-		"message:", message,
-		"from:", from,
-		"layer:", layer,
-		"type:", typeLog,
-	)
-}
-
-func NewLoggerWarning(code int, message, from, layer, typeLog string) {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-
-	logger.Warn(
-		"WARNING",
-		"code:", code,
-		"message:", message,
-		"from:", from,
-		"layer:", layer,
-		"type:", typeLog,
-	)
+	switch log.TypeLog {
+	case "ERROR":
+		logger.Error(
+			"ERROR",
+			"code:", log.Code,
+			"message:", log.Message,
+			"from:", log.From,
+			"layer:", log.Layer,
+			"type:", log.TypeLog,
+		)
+	case "INFO":
+		logger.Info(
+			"INFO",
+			"code:", log.Code,
+			"message:", log.Message,
+			"from:", log.From,
+			"layer:", log.Layer,
+			"type:", log.TypeLog,
+		)
+	case "WARNING":
+		logger.Warn(
+			"WARNING",
+			"code:", log.Code,
+			"message:", log.Message,
+			"from:", log.From,
+			"layer:", log.Layer,
+			"type:", log.TypeLog,
+		)
+	}
 }

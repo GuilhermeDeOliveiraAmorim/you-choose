@@ -42,8 +42,8 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching movies",
-					Status:   500,
 					Detail:   err.Error(),
+					Status:   500,
 					Instance: util.RFC500,
 				},
 			}
@@ -66,8 +66,8 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching brands",
-					Status:   500,
 					Detail:   err.Error(),
+					Status:   500,
 					Instance: util.RFC500,
 				},
 			}
