@@ -21,6 +21,7 @@ services:
     restart: always
     depends_on:
       - youchoose
+      - otel-collector
     networks:
       - you-choose
 

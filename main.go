@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"time"
 
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
@@ -9,11 +11,13 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/interface/handlers"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/telemetry"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"go.opentelemetry.io/otel"
 )
 
 // @title You Choose API
@@ -35,7 +39,16 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.PT_BR)
+	shutdown, err := telemetry.InitTracer()
+	if err != nil {
+		log.Fatalf("Erro ao inicializar o tracer: %v", err)
+	}
+
+	defer shutdown(context.Background())
+
+	tracer := otel.Tracer("you-choose-api")
+
+	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.ZH_CN)
 
 	db, sqlDB, err := util.SetupDatabaseConnection(util.LOCAL)
 	if err != nil {
@@ -71,7 +84,7 @@ func main() {
 	voteHandler := handlers.NewVoteHandler(voteFactory)
 
 	userFactory := factories.NewUserFactory(inputFactory)
-	userHandler := handlers.NewUserHandler(userFactory)
+	userHandler := handlers.NewUserHandler(userFactory, tracer)
 
 	brandFactory := factories.NewBrandFactory(inputFactory)
 	brandHandler := handlers.NewBrandHandler(brandFactory)
