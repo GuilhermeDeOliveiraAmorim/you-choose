@@ -44,46 +44,22 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 	if getUserByEmailErr != nil {
 		if strings.Compare(getUserByEmailErr.Error(), "user not found") == 0 {
 			return LoginOutputDto{}, []util.ProblemDetails{
-				{
-					Type:     "Forbidden",
-					Title:    util.GetErrorMessage("LoginUseCase", "UserNotFound", "Title"),
-					Detail:   util.GetErrorMessage("LoginUseCase", "UserNotFound", "Detail"),
-					Status:   403,
-					Instance: util.RFC403,
-				},
+				util.NewProblemDetails(util.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
 			}
 		}
 
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    util.GetErrorMessage("LoginUseCase", "ErrorGettingUser", "Title"),
-				Detail:   util.GetErrorMessage("LoginUseCase", "ErrorGettingUser", "Detail"),
-				Status:   500,
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(util.InternalServerError, util.GetErrorMessage("LoginUseCase", "ErrorGettingUser")),
 		}
 	} else if !user.Active {
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    util.GetErrorMessage("LoginUseCase", "UserNotActive", "Title"),
-				Detail:   util.GetErrorMessage("LoginUseCase", "UserNotActive", "Detail"),
-				Status:   403,
-				Instance: util.RFC403,
-			},
+			util.NewProblemDetails(util.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),
 		}
 	}
 
 	if !user.Login.DecryptPassword(input.Password) {
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Unauthorized",
-				Title:    util.GetErrorMessage("LoginUseCase", "InvalidCredentials", "Title"),
-				Detail:   util.GetErrorMessage("LoginUseCase", "InvalidCredentials", "Detail"),
-				Status:   401,
-				Instance: util.RFC401,
-			},
+			util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("LoginUseCase", "InvalidCredentials")),
 		}
 	}
 
@@ -100,13 +76,7 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    util.GetErrorMessage("LoginUseCase", "JWTError", "Title"),
-				Detail:   err.Error(),
-				Status:   500,
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(util.InternalServerError, util.GetErrorMessage("LoginUseCase", "JWTError")),
 		}
 	}
 

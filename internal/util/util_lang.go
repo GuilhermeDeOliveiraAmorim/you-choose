@@ -1,5 +1,10 @@
 package util
 
+type ErrorMessage struct {
+	Title  string
+	Detail string
+}
+
 var (
 	currentLanguage = "en-US"
 
@@ -581,11 +586,29 @@ func GetLanguage() string {
 	return currentLanguage
 }
 
-func GetErrorMessage(module, key, messageType string) string {
-	if msg, ok := errorMessages[currentLanguage][module][key]; ok {
-		if detail, ok := msg[messageType]; ok {
-			return detail
+func GetErrorMessage(useCase, errorCode string) ErrorMessage {
+	if langMsgs, ok := errorMessages[currentLanguage]; ok {
+		if uc, ok := langMsgs[useCase]; ok {
+			if err, ok := uc[errorCode]; ok {
+				return ErrorMessage{
+					Title:  err["Title"],
+					Detail: err["Detail"],
+				}
+			}
 		}
 	}
-	return errorMessages["en-US"][module][key]["Detail"]
+
+	if uc, ok := errorMessages["en-US"][useCase]; ok {
+		if err, ok := uc[errorCode]; ok {
+			return ErrorMessage{
+				Title:  err["Title"],
+				Detail: err["Detail"],
+			}
+		}
+	}
+
+	return ErrorMessage{
+		Title:  "Internal Error",
+		Detail: "An unexpected error occurred.",
+	}
 }

@@ -46,35 +46,35 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	if err != nil {
 		if strings.Compare(err.Error(), "user not found") == 0 {
 			return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-				util.NewForbiddenError(
-					util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Title"),
-					util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Detail"),
+				util.NewProblemDetails(
+					util.Forbidden,
+					util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound"),
 				),
 			}
 		}
 
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewNotFoundError(
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Title"),
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound", "Detail"),
+			util.NewProblemDetails(
+				util.NotFound,
+				util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound"),
 			),
 		}
 	}
 
 	if !user.Active {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewForbiddenError(
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotActive", "Title"),
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotActive", "Detail"),
+			util.NewProblemDetails(
+				util.Forbidden,
+				util.GetErrorMessage("AddMoviesListUseCase", "UserNotActive"),
 			),
 		}
 	}
 
 	if !user.IsAdmin {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewForbiddenError(
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotAdmin", "Title"),
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotAdmin", "Detail"),
+			util.NewProblemDetails(
+				util.Forbidden,
+				util.GetErrorMessage("AddMoviesListUseCase", "UserNotAdmin"),
 			),
 		}
 	}
@@ -84,18 +84,18 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)
 	if errGetList != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewInternalServerError(
-				util.GetErrorMessage("AddMoviesListUseCase", "ListNotFound", "Title"),
-				errGetList.Error(),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddMoviesListUseCase", "ListNotFound"),
 			),
 		}
 	}
 
 	if list.ListType != entities.MOVIE_TYPE {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewBadRequestError(
-				util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType", "Title"),
-				util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType", "Detail"),
+			util.NewProblemDetails(
+				util.BadRequest,
+				util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType"),
 			),
 		}
 	}
@@ -106,9 +106,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 			case entities.Movie:
 				if item.ID == movieID {
 					problems = append(problems,
-						util.NewBadRequestError(
-							util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList", "Title"),
-							util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList", "Detail"),
+						util.NewProblemDetails(
+							util.BadRequest,
+							util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList"),
 						),
 					)
 				}
@@ -123,9 +123,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies.Movies)
 	if errGetMoviesByID != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewInternalServerError(
-				util.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies", "Title"),
-				errGetMoviesByID.Error(),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies"),
 			),
 		}
 	}
@@ -162,9 +162,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	errAddMovies := u.ListRepository.AddMovies(list)
 	if errAddMovies != nil {
 		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewInternalServerError(
-				util.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies", "Title"),
-				errAddMovies.Error(),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies"),
 			),
 		}
 	}

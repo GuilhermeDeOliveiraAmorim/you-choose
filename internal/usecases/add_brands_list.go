@@ -43,23 +43,23 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	user, err := u.UserRepository.GetUser(input.UserID)
 	if err != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewNotFoundError(
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotFound", "Title"),
-				err.Error(),
+			util.NewProblemDetails(
+				util.NotFound,
+				util.GetErrorMessage("AddBrandsListUseCase", "UserNotFound"),
 			),
 		}
 	} else if !user.Active {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewForbiddenError(
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotActive", "Title"),
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotActive", "Detail"),
+			util.NewProblemDetails(
+				util.Forbidden,
+				util.GetErrorMessage("AddBrandsListUseCase", "UserNotActive"),
 			),
 		}
 	} else if !user.IsAdmin {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewForbiddenError(
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotAdmin", "Title"),
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotAdmin", "Detail"),
+			util.NewProblemDetails(
+				util.Forbidden,
+				util.GetErrorMessage("AddBrandsListUseCase", "UserNotAdmin"),
 			),
 		}
 	}
@@ -69,16 +69,16 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	list, errGetList := u.ListRepository.GetListByID(input.Brands.ListID)
 	if errGetList != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewInternalServerError(
-				util.GetErrorMessage("AddBrandsListUseCase", "ListNotFound", "Title"),
-				errGetList.Error(),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "ListNotFound"),
 			),
 		}
 	} else if list.ListType != entities.BRAND_TYPE {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewBadRequestError(
-				util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType", "Title"),
-				util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType", "Detail"),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType"),
 			),
 		}
 	}
@@ -89,9 +89,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 			case entities.Brand:
 				if item.ID == brandID {
 					problems = append(problems,
-						util.NewBadRequestError(
-							util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList", "Title"),
-							util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList", "Detail"),
+						util.NewProblemDetails(
+							util.BadRequest,
+							util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList"),
 						),
 					)
 				}
@@ -106,9 +106,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	brands, errGetBrandsByID := u.BrandRepository.GetBrandsByIDs(input.Brands.Brands)
 	if errGetBrandsByID != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewInternalServerError(
-				util.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands", "Title"),
-				errGetBrandsByID.Error(),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands"),
 			),
 		}
 	}
@@ -146,9 +146,9 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	errAddBrands := u.ListRepository.AddBrands(list)
 	if errAddBrands != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewInternalServerError(
-				util.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands", "Title"),
-				errAddBrands.Error(),
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands"),
 			),
 		}
 	}

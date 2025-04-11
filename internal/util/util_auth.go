@@ -17,18 +17,14 @@ func AuthMiddleware() gin.HandlerFunc {
 		if authHeader == "" {
 			NewLogger(Logger{
 				Code:    401,
-				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Detail"),
+				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedHeader").Detail,
 				From:    "AuthMiddleware",
 				Layer:   "Infra",
 				TypeLog: "ERROR",
 			})
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
-				Type:     "Unauthorized",
-				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Title"),
-				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedHeader", "Detail"),
-				Status:   http.StatusUnauthorized,
-				Instance: RFC401,
-			}})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": NewProblemDetails(Unauthorized, GetErrorMessage("AuthMiddleware", "UnauthorizedHeader")),
+			})
 			return
 		}
 
@@ -36,18 +32,14 @@ func AuthMiddleware() gin.HandlerFunc {
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			NewLogger(Logger{
 				Code:    401,
-				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Detail"),
+				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedBearer").Detail,
 				From:    "AuthMiddleware",
 				Layer:   "Infra",
 				TypeLog: "ERROR",
 			})
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
-				Type:     "Unauthorized",
-				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Title"),
-				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedBearer", "Detail"),
-				Status:   http.StatusUnauthorized,
-				Instance: RFC401,
-			}})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": NewProblemDetails(Unauthorized, GetErrorMessage("AuthMiddleware", "UnauthorizedBearer")),
+			})
 			return
 		}
 
@@ -57,18 +49,14 @@ func AuthMiddleware() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				NewLogger(Logger{
 					Code:    401,
-					Message: GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Detail"),
+					Message: GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse").Detail,
 					From:    "AuthMiddleware",
 					Layer:   "Infra",
 					TypeLog: "ERROR",
 				})
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
-					Type:     "Unauthorized",
-					Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Title"),
-					Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse", "Detail"),
-					Status:   http.StatusUnauthorized,
-					Instance: RFC401,
-				}})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+					"error": NewProblemDetails(Unauthorized, GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse")),
+				})
 				return nil, fmt.Errorf("unexpected signing method")
 			}
 			return []byte(config.SECRETS_VAR.JWT_SECRET), nil
@@ -77,29 +65,21 @@ func AuthMiddleware() gin.HandlerFunc {
 		if err != nil {
 			NewLogger(Logger{
 				Code:    401,
-				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Detail"),
+				Message: GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken").Detail,
 				From:    "AuthMiddleware",
 				Layer:   "Infra",
 				TypeLog: "ERROR",
 			})
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
-				Type:     "Unauthorized",
-				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Title"),
-				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken", "Detail"),
-				Status:   http.StatusUnauthorized,
-				Instance: RFC401,
-			}})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": NewProblemDetails(Unauthorized, GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken")),
+			})
 			return
 		}
 
 		if !token.Valid {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": ProblemDetails{
-				Type:     "Unauthorized",
-				Title:    GetErrorMessage("AuthMiddleware", "UnauthorizedToken", "Title"),
-				Detail:   GetErrorMessage("AuthMiddleware", "UnauthorizedToken", "Detail"),
-				Status:   http.StatusUnauthorized,
-				Instance: RFC401,
-			}})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": NewProblemDetails(Unauthorized, GetErrorMessage("AuthMiddleware", "UnauthorizedToken")),
+			})
 			return
 		}
 
