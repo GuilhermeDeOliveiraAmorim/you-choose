@@ -8,7 +8,6 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -34,8 +33,13 @@ func NewUserHandler(factory *factories.UserFactory, tracer trace.Tracer) *UserHa
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Router /signup [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
+	_, span := h.tracer.Start(c.Request.Context(), "UserHandler.CreateUser")
+	defer span.End()
+
 	var input usecases.CreateUserInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
+		span.RecordError(err)
+
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -48,6 +52,10 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	output, errs := h.userFactory.CreateUser.Execute(input)
 	if len(errs) > 0 {
+		for _, err := range errs {
+			span.RecordError(errors.New(err.Detail))
+		}
+
 		handleErrors(c, errs)
 		return
 	}
@@ -71,6 +79,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 	var input usecases.LoginInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
 		span.RecordError(err)
+
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -86,12 +95,10 @@ func (h *UserHandler) Login(c *gin.Context) {
 		for _, err := range errs {
 			span.RecordError(errors.New(err.Detail))
 		}
+
 		handleErrors(c, errs)
 		return
 	}
 
-	span.AddEvent("Login realizado com sucesso", trace.WithAttributes(
-		attribute.String("user.email", input.Email),
-	))
 	c.JSON(http.StatusOK, output)
 }

@@ -49,7 +49,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Instance: util.RFC409,
 			},
 		}
-	} else if strings.Compare(userEmailExistsErr.Error(), "not found") != 0 {
+	} else if strings.Compare(userEmailExistsErr.Error(), "email not found") != 0 {
 		return CreateUserOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
@@ -72,7 +72,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Instance: util.RFC409,
 			},
 		}
-	} else if strings.Compare(userNameExistsErr.Error(), "not found") != 0 {
+	} else if strings.Compare(userNameExistsErr.Error(), "user not found") != 0 {
 		return CreateUserOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
