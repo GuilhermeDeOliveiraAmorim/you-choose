@@ -35,7 +35,7 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	util.SetLanguage(config.LANGUAGE_VAR.LANGUAGE_DEFAULT)
+	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.ZH_CN)
 
 	db, sqlDB, err := util.SetupDatabaseConnection(util.LOCAL)
 	if err != nil {
