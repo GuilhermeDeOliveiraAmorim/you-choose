@@ -42,39 +42,6 @@ func NewCreateBrandUseCase(
 }
 
 func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return CreateBrandOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   "The user with the provided ID could not be located.",
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return CreateBrandOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "This action requires an active user account.",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return CreateBrandOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "Only admin users are allowed to create new brands.",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	brandExists, errThisBrandExist := u.BrandRepository.ThisBrandExist(input.Brand.Name)
 	if errThisBrandExist != nil && strings.Compare(errThisBrandExist.Error(), "brand not found") > 0 {
 		return CreateBrandOutputDTO{}, []util.ProblemDetails{

@@ -1,8 +1,6 @@
 package usecases
 
 import (
-	"strings"
-
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
@@ -42,43 +40,6 @@ func NewAddMoviesListUseCase(
 }
 
 func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesListOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		if strings.Compare(err.Error(), "user not found") == 0 {
-			return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-				util.NewProblemDetails(
-					util.Forbidden,
-					util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound"),
-				),
-			}
-		}
-
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.NotFound,
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotFound"),
-			),
-		}
-	}
-
-	if !user.Active {
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.Forbidden,
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotActive"),
-			),
-		}
-	}
-
-	if !user.IsAdmin {
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.Forbidden,
-				util.GetErrorMessage("AddMoviesListUseCase", "UserNotAdmin"),
-			),
-		}
-	}
-
 	var problems []util.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)

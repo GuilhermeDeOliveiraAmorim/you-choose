@@ -50,39 +50,6 @@ func NewCreateListUseCase(
 }
 
 func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   "The specified user could not be found.",
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "This user is currently inactive and cannot perform this action.",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "Only administrators are allowed to create lists.",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	if len(input.List.Items) < 2 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
@@ -147,6 +114,8 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	var brands []entities.Brand
 
 	if input.List.ListType == entities.MOVIE_TYPE {
+		var err error
+
 		list.AddType(entities.MOVIE_TYPE)
 
 		movies, err = u.MovieRepository.GetMoviesByIDs(input.List.Items)
@@ -180,6 +149,8 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		list.AddItems(items)
 
 	} else if input.List.ListType == entities.BRAND_TYPE {
+		var err error
+
 		list.AddType(entities.BRAND_TYPE)
 
 		brands, err = u.BrandRepository.GetBrandsByIDs(input.List.Items)

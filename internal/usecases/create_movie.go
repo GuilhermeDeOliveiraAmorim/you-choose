@@ -44,40 +44,6 @@ func NewCreateMovieUseCase(
 }
 
 func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutputDTO, []util.ProblemDetails) {
-
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return CreateMovieOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   "The user with the provided ID was not found.",
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return CreateMovieOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "The user is not active. Please ensure the user is active before proceeding.",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return CreateMovieOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "Only administrators can create movies.",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.Movie.ExternalID)
 	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{

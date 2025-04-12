@@ -40,30 +40,6 @@ func NewAddBrandsListUseCase(
 }
 
 func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsListOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.NotFound,
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotFound"),
-			),
-		}
-	} else if !user.Active {
-		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.Forbidden,
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotActive"),
-			),
-		}
-	} else if !user.IsAdmin {
-		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.Forbidden,
-				util.GetErrorMessage("AddBrandsListUseCase", "UserNotAdmin"),
-			),
-		}
-	}
-
 	var problems []util.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Brands.ListID)

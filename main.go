@@ -62,18 +62,16 @@ func main() {
 	}
 
 	movieFactory := factories.NewMovieFactory(inputFactory)
-	movieHandler := handlers.NewMovieHandler(movieFactory)
-
 	listFactory := factories.NewListFactory(inputFactory)
-	listHandler := handlers.NewListHandler(listFactory)
-
 	voteFactory := factories.NewVoteFactory(inputFactory)
-	voteHandler := handlers.NewVoteHandler(voteFactory)
-
 	userFactory := factories.NewUserFactory(inputFactory)
-	userHandler := handlers.NewUserHandler(userFactory)
-
 	brandFactory := factories.NewBrandFactory(inputFactory)
+	middlewareFactory := factories.NewMiddlewareFactory(inputFactory)
+
+	movieHandler := handlers.NewMovieHandler(movieFactory)
+	listHandler := handlers.NewListHandler(listFactory)
+	voteHandler := handlers.NewVoteHandler(voteFactory)
+	userHandler := handlers.NewUserHandler(userFactory)
 	brandHandler := handlers.NewBrandHandler(brandFactory)
 
 	public := r.Group("/")
@@ -86,19 +84,19 @@ func main() {
 		public.GET("items", listHandler.ShowsRankingItems)
 	}
 
-	middlewareFactory := factories.NewMiddlewareFactory(inputFactory)
-
-	protected := r.Group("/").Use(middlewareFactory.AuthMiddleware(), middlewareFactory.AdminMiddleware())
+	protectedUser := r.Group("/").Use(middlewareFactory.AuthMiddleware())
 	{
-		protected.POST("lists", listHandler.CreateList)
-		protected.POST("lists/movies", listHandler.AddMoviesList)
-		protected.POST("lists/brands", listHandler.AddBrandsList)
-		protected.GET("lists/users", listHandler.GetListByUserID)
+		protectedUser.GET("lists/users", listHandler.GetListByUserID)
+		protectedUser.POST("votes", voteHandler.Vote)
+	}
 
-		protected.POST("items/movies", movieHandler.CreateMovie)
-		protected.POST("items/brands", brandHandler.CreateBrand)
-
-		protected.POST("votes", voteHandler.Vote)
+	protectedAdmin := r.Group("/").Use(middlewareFactory.AuthMiddleware(), middlewareFactory.AdminMiddleware())
+	{
+		protectedAdmin.POST("lists", listHandler.CreateList)
+		protectedAdmin.POST("lists/movies", listHandler.AddMoviesList)
+		protectedAdmin.POST("lists/brands", listHandler.AddBrandsList)
+		protectedAdmin.POST("items/movies", movieHandler.CreateMovie)
+		protectedAdmin.POST("items/brands", brandHandler.CreateBrand)
 	}
 
 	r.Run(":8080")

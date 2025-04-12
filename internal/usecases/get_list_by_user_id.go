@@ -42,29 +42,6 @@ func NewGetListByUserIDUseCase(
 }
 
 func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetListByUserIDOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   "The user with the given ID could not be found.",
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "The user account is inactive and cannot perform this action.",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	list, errGetList := u.ListRepository.GetListByID(input.ListID)
 	if errGetList != nil {
 		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{

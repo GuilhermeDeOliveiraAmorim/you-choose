@@ -47,29 +47,6 @@ func NewVoteUseCase(
 }
 
 func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Detail:   "The user with the provided ID could not be found.",
-				Status:   404,
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return VoteOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Detail:   "The user is not active and cannot participate in voting.",
-				Status:   403,
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	list, errGetListByID := u.ListRepository.GetListByID(input.Vote.ListID)
 	if errGetListByID != nil {
 		return VoteOutputDTO{}, []util.ProblemDetails{
