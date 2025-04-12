@@ -49,7 +49,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Not Found",
 				Title:    "User not found",
 				Status:   404,
-				Detail:   err.Error(),
+				Detail:   "The user with the given ID could not be found.",
 				Instance: util.RFC404,
 			},
 		}
@@ -59,7 +59,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Forbidden",
 				Title:    "User is not active",
 				Status:   403,
-				Detail:   "User is not active",
+				Detail:   "The user account is inactive and cannot perform this action.",
 				Instance: util.RFC403,
 			},
 		}
@@ -72,7 +72,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
 				Status:   500,
-				Detail:   errGetList.Error(),
+				Detail:   "An error occurred while retrieving the list from the database.",
 				Instance: util.RFC500,
 			},
 		}
@@ -85,7 +85,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Internal Server Error",
 				Title:    "Error fetching votes",
 				Status:   500,
-				Detail:   errGetVotesByUserIDAndListID.Error(),
+				Detail:   "An error occurred while retrieving the votes for this user and list.",
 				Instance: util.RFC500,
 			},
 		}
@@ -98,7 +98,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Internal Server Error",
 				Title:    "Error fetching number of votes",
 				Status:   500,
-				Detail:   errGetNumberOfVotesByListID.Error(),
+				Detail:   "An error occurred while retrieving the total number of votes for this list.",
 				Instance: util.RFC500,
 			},
 		}
@@ -111,7 +111,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Internal Server Error",
 				Title:    "Error fetching ranked items",
 				Status:   500,
-				Detail:   errGetRankItemsByVotes.Error(),
+				Detail:   "An error occurred while retrieving the ranked items for this list.",
 				Instance: util.RFC500,
 			},
 		}
@@ -124,7 +124,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Invalid Input",
 				Title:    "Invalid list type",
 				Status:   400,
-				Detail:   err.Error(),
+				Detail:   "The list type provided is invalid or cannot be processed.",
 				Instance: util.RFC400,
 			},
 		}
@@ -137,7 +137,7 @@ func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetList
 				Type:     "Internal Server Error",
 				Title:    "Error fetching combinations already voted",
 				Status:   500,
-				Detail:   errGetCombinationsAlreadyVoted.Error(),
+				Detail:   "An error occurred while retrieving the combinations that have already been voted on.",
 				Instance: util.RFC500,
 			},
 		}
