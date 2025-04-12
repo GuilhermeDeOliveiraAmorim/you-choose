@@ -57,7 +57,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Instance: util.RFC409,
 			},
 		}
-	} else if strings.Compare(userEmailExistsErr.Error(), "not found") != 0 {
+	} else if strings.Compare(userEmailExistsErr.Error(), "email not found") != 0 {
 		return CreateUserOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
@@ -80,7 +80,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Instance: util.RFC409,
 			},
 		}
-	} else if strings.Compare(userNameExistsErr.Error(), "not found") != 0 {
+	} else if strings.Compare(userNameExistsErr.Error(), "username not found") != 0 {
 		return CreateUserOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
@@ -94,15 +94,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 
 	newLogin, newLoginErr := entities.NewLogin(input.Email, input.Password)
 	if newLoginErr != nil {
-		return CreateUserOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Bad Request",
-				Title:    "Error creating login",
-				Status:   400,
-				Detail:   "An error occurred while creating the user login information.",
-				Instance: util.RFC400,
-			},
-		}
+		return CreateUserOutputDto{}, newLoginErr
 	}
 
 	encryptEmailErr := newLogin.EncryptEmail()

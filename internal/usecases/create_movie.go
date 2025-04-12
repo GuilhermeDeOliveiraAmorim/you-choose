@@ -57,7 +57,6 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 			},
 		}
 	} else if !user.Active {
-
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",
@@ -68,7 +67,6 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 			},
 		}
 	} else if !user.IsAdmin {
-
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Forbidden",

@@ -97,7 +97,7 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 	result := u.gorm.Model(&Users{}).Where("name = ?", userName).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return false, errors.New("user not found")
+			return false, errors.New("username not found")
 		}
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,

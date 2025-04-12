@@ -86,7 +86,9 @@ func main() {
 		public.GET("items", listHandler.ShowsRankingItems)
 	}
 
-	protected := r.Group("/").Use(util.AuthMiddleware())
+	middlewareFactory := factories.NewMiddlewareFactory(inputFactory)
+
+	protected := r.Group("/").Use(middlewareFactory.AuthMiddleware(), middlewareFactory.AdminMiddleware())
 	{
 		protected.POST("lists", listHandler.CreateList)
 		protected.POST("lists/movies", listHandler.AddMoviesList)

@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
@@ -235,8 +234,6 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	}
 
 	list.AddCover(cover)
-
-	fmt.Println("list.ListType: ", list.ListType)
 
 	err = u.ListRepository.CreateList(*list)
 	if err != nil {
