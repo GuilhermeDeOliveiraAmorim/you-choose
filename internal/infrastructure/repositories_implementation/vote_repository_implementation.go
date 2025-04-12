@@ -69,7 +69,7 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 			From:    "GetVotesByUserIDAndListID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return nil, errors.New(result.Error.Error())
+		return nil, result.Error
 	}
 
 	var votes []entities.Vote
@@ -117,7 +117,13 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{}, error) {
 	var combinations []Combinations
 	if err := c.gorm.Where("list_id = ?", listID).Find(&combinations).Error; err != nil {
-		return nil, errors.New(err.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "RankItemsByVotes",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, err
 	}
 
 	voteCounts := make(map[string]int)
@@ -130,7 +136,7 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 				From:    "RankItemsByVotes",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 			})
-			return nil, errors.New(err.Error())
+			return nil, err
 		}
 
 		for _, vote := range votes {
@@ -144,7 +150,13 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 	case entities.BRAND_TYPE:
 		return c.RankBrandsByVotes(voteCounts)
 	default:
-		return nil, errors.New("invalid list type")
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: "Invalid list type",
+			From:    "RankItemsByVotes",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, errors.New("Invalid list type")
 	}
 }
 
@@ -160,7 +172,7 @@ func (c *VoteRepository) RankMoviesByVotes(voteCounts map[string]int) ([]interfa
 				From:    "RankMoviesByVotes",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 			})
-			return nil, errors.New(err.Error())
+			return nil, err
 		}
 		movie.VotesCount = count
 		movies = append(movies, movie)
@@ -190,7 +202,7 @@ func (c *VoteRepository) RankBrandsByVotes(voteCounts map[string]int) ([]interfa
 				From:    "RankBrandsByVotes",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 			})
-			return nil, errors.New(err.Error())
+			return nil, err
 		}
 		brand.VotesCount = count
 		brands = append(brands, brand)

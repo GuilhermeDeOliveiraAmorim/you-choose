@@ -102,7 +102,7 @@ func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
 			From:    "ThisListExistByName",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return false, errors.New(result.Error.Error())
+		return false, result.Error
 	}
 
 	return count > 0, nil
@@ -119,7 +119,7 @@ func (c *ListRepository) ThisListExistByID(listID string) (bool, error) {
 			From:    "ThisListExistByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return false, errors.New(result.Error.Error())
+		return false, result.Error
 	}
 
 	return count > 0, nil
@@ -180,7 +180,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 			From:    "GetListByID 1",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return entities.List{}, errors.New(resultListModel.Error.Error())
+		return entities.List{}, resultListModel.Error
 	}
 
 	items, err := c.FetchItemsByListType(listID, listModel.ListType)
@@ -209,7 +209,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 			From:    "GetListByID 3",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return entities.List{}, errors.New(result.Error.Error())
+		return entities.List{}, result.Error
 	}
 
 	var combinations []entities.Combination
@@ -231,7 +231,7 @@ func (c *ListRepository) GetLists() ([]entities.List, error) {
 			From:    "GetLists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return nil, errors.New(result.Error.Error())
+		return nil, result.Error
 	}
 
 	var lists []entities.List
@@ -264,7 +264,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 				From:    "FetchItemsByListType 1",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 			})
-			return nil, errors.New(resultMoviesModel.Error.Error())
+			return nil, resultMoviesModel.Error
 		}
 
 		for _, movie := range moviesModel {
@@ -288,7 +288,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 				From:    "FetchItemsByListType 2",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 			})
-			return nil, errors.New(resultBrandsModel.Error.Error())
+			return nil, resultBrandsModel.Error
 		}
 
 		for _, brand := range brandsModel {
@@ -296,7 +296,13 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 		}
 
 	default:
-		return nil, errors.New("invalid list type")
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: errors.New("invalid list type").Error(),
+			From:    "FetchItemsByListType 2",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, errors.New("Invalid list type")
 	}
 
 	return items, nil

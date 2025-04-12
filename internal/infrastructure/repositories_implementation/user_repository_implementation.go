@@ -65,7 +65,7 @@ func (u *UserRepository) GetUserByEmail(userEmail string) (entities.User, error)
 			From:    "GetUserByEmail",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return entities.User{}, errors.New(result.Error.Error())
+		return entities.User{}, result.Error
 	}
 
 	return *userModel.ToEntity(), nil
@@ -85,7 +85,7 @@ func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
 			From:    "ThisUserEmailExists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return false, errors.New(result.Error.Error())
+		return false, result.Error
 	}
 
 	return true, nil
@@ -105,7 +105,7 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 			From:    "ThisUserNameExists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return false, errors.New(result.Error.Error())
+		return false, result.Error
 	}
 
 	return true, nil
@@ -125,7 +125,7 @@ func (u *UserRepository) GetUser(userID string) (entities.User, error) {
 			From:    "GetUser",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return entities.User{}, errors.New(result.Error.Error())
+		return entities.User{}, result.Error
 	}
 
 	user := entities.User{

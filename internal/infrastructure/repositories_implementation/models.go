@@ -2,10 +2,10 @@ package repositories_implementation
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -215,8 +215,12 @@ func Migration(db *gorm.DB, sqlDB *sql.DB) {
 		Brands{},
 		ListBrands{},
 	); err != nil {
-		fmt.Println("Error during migration:", err)
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "Migration",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return
 	}
-	fmt.Println("Successful migration")
 }

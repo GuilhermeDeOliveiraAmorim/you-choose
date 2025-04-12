@@ -66,7 +66,7 @@ func (c *MovieRepository) GetMovieByID(movieID string) (entities.Movie, error) {
 			From:    "GetMovieByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return entities.Movie{}, errors.New(result.Error.Error())
+		return entities.Movie{}, result.Error
 	}
 
 	return *movieModel.ToEntity(), nil
@@ -86,7 +86,7 @@ func (c *MovieRepository) ThisMovieExist(movieExternalID string) (bool, error) {
 			From:    "ThisMovieExist",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return false, errors.New(result.Error.Error())
+		return false, result.Error
 	}
 
 	return true, nil
@@ -103,7 +103,7 @@ func (c *MovieRepository) GetMoviesByIDs(moviesIDs []string) ([]entities.Movie, 
 			From:    "GetMoviesByIDs",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return nil, errors.New(result.Error.Error())
+		return nil, result.Error
 	}
 
 	var movies []entities.Movie
@@ -157,7 +157,7 @@ func (c *MovieRepository) GetMovies() ([]entities.Movie, error) {
 			From:    "GetMovies",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return nil, errors.New(result.Error.Error())
+		return nil, result.Error
 	}
 
 	var movies []entities.Movie

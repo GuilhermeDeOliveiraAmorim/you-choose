@@ -64,7 +64,7 @@ func (c *BrandRepository) GetBrandByID(brandID string) (entities.Brand, error) {
 			From:    "GetBrandByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return entities.Brand{}, errors.New(result.Error.Error())
+		return entities.Brand{}, result.Error
 	}
 
 	return *brandModel.ToEntity(), nil
@@ -84,7 +84,7 @@ func (c *BrandRepository) ThisBrandExist(brandName string) (bool, error) {
 			From:    "ThisBrandExist",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return false, errors.New(result.Error.Error())
+		return false, result.Error
 	}
 
 	return true, nil
@@ -101,7 +101,7 @@ func (c *BrandRepository) GetBrandsByIDs(brandsIDs []string) ([]entities.Brand, 
 			From:    "GetBrandsByIDs",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return nil, errors.New(result.Error.Error())
+		return nil, result.Error
 	}
 
 	var brands []entities.Brand
@@ -153,7 +153,7 @@ func (c *BrandRepository) GetBrands() ([]entities.Brand, error) {
 			From:    "GetBrands",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 		})
-		return nil, errors.New(result.Error.Error())
+		return nil, result.Error
 	}
 
 	var brands []entities.Brand
