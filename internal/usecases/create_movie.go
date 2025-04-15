@@ -44,39 +44,6 @@ func NewCreateMovieUseCase(
 }
 
 func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return CreateMovieOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   err.Error(),
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return CreateMovieOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "User is not active",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return CreateMovieOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "User is not an admin",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.Movie.ExternalID)
 	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
@@ -84,7 +51,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing movie",
 				Status:   500,
-				Detail:   errThisMovieExist.Error(),
+				Detail:   "An error occurred while checking if the movie already exists.",
 				Instance: util.RFC500,
 			},
 		}
@@ -93,10 +60,10 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 	if movieExists {
 		return CreateMovieOutputDTO{}, []util.ProblemDetails{
 			{
-				Type:     "Validation Error",
-				Title:    "Conflict",
+				Type:     "Conflict",
+				Title:    "Movie already exists",
 				Status:   409,
-				Detail:   "A movie with the same external ID already exists.",
+				Detail:   "A movie with the same external ID already exists. Please check the external ID and try again.",
 				Instance: util.RFC409,
 			},
 		}
@@ -119,7 +86,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 				Type:     "Internal Server Error",
 				Title:    "Error saving poster",
 				Status:   500,
-				Detail:   errSaveImage.Error(),
+				Detail:   "An error occurred while saving the movie poster.",
 				Instance: util.RFC500,
 			},
 		}
@@ -134,7 +101,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 				Type:     "Internal Server Error",
 				Title:    "Error creating movie",
 				Status:   500,
-				Detail:   errCreateMovie.Error(),
+				Detail:   "An error occurred while creating the movie in the database.",
 				Instance: util.RFC500,
 			},
 		}
@@ -142,6 +109,6 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 
 	return CreateMovieOutputDTO{
 		SuccessMessage: "Movie created successfully!",
-		ContentMessage: movie.Name,
+		ContentMessage: "The movie '" + movie.Name + "' was created successfully.",
 	}, nil
 }

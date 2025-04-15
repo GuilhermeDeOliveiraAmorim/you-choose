@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -26,7 +28,7 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 		}
 	}()
 
-	if err := tx.Create(&Movies{
+	if err := tx.Create(&models.Movies{
 		ID:            movie.ID,
 		Active:        movie.Active,
 		CreatedAt:     movie.CreatedAt,
@@ -38,6 +40,12 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 		ExternalID:    movie.ExternalID,
 		VotesCount:    movie.VotesCount,
 	}).Error; err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "CreateMovie",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		tx.Rollback()
 		return err
 	}
@@ -46,39 +54,57 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 }
 
 func (c *MovieRepository) GetMovieByID(movieID string) (entities.Movie, error) {
-	var movieModel Movies
+	var movieModel models.Movies
 
-	result := c.gorm.Model(&Movies{}).Where("id =? AND active =?", movieID, true).First(&movieModel)
+	result := c.gorm.Model(&models.Movies{}).Where("id =? AND active =?", movieID, true).First(&movieModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.Movie{}, errors.New("movie not found")
 		}
-		return entities.Movie{}, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetMovieByID",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return entities.Movie{}, result.Error
 	}
 
 	return *movieModel.ToEntity(), nil
 }
 
 func (c *MovieRepository) ThisMovieExist(movieExternalID string) (bool, error) {
-	var movieModel Movies
+	var movieModel models.Movies
 
-	result := c.gorm.Model(&Movies{}).Where("external_id =?", movieExternalID).First(&movieModel)
+	result := c.gorm.Model(&models.Movies{}).Where("external_id =?", movieExternalID).First(&movieModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
-		return false, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "ThisMovieExist",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return false, result.Error
 	}
 
 	return true, nil
 }
 
 func (c *MovieRepository) GetMoviesByIDs(moviesIDs []string) ([]entities.Movie, error) {
-	var moviesModel []Movies
+	var moviesModel []models.Movies
 
-	result := c.gorm.Model(&Movies{}).Where("id IN?", moviesIDs).Find(&moviesModel)
+	result := c.gorm.Model(&models.Movies{}).Where("id IN?", moviesIDs).Find(&moviesModel)
 	if result.Error != nil {
-		return nil, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetMoviesByIDs",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, result.Error
 	}
 
 	var movies []entities.Movie
@@ -98,7 +124,7 @@ func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
 		}
 	}()
 
-	if err := tx.Model(&Movies{}).Where("id =?", movie.ID).Updates(Movies{
+	if err := tx.Model(&models.Movies{}).Where("id =?", movie.ID).Updates(models.Movies{
 		Active:        movie.Active,
 		Name:          movie.Name,
 		Year:          movie.Year,
@@ -108,6 +134,12 @@ func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
 		UpdatedAt:     movie.UpdatedAt,
 		ExternalID:    movie.ExternalID,
 	}).Error; err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "UpdadeMovie",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		tx.Rollback()
 		return err
 	}
@@ -116,11 +148,17 @@ func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
 }
 
 func (c *MovieRepository) GetMovies() ([]entities.Movie, error) {
-	var moviesModel []Movies
+	var moviesModel []models.Movies
 
-	result := c.gorm.Model(&Movies{}).Where("active =?", true).Find(&moviesModel)
+	result := c.gorm.Model(&models.Movies{}).Where("active =?", true).Find(&moviesModel)
 	if result.Error != nil {
-		return nil, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetMovies",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, result.Error
 	}
 
 	var movies []entities.Movie

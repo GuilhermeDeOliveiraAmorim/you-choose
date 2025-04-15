@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"strings"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
@@ -41,36 +42,24 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 
 	user, getUserByEmailErr := c.UserRepository.GetUserByEmail(email)
 	if getUserByEmailErr != nil {
+		if strings.Compare(getUserByEmailErr.Error(), "user not found") == 0 {
+			return LoginOutputDto{}, []util.ProblemDetails{
+				util.NewProblemDetails(util.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
+			}
+		}
+
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error getting user",
-				Status:   500,
-				Detail:   getUserByEmailErr.Error(),
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(util.InternalServerError, util.GetErrorMessage("LoginUseCase", "ErrorGettingUser")),
 		}
 	} else if !user.Active {
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "User is not active",
-				Instance: util.RFC403,
-			},
+			util.NewProblemDetails(util.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),
 		}
 	}
 
 	if !user.Login.DecryptPassword(input.Password) {
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Unauthorized",
-				Title:    "Invalid email or password",
-				Status:   401,
-				Detail:   "Invalid email or password",
-				Instance: util.RFC401,
-			},
+			util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("LoginUseCase", "InvalidCredentials")),
 		}
 	}
 
@@ -87,13 +76,7 @@ func (c *LoginUseCase) Execute(input LoginInputDto) (LoginOutputDto, []util.Prob
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
 		return LoginOutputDto{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "JWT token Error",
-				Status:   500,
-				Detail:   "Error creating JWT token",
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(util.InternalServerError, util.GetErrorMessage("LoginUseCase", "JWTError")),
 		}
 	}
 

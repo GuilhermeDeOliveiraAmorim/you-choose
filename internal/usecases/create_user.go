@@ -35,7 +35,15 @@ func NewCreateUserUseCase(
 func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputDto, []util.ProblemDetails) {
 	email, hashEmailWithHMACErr := util.HashEmailWithHMAC(input.Email)
 	if hashEmailWithHMACErr != nil {
-		return CreateUserOutputDto{}, hashEmailWithHMACErr
+		return CreateUserOutputDto{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error hashing email",
+				Status:   500,
+				Detail:   "An error occurred while hashing the email with HMAC.",
+				Instance: util.RFC500,
+			},
+		}
 	}
 
 	userEmailExists, userEmailExistsErr := c.UserRepository.ThisUserEmailExists(email)
@@ -45,17 +53,17 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Type:     "Conflict",
 				Title:    "Email already exists",
 				Status:   409,
-				Detail:   "Email already exists",
+				Detail:   "The provided email is already registered.",
 				Instance: util.RFC409,
 			},
 		}
-	} else if strings.Compare(userEmailExistsErr.Error(), "not found") != 0 {
+	} else if strings.Compare(userEmailExistsErr.Error(), "email not found") != 0 {
 		return CreateUserOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error checking user email existence",
 				Status:   500,
-				Detail:   userEmailExistsErr.Error(),
+				Detail:   "An error occurred while checking if the email already exists.",
 				Instance: util.RFC500,
 			},
 		}
@@ -68,17 +76,17 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Type:     "Conflict",
 				Title:    "Username already exists",
 				Status:   409,
-				Detail:   "Username already exists",
+				Detail:   "The provided username is already taken.",
 				Instance: util.RFC409,
 			},
 		}
-	} else if strings.Compare(userNameExistsErr.Error(), "not found") != 0 {
+	} else if strings.Compare(userNameExistsErr.Error(), "username not found") != 0 {
 		return CreateUserOutputDto{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error checking user name existence",
 				Status:   500,
-				Detail:   userEmailExistsErr.Error(),
+				Detail:   "An error occurred while checking if the username already exists.",
 				Instance: util.RFC500,
 			},
 		}
@@ -96,7 +104,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Type:     "Internal Server Error",
 				Title:    "Error encrypting email",
 				Status:   500,
-				Detail:   encryptEmailErr.Error(),
+				Detail:   "An error occurred while encrypting the email address.",
 				Instance: util.RFC500,
 			},
 		}
@@ -109,7 +117,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Type:     "Internal Server Error",
 				Title:    "Error encrypting password",
 				Status:   500,
-				Detail:   encryptPasswordErr.Error(),
+				Detail:   "An error occurred while encrypting the password.",
 				Instance: util.RFC500,
 			},
 		}
@@ -117,7 +125,15 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 
 	newUser, newUserErr := entities.NewUser(input.Name, *newLogin)
 	if newUserErr != nil {
-		return CreateUserOutputDto{}, newUserErr
+		return CreateUserOutputDto{}, []util.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error creating user",
+				Status:   500,
+				Detail:   "An error occurred while creating the new user.",
+				Instance: util.RFC500,
+			},
+		}
 	}
 
 	createUserErr := c.UserRepository.CreateUser(*newUser)
@@ -127,7 +143,7 @@ func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputD
 				Type:     "Internal Server Error",
 				Title:    "Error creating new user",
 				Status:   500,
-				Detail:   createUserErr.Error(),
+				Detail:   "An error occurred while saving the new user to the database.",
 				Instance: util.RFC500,
 			},
 		}

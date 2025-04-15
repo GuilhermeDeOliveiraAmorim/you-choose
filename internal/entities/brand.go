@@ -9,8 +9,8 @@ import (
 type Brand struct {
 	SharedEntity
 	Votable
-	Name       string `json:"name"`
-	Logo       string `json:"logo"`
+	Name string `json:"name"`
+	Logo string `json:"logo"`
 }
 
 func NewBrand(name, logo string) (*Brand, []util.ProblemDetails) {
@@ -36,4 +36,3 @@ func (b *Brand) UpdateLogo(logo string) {
 func (b *Brand) Equals(brand Brand) bool {
 	return b.Name == brand.Name
 }
-

@@ -82,7 +82,7 @@ func (l *List) AddCombinations(combinations []Combination) {
 func (l *List) GetCombinations(itemIDs []string) ([]Combination, []util.ProblemDetails) {
 	var combinations []Combination
 
-	for i := 0; i < len(itemIDs); i++ {
+	for i := range itemIDs {
 		for j := i + 1; j < len(itemIDs); j++ {
 			newCombination, errNewCombination := NewCombination(l.ID, itemIDs[i], itemIDs[j])
 			if errNewCombination != nil {

@@ -42,39 +42,6 @@ func NewCreateBrandUseCase(
 }
 
 func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return CreateBrandOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   err.Error(),
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return CreateBrandOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "User is not active",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return CreateBrandOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "User is not an admin",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	brandExists, errThisBrandExist := u.BrandRepository.ThisBrandExist(input.Brand.Name)
 	if errThisBrandExist != nil && strings.Compare(errThisBrandExist.Error(), "brand not found") > 0 {
 		return CreateBrandOutputDTO{}, []util.ProblemDetails{
@@ -82,7 +49,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing brand",
 				Status:   500,
-				Detail:   errThisBrandExist.Error(),
+				Detail:   "An unexpected error occurred while verifying existing brand data.",
 				Instance: util.RFC500,
 			},
 		}
@@ -94,7 +61,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 				Type:     "Validation Error",
 				Title:    "Conflict",
 				Status:   409,
-				Detail:   "A brand with the same external ID already exists.",
+				Detail:   "A brand with the same name already exists in the system.",
 				Instance: util.RFC409,
 			},
 		}
@@ -116,7 +83,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 				Type:     "Internal Server Error",
 				Title:    "Error saving logo",
 				Status:   500,
-				Detail:   errSaveImage.Error(),
+				Detail:   "We encountered an issue while saving the brand's logo. Please try again later.",
 				Instance: util.RFC500,
 			},
 		}
@@ -131,7 +98,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 				Type:     "Internal Server Error",
 				Title:    "Error creating brand",
 				Status:   500,
-				Detail:   errCreateBrand.Error(),
+				Detail:   "Something went wrong while creating the brand. Please contact support if the issue persists.",
 				Instance: util.RFC500,
 			},
 		}

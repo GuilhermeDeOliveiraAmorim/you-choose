@@ -42,8 +42,8 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching movies",
+					Detail:   "An error occurred while retrieving the list of movies from the database.",
 					Status:   500,
-					Detail:   err.Error(),
 					Instance: util.RFC500,
 				},
 			}
@@ -56,8 +56,8 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 		ranking = make([]interface{}, len(movies))
 
 		for i, movie := range movies {
-            ranking[i] = movie
-        }
+			ranking[i] = movie
+		}
 
 	case entities.BRAND_TYPE:
 		brands, err := u.BrandRepository.GetBrands()
@@ -66,8 +66,8 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching brands",
+					Detail:   "An error occurred while retrieving the list of brands from the database.",
 					Status:   500,
-					Detail:   err.Error(),
 					Instance: util.RFC500,
 				},
 			}
@@ -80,8 +80,8 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 		ranking = make([]interface{}, len(brands))
 
 		for i, brand := range brands {
-            ranking[i] = brand
-        }
+			ranking[i] = brand
+		}
 	}
 
 	return ShowsRankingItemsOutputDTO{

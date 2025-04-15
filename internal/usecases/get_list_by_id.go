@@ -39,7 +39,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
 				Status:   500,
-				Detail:   errGetList.Error(),
+				Detail:   "An error occurred while retrieving the list from the database.",
 				Instance: util.RFC500,
 			},
 		}
@@ -52,7 +52,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 				Type:     "Internal Server Error",
 				Title:    "Error fetching number of votes",
 				Status:   500,
-				Detail:   errGetNumberOfVotesByListID.Error(),
+				Detail:   "An error occurred while retrieving the total number of votes for the list.",
 				Instance: util.RFC500,
 			},
 		}
@@ -65,7 +65,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 				Type:     "Internal Server Error",
 				Title:    "Error fetching ranked items",
 				Status:   500,
-				Detail:   errGetRankItemsByVotes.Error(),
+				Detail:   "An error occurred while retrieving the ranked items for the list.",
 				Instance: util.RFC500,
 			},
 		}
@@ -78,7 +78,7 @@ func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutp
 				Type:     "Invalid Input",
 				Title:    "Invalid list type",
 				Status:   400,
-				Detail:   err.Error(),
+				Detail:   "The list type is invalid or cannot be processed.",
 				Instance: util.RFC400,
 			},
 		}

@@ -39,7 +39,7 @@ func (u *GetListsUseCase) Execute(input GetListsInputDTO) (GetListsOutputDTO, []
 				Type:     "Internal Server Error",
 				Title:    "Error fetching lists",
 				Status:   500,
-				Detail:   errGetLists.Error(),
+				Detail:   "An error occurred while retrieving the lists from the database.",
 				Instance: util.RFC500,
 			},
 		}

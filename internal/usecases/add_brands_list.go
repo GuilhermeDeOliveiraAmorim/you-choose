@@ -1,8 +1,6 @@
 package usecases
 
 import (
-	"fmt"
-
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
@@ -42,61 +40,22 @@ func NewAddBrandsListUseCase(
 }
 
 func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsListOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   err.Error(),
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "User is not active",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "User is not an admin",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	var problems []util.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Brands.ListID)
 	if errGetList != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching list",
-				Status:   500,
-				Detail:   errGetList.Error(),
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "ListNotFound"),
+			),
 		}
 	} else if list.ListType != entities.BRAND_TYPE {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Validation Error",
-				Title:    "Invalid list type",
-				Status:   400,
-				Detail:   "List type must be 'brand'",
-				Instance: util.RFC400,
-			},
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType"),
+			),
 		}
 	}
 
@@ -106,13 +65,10 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 			case entities.Brand:
 				if item.ID == brandID {
 					problems = append(problems,
-						util.ProblemDetails{
-							Type:     "Validation Error",
-							Title:    "Brand already in list",
-							Status:   400,
-							Detail:   fmt.Sprintf("Brand with ID %s already exists in the list.", brandID),
-							Instance: util.RFC400,
-						},
+						util.NewProblemDetails(
+							util.BadRequest,
+							util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList"),
+						),
 					)
 				}
 			}
@@ -126,13 +82,10 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	brands, errGetBrandsByID := u.BrandRepository.GetBrandsByIDs(input.Brands.Brands)
 	if errGetBrandsByID != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching brands",
-				Status:   500,
-				Detail:   errGetBrandsByID.Error(),
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands"),
+			),
 		}
 	}
 
@@ -140,7 +93,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 
 	getOldBrandIDs, errGetBrandIDs := list.GetItemIDs()
 	if len(errGetBrandIDs) > 0 {
-		return AddBrandsListOutputDTO{}, problems
+		return AddBrandsListOutputDTO{}, errGetBrandIDs
 	}
 
 	brandIDs = append(brandIDs, getOldBrandIDs...)
@@ -154,7 +107,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 
 	getNewBrandIDs, errGetBrandIDs := list.GetItemIDs()
 	if len(errGetBrandIDs) > 0 {
-		return AddBrandsListOutputDTO{}, problems
+		return AddBrandsListOutputDTO{}, errGetBrandIDs
 	}
 
 	brandIDs = append(brandIDs, getNewBrandIDs...)
@@ -169,13 +122,10 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	errAddBrands := u.ListRepository.AddBrands(list)
 	if errAddBrands != nil {
 		return AddBrandsListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error adding brands to list",
-				Status:   500,
-				Detail:   errAddBrands.Error(),
-				Instance: util.RFC500,
-			},
+			util.NewProblemDetails(
+				util.InternalServerError,
+				util.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands"),
+			),
 		}
 	}
 

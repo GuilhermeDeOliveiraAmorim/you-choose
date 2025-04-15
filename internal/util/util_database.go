@@ -18,7 +18,7 @@ const (
 	LOCAL    = "local"
 )
 
-func NewLogger() logger.Interface {
+func NewLoggerGorm() logger.Interface {
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
@@ -36,7 +36,7 @@ func NewLogger() logger.Interface {
 func NewPostgresDB() *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_CONTAINER.DB_HOST + " user=" + config.DB_POSTGRES_CONTAINER.DB_USER + " password=" + config.DB_POSTGRES_CONTAINER.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_CONTAINER.DB_NAME + " port=" + config.DB_POSTGRES_CONTAINER.DB_PORT + " sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: NewLogger(),
+		Logger: NewLoggerGorm(),
 	})
 	if err != nil {
 		log.Printf("Error connecting to database: %v", err)
@@ -48,7 +48,7 @@ func NewPostgresDB() *gorm.DB {
 func NewPostgresDBLocal() *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_LOCAL.DB_HOST + " user=" + config.DB_POSTGRES_LOCAL.DB_USER + " password=" + config.DB_POSTGRES_LOCAL.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_LOCAL.DB_NAME + " port=" + config.DB_POSTGRES_LOCAL.DB_PORT + " sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: NewLogger(),
+		Logger: NewLoggerGorm(),
 	})
 	if err != nil {
 		log.Printf("Error connecting to database: %v", err)
@@ -110,7 +110,7 @@ func Shutdown(db *gorm.DB) {
 func NeonConnection() *gorm.DB {
 	dsn := "postgresql://" + config.DB_NEON.DB_USER + ":" + config.DB_NEON.DB_PASSWORD + "@" + config.DB_NEON.DB_HOST + "/" + config.DB_NEON.DB_NAME + "?sslmode=require"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: NewLogger(),
+		Logger: NewLoggerGorm(),
 	})
 	if err != nil {
 		log.Printf("Error connecting to database: %v", err)

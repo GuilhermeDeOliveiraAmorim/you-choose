@@ -1,15 +1,16 @@
 package factories
 
 import (
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
+	repositories_implementation "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type MovieFactory struct {
 	CreateMovie *usecases.CreateMovieUseCase
 }
 
-func NewMovieFactory(input ImputFactory) *MovieFactory {
+func NewMovieFactory(input util.ImputFactory) *MovieFactory {
 	movieResository := repositories_implementation.NewMovieRepository(input.DB)
 	userResository := repositories_implementation.NewUserRepository(input.DB)
 	imageRepository := repositories_implementation.NewImageRepository(input.BucketName)

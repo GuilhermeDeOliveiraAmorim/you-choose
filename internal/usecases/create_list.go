@@ -1,7 +1,6 @@
 package usecases
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
@@ -51,46 +50,13 @@ func NewCreateListUseCase(
 }
 
 func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []util.ProblemDetails) {
-	user, err := u.UserRepository.GetUser(input.UserID)
-	if err != nil {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Not Found",
-				Title:    "User not found",
-				Status:   404,
-				Detail:   err.Error(),
-				Instance: util.RFC404,
-			},
-		}
-	} else if !user.Active {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not active",
-				Status:   403,
-				Detail:   "User is not active",
-				Instance: util.RFC403,
-			},
-		}
-	} else if !user.IsAdmin {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
-			{
-				Type:     "Forbidden",
-				Title:    "User is not an admin",
-				Status:   403,
-				Detail:   "User is not an admin",
-				Instance: util.RFC403,
-			},
-		}
-	}
-
 	if len(input.List.Items) < 2 {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Bad Request",
 				Status:   400,
-				Detail:   "At least two items must be provided.",
+				Detail:   "You must provide at least two items to create a list.",
 				Instance: util.RFC400,
 			},
 		}
@@ -103,7 +69,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing list",
 				Status:   500,
-				Detail:   errThisListExist.Error(),
+				Detail:   "There was a problem checking if the list already exists.",
 				Instance: util.RFC500,
 			},
 		}
@@ -115,7 +81,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 				Type:     "Validation Error",
 				Title:    "Conflict",
 				Status:   409,
-				Detail:   "A list with the same name already exists.",
+				Detail:   "A list with this name already exists. Please choose a different name.",
 				Instance: util.RFC409,
 			},
 		}
@@ -138,7 +104,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 				Type:     "Validation Error",
 				Title:    "Bad Request",
 				Status:   400,
-				Detail:   "Invalid type. Available types: " + strings.Join(list.GetTypes(), ", "),
+				Detail:   "The list type provided is not valid. Allowed types: " + strings.Join(list.GetTypes(), ", "),
 				Instance: util.RFC400,
 			},
 		}
@@ -148,18 +114,18 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	var brands []entities.Brand
 
 	if input.List.ListType == entities.MOVIE_TYPE {
+		var err error
+
 		list.AddType(entities.MOVIE_TYPE)
 
-		var errGetMoviesByID error
-
-		movies, errGetMoviesByID = u.MovieRepository.GetMoviesByIDs(input.List.Items)
-		if errGetMoviesByID != nil {
+		movies, err = u.MovieRepository.GetMoviesByIDs(input.List.Items)
+		if err != nil {
 			return CreateListOutputDTO{}, []util.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching movies",
 					Status:   500,
-					Detail:   errGetMoviesByID.Error(),
+					Detail:   "We couldn't retrieve the movies at this time. Please try again later.",
 					Instance: util.RFC500,
 				},
 			}
@@ -169,7 +135,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 					Type:     "Not Found",
 					Title:    "Movies not found",
 					Status:   404,
-					Detail:   "Movies not found",
+					Detail:   "No movies were found for the given IDs.",
 					Instance: util.RFC404,
 				},
 			}
@@ -181,19 +147,20 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 
 		list.AddItems(items)
+
 	} else if input.List.ListType == entities.BRAND_TYPE {
+		var err error
+
 		list.AddType(entities.BRAND_TYPE)
 
-		var errGetBrandsByID error
-
-		brands, errGetBrandsByID = u.BrandRepository.GetBrandsByIDs(input.List.Items)
-		if errGetBrandsByID != nil {
+		brands, err = u.BrandRepository.GetBrandsByIDs(input.List.Items)
+		if err != nil {
 			return CreateListOutputDTO{}, []util.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching brands",
 					Status:   500,
-					Detail:   errGetBrandsByID.Error(),
+					Detail:   "We couldn't retrieve the brands at this moment. Please try again later.",
 					Instance: util.RFC500,
 				},
 			}
@@ -203,15 +170,15 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 					Type:     "Not Found",
 					Title:    "Brands not found",
 					Status:   404,
-					Detail:   "Brands not found",
+					Detail:   "No brands were found for the given IDs.",
 					Instance: util.RFC404,
 				},
 			}
 		}
 
 		var items []interface{}
-		for _, movie := range brands {
-			items = append(items, movie)
+		for _, brand := range brands {
+			items = append(items, brand)
 		}
 
 		list.AddItems(items)
@@ -224,14 +191,14 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	list.AddCombinations(combinations)
 
-	cover, errSaveImage := u.ImageRepository.SaveImage(input.List.Cover)
-	if errSaveImage != nil {
+	cover, err := u.ImageRepository.SaveImage(input.List.Cover)
+	if err != nil {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error saving cover",
 				Status:   500,
-				Detail:   errSaveImage.Error(),
+				Detail:   "The cover image could not be saved at this time.",
 				Instance: util.RFC500,
 			},
 		}
@@ -239,16 +206,14 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	list.AddCover(cover)
 
-	fmt.Println("list.ListType: ", list.ListType)
-
-	errCreateList := u.ListRepository.CreateList(*list)
-	if errCreateList != nil {
+	err = u.ListRepository.CreateList(*list)
+	if err != nil {
 		return CreateListOutputDTO{}, []util.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating list",
 				Status:   500,
-				Detail:   errCreateList.Error(),
+				Detail:   "An error occurred while saving the list. Please try again later.",
 				Instance: util.RFC500,
 			},
 		}

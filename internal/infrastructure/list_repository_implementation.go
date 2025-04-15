@@ -2,10 +2,11 @@ package repositories_implementation
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -28,7 +29,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		}
 	}()
 
-	if err := tx.Create(&Lists{
+	if err := tx.Create(&models.Lists{
 		ID:            list.ID,
 		Active:        list.Active,
 		CreatedAt:     list.CreatedAt,
@@ -38,6 +39,12 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		Cover:         list.Cover,
 		ListType:      list.ListType,
 	}).Error; err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "CreateList 1",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		tx.Rollback()
 		return err
 	}
@@ -46,11 +53,23 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		switch item := item.(type) {
 		case entities.Movie:
 			if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				util.NewLogger(util.Logger{
+					Code:    util.RFC500_CODE,
+					Message: err.Error(),
+					From:    "CreateList 2",
+					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				})
 				tx.Rollback()
 				return err
 			}
 		case entities.Brand:
 			if err := tx.Exec("INSERT INTO list_brands (list_id, brand_id, created_at) VALUES (?, ?,?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				util.NewLogger(util.Logger{
+					Code:    util.RFC500_CODE,
+					Message: err.Error(),
+					From:    "CreateList 3",
+					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				})
 				tx.Rollback()
 				return err
 			}
@@ -59,6 +78,12 @@ func (c *ListRepository) CreateList(list entities.List) error {
 
 	for _, combination := range list.Combinations {
 		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_item_id, second_item_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstItemID, combination.SecondItemID).Error; err != nil {
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: err.Error(),
+				From:    "CreateList 4",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
 			tx.Rollback()
 			return err
 		}
@@ -70,9 +95,15 @@ func (c *ListRepository) CreateList(list entities.List) error {
 func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
 	var count int64
 
-	result := c.gorm.Model(&Lists{}).Where("name =? AND active =?", listName, true).Count(&count)
+	result := c.gorm.Model(&models.Lists{}).Where("name =? AND active =?", listName, true).Count(&count)
 	if result.Error != nil {
-		return false, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "ThisListExistByName",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return false, result.Error
 	}
 
 	return count > 0, nil
@@ -81,9 +112,15 @@ func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
 func (c *ListRepository) ThisListExistByID(listID string) (bool, error) {
 	var count int64
 
-	result := c.gorm.Model(&Lists{}).Where("id =? AND active =?", listID, true).Count(&count)
+	result := c.gorm.Model(&models.Lists{}).Where("id =? AND active =?", listID, true).Count(&count)
 	if result.Error != nil {
-		return false, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "ThisListExistByID",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return false, result.Error
 	}
 
 	return count > 0, nil
@@ -102,6 +139,12 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 		switch item := item.(type) {
 		case entities.Movie:
 			if err := tx.Exec("INSERT INTO list_movies (list_id, movie_id, created_at) VALUES (?, ?, ?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				util.NewLogger(util.Logger{
+					Code:    util.RFC500_CODE,
+					Message: err.Error(),
+					From:    "AddMovies 1",
+					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				})
 				tx.Rollback()
 				return err
 			}
@@ -110,6 +153,12 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 
 	for _, combination := range list.Combinations {
 		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_item_id, second_item_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstItemID, combination.SecondItemID).Error; err != nil {
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: err.Error(),
+				From:    "AddMovies 2",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
 			tx.Rollback()
 			return err
 		}
@@ -119,22 +168,34 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 }
 
 func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
-	var listModel Lists
+	var listModel models.Lists
 
-	resultListModel := c.gorm.Model(&Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
+	resultListModel := c.gorm.Model(&models.Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
 	if resultListModel.Error != nil {
 		if errors.Is(resultListModel.Error, gorm.ErrRecordNotFound) {
 			return entities.List{}, errors.New("list not found")
 		}
-		return entities.List{}, errors.New(resultListModel.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: resultListModel.Error.Error(),
+			From:    "GetListByID 1",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return entities.List{}, resultListModel.Error
 	}
 
-	items, err := c.fetchItemsByListType(listID, listModel.ListType)
+	items, err := c.FetchItemsByListType(listID, listModel.ListType)
 	if err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: err.Error(),
+			From:    "GetListByID 2",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
 		return entities.List{}, err
 	}
 
-	var combinationsModel []Combinations
+	var combinationsModel []models.Combinations
 	result := c.gorm.Table("combinations").
 		Select("combinations.*").
 		Where("list_id = ?", listID).
@@ -143,7 +204,13 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.List{}, errors.New("combinations not found")
 		}
-		return entities.List{}, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetListByID 3",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return entities.List{}, result.Error
 	}
 
 	var combinations []entities.Combination
@@ -155,33 +222,34 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 }
 
 func (c *ListRepository) GetLists() ([]entities.List, error) {
-	var listsModel []Lists
+	var listsModel []models.Lists
 
-	result := c.gorm.Model(&Lists{}).Where("active =?", true).Find(&listsModel)
+	result := c.gorm.Model(&models.Lists{}).Where("active =?", true).Find(&listsModel)
 	if result.Error != nil {
-		return nil, errors.New(result.Error.Error())
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: result.Error.Error(),
+			From:    "GetLists",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, result.Error
 	}
 
 	var lists []entities.List
 
 	for _, list := range listsModel {
-		fmt.Println(list)
 		lists = append(lists, *list.ToEntity([]interface{}{}, []entities.Combination{}, false))
-	}
-
-	for _, list := range lists {
-		fmt.Println(list)
 	}
 
 	return lists, nil
 }
 
-func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interface{}, error) {
+func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interface{}, error) {
 	var items []interface{}
 
 	switch listType {
 	case entities.MOVIE_TYPE:
-		var moviesModel []Movies
+		var moviesModel []models.Movies
 		resultMoviesModel := c.gorm.Table("movies").
 			Select("movies.*").
 			Joins("JOIN list_movies ON list_movies.movie_id = movies.id").
@@ -191,7 +259,13 @@ func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interf
 			if errors.Is(resultMoviesModel.Error, gorm.ErrRecordNotFound) {
 				return nil, errors.New("movies not found")
 			}
-			return nil, errors.New(resultMoviesModel.Error.Error())
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: resultMoviesModel.Error.Error(),
+				From:    "FetchItemsByListType 1",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
+			return nil, resultMoviesModel.Error
 		}
 
 		for _, movie := range moviesModel {
@@ -199,7 +273,7 @@ func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interf
 		}
 
 	case entities.BRAND_TYPE:
-		var brandsModel []Brands
+		var brandsModel []models.Brands
 		resultBrandsModel := c.gorm.Table("brands").
 			Select("brands.*").
 			Joins("JOIN list_brands ON list_brands.brand_id = brands.id").
@@ -209,7 +283,13 @@ func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interf
 			if errors.Is(resultBrandsModel.Error, gorm.ErrRecordNotFound) {
 				return nil, errors.New("brands not found")
 			}
-			return nil, errors.New(resultBrandsModel.Error.Error())
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: resultBrandsModel.Error.Error(),
+				From:    "FetchItemsByListType 2",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
+			return nil, resultBrandsModel.Error
 		}
 
 		for _, brand := range brandsModel {
@@ -217,7 +297,13 @@ func (c *ListRepository) fetchItemsByListType(listID, listType string) ([]interf
 		}
 
 	default:
-		return nil, errors.New("invalid list type")
+		util.NewLogger(util.Logger{
+			Code:    util.RFC500_CODE,
+			Message: errors.New("invalid list type").Error(),
+			From:    "FetchItemsByListType 2",
+			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+		})
+		return nil, errors.New("Invalid list type")
 	}
 
 	return items, nil
@@ -236,6 +322,12 @@ func (c *ListRepository) AddBrands(list entities.List) error {
 		switch item := item.(type) {
 		case entities.Brand:
 			if err := tx.Exec("INSERT INTO list_brands (list_id, brand_id, created_at) VALUES (?, ?, ?)", list.ID, item.ID, time.Now()).Error; err != nil {
+				util.NewLogger(util.Logger{
+					Code:    util.RFC500_CODE,
+					Message: err.Error(),
+					From:    "AddBrands 1",
+					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				})
 				tx.Rollback()
 				return err
 			}
@@ -244,6 +336,12 @@ func (c *ListRepository) AddBrands(list entities.List) error {
 
 	for _, combination := range list.Combinations {
 		if err := tx.Exec("INSERT INTO combinations (id, list_id, first_item_id, second_item_id) VALUES (?, ?, ?, ?)", combination.ID, list.ID, combination.FirstItemID, combination.SecondItemID).Error; err != nil {
+			util.NewLogger(util.Logger{
+				Code:    util.RFC500_CODE,
+				Message: err.Error(),
+				From:    "AddBrands 2",
+				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			})
 			tx.Rollback()
 			return err
 		}
