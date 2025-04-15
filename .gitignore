@@ -36,4 +36,4 @@ internal/config/env.prod
 /postgres-data
 
 # Swagger
-/api
+api/
