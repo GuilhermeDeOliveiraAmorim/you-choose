@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
@@ -27,7 +28,7 @@ func (c *BrandRepository) CreateBrand(brand entities.Brand) error {
 		}
 	}()
 
-	if err := tx.Create(&Brands{
+	if err := tx.Create(&models.Brands{
 		ID:            brand.ID,
 		Active:        brand.Active,
 		CreatedAt:     brand.CreatedAt,
@@ -51,9 +52,9 @@ func (c *BrandRepository) CreateBrand(brand entities.Brand) error {
 }
 
 func (c *BrandRepository) GetBrandByID(brandID string) (entities.Brand, error) {
-	var brandModel Brands
+	var brandModel models.Brands
 
-	result := c.gorm.Model(&Brands{}).Where("id =? AND active =?", brandID, true).First(&brandModel)
+	result := c.gorm.Model(&models.Brands{}).Where("id =? AND active =?", brandID, true).First(&brandModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.Brand{}, errors.New("brand not found")
@@ -71,9 +72,9 @@ func (c *BrandRepository) GetBrandByID(brandID string) (entities.Brand, error) {
 }
 
 func (c *BrandRepository) ThisBrandExist(brandName string) (bool, error) {
-	var brandModel Brands
+	var brandModel models.Brands
 
-	result := c.gorm.Model(&Brands{}).Where("name =?", brandName).First(&brandModel)
+	result := c.gorm.Model(&models.Brands{}).Where("name =?", brandName).First(&brandModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, nil
@@ -91,9 +92,9 @@ func (c *BrandRepository) ThisBrandExist(brandName string) (bool, error) {
 }
 
 func (c *BrandRepository) GetBrandsByIDs(brandsIDs []string) ([]entities.Brand, error) {
-	var brandsModel []Brands
+	var brandsModel []models.Brands
 
-	result := c.gorm.Model(&Brands{}).Where("id IN?", brandsIDs).Find(&brandsModel)
+	result := c.gorm.Model(&models.Brands{}).Where("id IN?", brandsIDs).Find(&brandsModel)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -121,7 +122,7 @@ func (c *BrandRepository) UpdadeBrand(brand entities.Brand) error {
 		}
 	}()
 
-	if err := tx.Model(&Brands{}).Where("id =?", brand.ID).Updates(Brands{
+	if err := tx.Model(&models.Brands{}).Where("id =?", brand.ID).Updates(models.Brands{
 		Active:        brand.Active,
 		Name:          brand.Name,
 		VotesCount:    brand.VotesCount,
@@ -143,9 +144,9 @@ func (c *BrandRepository) UpdadeBrand(brand entities.Brand) error {
 }
 
 func (c *BrandRepository) GetBrands() ([]entities.Brand, error) {
-	var brandsModel []Brands
+	var brandsModel []models.Brands
 
-	result := c.gorm.Model(&Brands{}).Where("active =?", true).Find(&brandsModel)
+	result := c.gorm.Model(&models.Brands{}).Where("active =?", true).Find(&brandsModel)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,

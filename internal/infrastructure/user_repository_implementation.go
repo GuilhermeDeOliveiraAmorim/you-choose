@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
@@ -27,7 +28,7 @@ func (u *UserRepository) CreateUser(user entities.User) error {
 		}
 	}()
 
-	if err := tx.Create(&Users{
+	if err := tx.Create(&models.Users{
 		ID:            user.ID,
 		Active:        user.Active,
 		CreatedAt:     user.CreatedAt,
@@ -52,9 +53,9 @@ func (u *UserRepository) CreateUser(user entities.User) error {
 }
 
 func (u *UserRepository) GetUserByEmail(userEmail string) (entities.User, error) {
-	var userModel Users
+	var userModel models.Users
 
-	result := u.gorm.Model(&Users{}).Where("email = ?", userEmail).First(&userModel)
+	result := u.gorm.Model(&models.Users{}).Where("email = ?", userEmail).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.User{}, errors.New("user not found")
@@ -72,9 +73,9 @@ func (u *UserRepository) GetUserByEmail(userEmail string) (entities.User, error)
 }
 
 func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
-	var userModel Users
+	var userModel models.Users
 
-	result := u.gorm.Model(&Users{}).Where("email = ?", userEmail).First(&userModel)
+	result := u.gorm.Model(&models.Users{}).Where("email = ?", userEmail).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, errors.New("email not found")
@@ -92,9 +93,9 @@ func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
 }
 
 func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
-	var userModel Users
+	var userModel models.Users
 
-	result := u.gorm.Model(&Users{}).Where("name = ?", userName).First(&userModel)
+	result := u.gorm.Model(&models.Users{}).Where("name = ?", userName).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, errors.New("username not found")
@@ -112,9 +113,9 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 }
 
 func (u *UserRepository) GetUser(userID string) (entities.User, error) {
-	var userModel Users
+	var userModel models.Users
 
-	result := u.gorm.Model(&Users{}).Where("id = ?", userID).First(&userModel)
+	result := u.gorm.Model(&models.Users{}).Where("id = ?", userID).First(&userModel)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.User{}, errors.New("user not found")

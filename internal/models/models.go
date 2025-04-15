@@ -1,4 +1,4 @@
-package repositories_implementation
+package models
 
 import (
 	"database/sql"

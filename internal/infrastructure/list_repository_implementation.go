@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
@@ -28,7 +29,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 		}
 	}()
 
-	if err := tx.Create(&Lists{
+	if err := tx.Create(&models.Lists{
 		ID:            list.ID,
 		Active:        list.Active,
 		CreatedAt:     list.CreatedAt,
@@ -94,7 +95,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
 	var count int64
 
-	result := c.gorm.Model(&Lists{}).Where("name =? AND active =?", listName, true).Count(&count)
+	result := c.gorm.Model(&models.Lists{}).Where("name =? AND active =?", listName, true).Count(&count)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -111,7 +112,7 @@ func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
 func (c *ListRepository) ThisListExistByID(listID string) (bool, error) {
 	var count int64
 
-	result := c.gorm.Model(&Lists{}).Where("id =? AND active =?", listID, true).Count(&count)
+	result := c.gorm.Model(&models.Lists{}).Where("id =? AND active =?", listID, true).Count(&count)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -167,9 +168,9 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 }
 
 func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
-	var listModel Lists
+	var listModel models.Lists
 
-	resultListModel := c.gorm.Model(&Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
+	resultListModel := c.gorm.Model(&models.Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
 	if resultListModel.Error != nil {
 		if errors.Is(resultListModel.Error, gorm.ErrRecordNotFound) {
 			return entities.List{}, errors.New("list not found")
@@ -194,7 +195,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 		return entities.List{}, err
 	}
 
-	var combinationsModel []Combinations
+	var combinationsModel []models.Combinations
 	result := c.gorm.Table("combinations").
 		Select("combinations.*").
 		Where("list_id = ?", listID).
@@ -221,9 +222,9 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 }
 
 func (c *ListRepository) GetLists() ([]entities.List, error) {
-	var listsModel []Lists
+	var listsModel []models.Lists
 
-	result := c.gorm.Model(&Lists{}).Where("active =?", true).Find(&listsModel)
+	result := c.gorm.Model(&models.Lists{}).Where("active =?", true).Find(&listsModel)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -248,7 +249,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 
 	switch listType {
 	case entities.MOVIE_TYPE:
-		var moviesModel []Movies
+		var moviesModel []models.Movies
 		resultMoviesModel := c.gorm.Table("movies").
 			Select("movies.*").
 			Joins("JOIN list_movies ON list_movies.movie_id = movies.id").
@@ -272,7 +273,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 		}
 
 	case entities.BRAND_TYPE:
-		var brandsModel []Brands
+		var brandsModel []models.Brands
 		resultBrandsModel := c.gorm.Table("brands").
 			Select("brands.*").
 			Joins("JOIN list_brands ON list_brands.brand_id = brands.id").

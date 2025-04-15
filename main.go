@@ -8,7 +8,7 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -43,7 +43,7 @@ func main() {
 	}
 	fmt.Println("Successful connection")
 
-	repositories_implementation.Migration(db, sqlDB)
+	models.Migration(db, sqlDB)
 
 	r := gin.Default()
 

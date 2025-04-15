@@ -2,6 +2,7 @@ package repositories_implementation
 
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
@@ -17,7 +18,7 @@ func NewCombinationRepository(gorm *gorm.DB) *CombinationRepository {
 }
 
 func (c *CombinationRepository) GetCombinationsByListID(listID string) ([]entities.Combination, error) {
-	var combinationsModel []Combinations
+	var combinationsModel []models.Combinations
 
 	result := c.gorm.Table("combinations").
 		Select("combinations.*").
@@ -43,7 +44,7 @@ func (c *CombinationRepository) GetCombinationsByListID(listID string) ([]entiti
 }
 
 func (c *CombinationRepository) GetCombinationsAlreadyVoted(listID string) ([]entities.Combination, error) {
-	var combinationsModel []Combinations
+	var combinationsModel []models.Combinations
 
 	result := c.gorm.Table("combinations").
 		Select("combinations.*").

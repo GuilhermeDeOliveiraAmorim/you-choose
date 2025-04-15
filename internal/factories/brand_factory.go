@@ -1,7 +1,7 @@
 package factories
 
 import (
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )

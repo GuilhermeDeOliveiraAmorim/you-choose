@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
@@ -28,7 +29,7 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 		}
 	}()
 
-	if err := tx.Create(&Votes{
+	if err := tx.Create(&models.Votes{
 		ID:            vote.ID,
 		Active:        vote.Active,
 		CreatedAt:     vote.CreatedAt,
@@ -51,10 +52,10 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 }
 
 func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]entities.Vote, error) {
-	var votesModel []Votes
+	var votesModel []models.Votes
 
 	result := c.gorm.
-		Model(&Votes{}).
+		Model(&models.Votes{}).
 		Joins("JOIN combinations ON votes.combination_id = combinations.id").
 		Where("combinations.list_id = ? AND votes.user_id = ? AND votes.active = ?", listID, userID, true).
 		Find(&votesModel)
@@ -83,7 +84,7 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bool, error) {
 	var count int64
 
-	result := c.gorm.Model(&Votes{}).Where("user_id =? AND combination_id =?", userID, combinationID).Count(&count)
+	result := c.gorm.Model(&models.Votes{}).Where("user_id =? AND combination_id =?", userID, combinationID).Count(&count)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -100,7 +101,7 @@ func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bo
 func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 	var count int64
 
-	result := c.gorm.Model(&Votes{}).Where("combination_id IN (SELECT id FROM combinations WHERE list_id =? AND active =?)", listID, true).Count(&count)
+	result := c.gorm.Model(&models.Votes{}).Where("combination_id IN (SELECT id FROM combinations WHERE list_id =? AND active =?)", listID, true).Count(&count)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -115,7 +116,7 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 }
 
 func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{}, error) {
-	var combinations []Combinations
+	var combinations []models.Combinations
 	if err := c.gorm.Where("list_id = ?", listID).Find(&combinations).Error; err != nil {
 		util.NewLogger(util.Logger{
 			Code:    util.RFC500_CODE,
@@ -128,7 +129,7 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 
 	voteCounts := make(map[string]int)
 	for _, combination := range combinations {
-		var votes []Votes
+		var votes []models.Votes
 		if err := c.gorm.Where("combination_id = ?", combination.ID).Find(&votes).Error; err != nil {
 			util.NewLogger(util.Logger{
 				Code:    util.RFC500_CODE,
@@ -161,10 +162,10 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 }
 
 func (c *VoteRepository) RankMoviesByVotes(voteCounts map[string]int) ([]interface{}, error) {
-	var movies []Movies
+	var movies []models.Movies
 
 	for movieID, count := range voteCounts {
-		var movie Movies
+		var movie models.Movies
 		if err := c.gorm.First(&movie, "id = ?", movieID).Error; err != nil {
 			util.NewLogger(util.Logger{
 				Code:    util.RFC500_CODE,
@@ -191,10 +192,10 @@ func (c *VoteRepository) RankMoviesByVotes(voteCounts map[string]int) ([]interfa
 }
 
 func (c *VoteRepository) RankBrandsByVotes(voteCounts map[string]int) ([]interface{}, error) {
-	var brands []Brands
+	var brands []models.Brands
 
 	for brandID, count := range voteCounts {
-		var brand Brands
+		var brand models.Brands
 		if err := c.gorm.First(&brand, "id = ?", brandID).Error; err != nil {
 			util.NewLogger(util.Logger{
 				Code:    util.RFC500_CODE,
