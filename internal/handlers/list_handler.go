@@ -32,7 +32,7 @@ func NewListHandler(factory *factories.ListFactory) *ListHandler {
 // @Security BearerAuth
 // @Router /lists [post]
 func (h *ListHandler) CreateList(c *gin.Context) {
-	userID, err := getUserID(c)
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -57,7 +57,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 
 	output, errs := h.listFactory.CreateList.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -77,7 +77,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 // @Security BearerAuth
 // @Router /lists/movies [post]
 func (h *ListHandler) AddMoviesList(c *gin.Context) {
-	userID, err := getUserID(c)
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -102,7 +102,7 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 
 	output, errs := h.listFactory.AddMoviesList.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -122,7 +122,7 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 // @Security BearerAuth
 // @Router /lists/users [get]
 func (h *ListHandler) GetListByUserID(c *gin.Context) {
-	userID, err := getUserID(c)
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -137,7 +137,7 @@ func (h *ListHandler) GetListByUserID(c *gin.Context) {
 
 	output, errs := h.listFactory.GetListByUserID.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (h *ListHandler) GetListByID(c *gin.Context) {
 
 	output, errs := h.listFactory.GetListByID.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -186,7 +186,7 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 
 	output, errs := h.listFactory.GetLists.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -206,7 +206,7 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 // @Security BearerAuth
 // @Router /lists/brands [post]
 func (h *ListHandler) AddBrandsList(c *gin.Context) {
-	userID, err := getUserID(c)
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -231,7 +231,7 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 
 	output, errs := h.listFactory.AddBrandsList.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -258,7 +258,7 @@ func (h *ListHandler) ShowsRankingItems(c *gin.Context) {
 
 	output, errs := h.listFactory.ShowsRankingItems.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 

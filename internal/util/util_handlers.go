@@ -1,13 +1,12 @@
-package handlers
+package util
 
 import (
 	"net/http"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
-func handleErrors(c *gin.Context, errs []util.ProblemDetails) {
+func HandleErrors(c *gin.Context, errs []ProblemDetails) {
 	if len(errs) == 0 {
 		return
 	}
@@ -16,26 +15,26 @@ func handleErrors(c *gin.Context, errs []util.ProblemDetails) {
 	c.JSON(status, gin.H{"errors": errs})
 }
 
-func getUserID(c *gin.Context) (string, *util.ProblemDetails) {
+func GetUserID(c *gin.Context) (string, *ProblemDetails) {
 	userID, exists := c.Get("userID")
 	if !exists {
-		return "", &util.ProblemDetails{
+		return "", &ProblemDetails{
 			Type:     "Unauthorized",
 			Title:    "Missing User ID",
 			Status:   http.StatusUnauthorized,
 			Detail:   "User id is required",
-			Instance: util.RFC401,
+			Instance: RFC401,
 		}
 	}
 
 	userIDStr, ok := userID.(string)
 	if !ok || userIDStr == "" {
-		return "", &util.ProblemDetails{
+		return "", &ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Invalid User ID",
 			Status:   http.StatusBadRequest,
 			Detail:   "A valid user id is required",
-			Instance: util.RFC400,
+			Instance: RFC400,
 		}
 	}
 

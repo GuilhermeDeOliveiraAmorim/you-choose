@@ -9,37 +9,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type BrandHandler struct {
-	brandFactory *factories.BrandFactory
+type VoteHandler struct {
+	voteFactory *factories.VoteFactory
 }
 
-func NewBrandHandler(factory *factories.BrandFactory) *BrandHandler {
-	return &BrandHandler{
-		brandFactory: factory,
+func NewVoteHandler(factory *factories.VoteFactory) *VoteHandler {
+	return &VoteHandler{
+		voteFactory: factory,
 	}
 }
 
-// @Summary Create a new brand
-// @Description Registers a new brand in the system
-// @Tags Items
+// @Summary Create a new vote
+// @Description Registers a new vote in the system
+// @Tags Votes
 // @Accept json
 // @Produce json
-// @Param request body usecases.Brand true "Brand data"
-// @Success 201 {object} usecases.CreateBrandOutputDTO
+// @Param request body usecases.Vote true "Vote data"
+// @Success 201 {object} usecases.VoteOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
 // @Security BearerAuth
-// @Router /items/brands [post]
-func (h *BrandHandler) CreateBrand(c *gin.Context) {
-	userID, err := getUserID(c)
+// @Router /votes [post]
+func (h *VoteHandler) Vote(c *gin.Context) {
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
 	}
 
-	var brand usecases.Brand
-	if err := c.ShouldBindJSON(&brand); err != nil {
+	var vote usecases.Vote
+	if err := c.ShouldBindJSON(&vote); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -50,14 +50,14 @@ func (h *BrandHandler) CreateBrand(c *gin.Context) {
 		return
 	}
 
-	input := usecases.CreateBrandInputDTO{
+	input := usecases.VoteInputDTO{
 		UserID: userID,
-		Brand:  brand,
+		Vote:   vote,
 	}
 
-	output, errs := h.brandFactory.CreateBrand.Execute(input)
+	output, errs := h.voteFactory.Vote.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 

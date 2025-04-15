@@ -9,37 +9,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type VoteHandler struct {
-	voteFactory *factories.VoteFactory
+type MovieHandler struct {
+	movieFactory *factories.MovieFactory
 }
 
-func NewVoteHandler(factory *factories.VoteFactory) *VoteHandler {
-	return &VoteHandler{
-		voteFactory: factory,
+func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
+	return &MovieHandler{
+		movieFactory: factory,
 	}
 }
 
-// @Summary Create a new vote
-// @Description Registers a new vote in the system
-// @Tags Votes
+// @Summary Create a new movie
+// @Description Registers a new movie in the system
+// @Tags Items
 // @Accept json
 // @Produce json
-// @Param request body usecases.Vote true "Vote data"
-// @Success 201 {object} usecases.VoteOutputDTO
+// @Param request body usecases.Movie true "Movie data"
+// @Success 201 {object} usecases.CreateMovieOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
 // @Security BearerAuth
-// @Router /votes [post]
-func (h *VoteHandler) Vote(c *gin.Context) {
-	userID, err := getUserID(c)
+// @Router /items/movies [post]
+func (h *MovieHandler) CreateMovie(c *gin.Context) {
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
 	}
 
-	var vote usecases.Vote
-	if err := c.ShouldBindJSON(&vote); err != nil {
+	var movie usecases.Movie
+	if err := c.ShouldBindJSON(&movie); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -50,14 +50,14 @@ func (h *VoteHandler) Vote(c *gin.Context) {
 		return
 	}
 
-	input := usecases.VoteInputDTO{
+	input := usecases.CreateMovieInputDTO{
 		UserID: userID,
-		Vote:   vote,
+		Movie:  movie,
 	}
 
-	output, errs := h.voteFactory.Vote.Execute(input)
+	output, errs := h.movieFactory.CreateMovie.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 

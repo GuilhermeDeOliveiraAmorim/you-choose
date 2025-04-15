@@ -9,37 +9,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type MovieHandler struct {
-	movieFactory *factories.MovieFactory
+type BrandHandler struct {
+	brandFactory *factories.BrandFactory
 }
 
-func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
-	return &MovieHandler{
-		movieFactory: factory,
+func NewBrandHandler(factory *factories.BrandFactory) *BrandHandler {
+	return &BrandHandler{
+		brandFactory: factory,
 	}
 }
 
-// @Summary Create a new movie
-// @Description Registers a new movie in the system
+// @Summary Create a new brand
+// @Description Registers a new brand in the system
 // @Tags Items
 // @Accept json
 // @Produce json
-// @Param request body usecases.Movie true "Movie data"
-// @Success 201 {object} usecases.CreateMovieOutputDTO
+// @Param request body usecases.Brand true "Brand data"
+// @Success 201 {object} usecases.CreateBrandOutputDTO
 // @Failure 400 {object} util.ProblemDetails "Bad Request"
 // @Failure 500 {object} util.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} util.ProblemDetails "Unauthorized"
 // @Security BearerAuth
-// @Router /items/movies [post]
-func (h *MovieHandler) CreateMovie(c *gin.Context) {
-	userID, err := getUserID(c)
+// @Router /items/brands [post]
+func (h *BrandHandler) CreateBrand(c *gin.Context) {
+	userID, err := util.GetUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
 	}
 
-	var movie usecases.Movie
-	if err := c.ShouldBindJSON(&movie); err != nil {
+	var brand usecases.Brand
+	if err := c.ShouldBindJSON(&brand); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
@@ -50,14 +50,14 @@ func (h *MovieHandler) CreateMovie(c *gin.Context) {
 		return
 	}
 
-	input := usecases.CreateMovieInputDTO{
+	input := usecases.CreateBrandInputDTO{
 		UserID: userID,
-		Movie:  movie,
+		Brand:  brand,
 	}
 
-	output, errs := h.movieFactory.CreateMovie.Execute(input)
+	output, errs := h.brandFactory.CreateBrand.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 

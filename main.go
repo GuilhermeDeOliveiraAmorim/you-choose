@@ -7,8 +7,8 @@ import (
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure/repositories_implementation"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/interface/handlers"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -56,47 +56,37 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	inputFactory := factories.ImputFactory{
+	inputFactory := util.ImputFactory{
 		DB:         db,
 		BucketName: config.GOOGLE_VAR.IMAGE_BUCKET_NAME,
 	}
 
-	movieFactory := factories.NewMovieFactory(inputFactory)
-	listFactory := factories.NewListFactory(inputFactory)
-	voteFactory := factories.NewVoteFactory(inputFactory)
-	userFactory := factories.NewUserFactory(inputFactory)
-	brandFactory := factories.NewBrandFactory(inputFactory)
+	handlerFactory := handlers.NewHandlerFactory(inputFactory)
 	middlewareFactory := factories.NewMiddlewareFactory(inputFactory)
-
-	movieHandler := handlers.NewMovieHandler(movieFactory)
-	listHandler := handlers.NewListHandler(listFactory)
-	voteHandler := handlers.NewVoteHandler(voteFactory)
-	userHandler := handlers.NewUserHandler(userFactory)
-	brandHandler := handlers.NewBrandHandler(brandFactory)
 
 	public := r.Group("/")
 	{
 		public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		public.POST("signup", userHandler.CreateUser)
-		public.POST("login", userHandler.Login)
-		public.GET("lists", listHandler.GetListByID)
-		public.GET("lists/all", listHandler.GetLists)
-		public.GET("items", listHandler.ShowsRankingItems)
+		public.POST("signup", handlerFactory.UserHandler.CreateUser)
+		public.POST("login", handlerFactory.UserHandler.Login)
+		public.GET("lists", handlerFactory.ListHandler.GetListByID)
+		public.GET("lists/all", handlerFactory.ListHandler.GetLists)
+		public.GET("items", handlerFactory.ListHandler.ShowsRankingItems)
 	}
 
 	protectedUser := r.Group("/").Use(middlewareFactory.AuthMiddleware())
 	{
-		protectedUser.GET("lists/users", listHandler.GetListByUserID)
-		protectedUser.POST("votes", voteHandler.Vote)
+		protectedUser.GET("lists/users", handlerFactory.ListHandler.GetListByUserID)
+		protectedUser.POST("votes", handlerFactory.VoteHandler.Vote)
 	}
 
 	protectedAdmin := r.Group("/").Use(middlewareFactory.AuthMiddleware(), middlewareFactory.AdminMiddleware())
 	{
-		protectedAdmin.POST("lists", listHandler.CreateList)
-		protectedAdmin.POST("lists/movies", listHandler.AddMoviesList)
-		protectedAdmin.POST("lists/brands", listHandler.AddBrandsList)
-		protectedAdmin.POST("items/movies", movieHandler.CreateMovie)
-		protectedAdmin.POST("items/brands", brandHandler.CreateBrand)
+		protectedAdmin.POST("lists", handlerFactory.ListHandler.CreateList)
+		protectedAdmin.POST("lists/movies", handlerFactory.ListHandler.AddMoviesList)
+		protectedAdmin.POST("lists/brands", handlerFactory.ListHandler.AddBrandsList)
+		protectedAdmin.POST("items/movies", handlerFactory.MovieHandler.CreateMovie)
+		protectedAdmin.POST("items/brands", handlerFactory.BrandHandler.CreateBrand)
 	}
 
 	r.Run(":8080")

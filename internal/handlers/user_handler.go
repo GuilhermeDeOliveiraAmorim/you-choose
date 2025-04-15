@@ -43,7 +43,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	output, errs := h.userFactory.CreateUser.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
@@ -74,7 +74,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	output, errs := h.userFactory.Login.Execute(input)
 	if len(errs) > 0 {
-		handleErrors(c, errs)
+		util.HandleErrors(c, errs)
 		return
 	}
 
