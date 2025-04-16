@@ -34,17 +34,26 @@ func main() {
 
 	db, sqlDB, err := util.SetupDatabaseConnection(util.LOCAL)
 	if err != nil {
+		util.NewLogger(util.Logger{
+			Code:    util.RFC200_CODE,
+			Message: err.Error(),
+			From:    "Main",
+			Layer:   util.LoggerLayers.CONFIGURATION,
+			TypeLog: util.LoggerTypes.ERROR,
+		})
+
 		panic("Failed to connect database")
 	}
+
+	models.Migration(db, sqlDB)
+
 	util.NewLogger(util.Logger{
 		Code:    util.RFC200_CODE,
-		Message: "Successfully connected to the database",
+		Message: "Database connection and migration completed successfully",
 		From:    "Main",
 		Layer:   util.LoggerLayers.CONFIGURATION,
 		TypeLog: util.LoggerTypes.INFO,
 	})
-
-	models.Migration(db, sqlDB)
 
 	inputFactory := util.ImputFactory{
 		DB:         db,
