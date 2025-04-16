@@ -43,6 +43,7 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 			Message: err.Error(),
 			From:    "CreateVote",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -69,6 +70,7 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 			Message: result.Error.Error(),
 			From:    "GetVotesByUserIDAndListID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -91,6 +93,7 @@ func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bo
 			Message: result.Error.Error(),
 			From:    "VoteAlreadyRegistered",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -108,6 +111,7 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 			Message: result.Error.Error(),
 			From:    "GetNumberOfVotesByListID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return 0, result.Error
 	}
@@ -123,6 +127,7 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 			Message: err.Error(),
 			From:    "RankItemsByVotes",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, err
 	}
@@ -136,6 +141,7 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 				Message: err.Error(),
 				From:    "RankItemsByVotes",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			return nil, err
 		}
@@ -156,6 +162,7 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 			Message: "Invalid list type",
 			From:    "RankItemsByVotes",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, errors.New("Invalid list type")
 	}
@@ -172,6 +179,7 @@ func (c *VoteRepository) RankMoviesByVotes(voteCounts map[string]int) ([]interfa
 				Message: err.Error(),
 				From:    "RankMoviesByVotes",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			return nil, err
 		}
@@ -202,6 +210,7 @@ func (c *VoteRepository) RankBrandsByVotes(voteCounts map[string]int) ([]interfa
 				Message: err.Error(),
 				From:    "RankBrandsByVotes",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			return nil, err
 		}

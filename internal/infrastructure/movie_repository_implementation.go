@@ -45,6 +45,7 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 			Message: err.Error(),
 			From:    "CreateMovie",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -66,6 +67,7 @@ func (c *MovieRepository) GetMovieByID(movieID string) (entities.Movie, error) {
 			Message: result.Error.Error(),
 			From:    "GetMovieByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.Movie{}, result.Error
 	}
@@ -86,6 +88,7 @@ func (c *MovieRepository) ThisMovieExist(movieExternalID string) (bool, error) {
 			Message: result.Error.Error(),
 			From:    "ThisMovieExist",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -103,6 +106,7 @@ func (c *MovieRepository) GetMoviesByIDs(moviesIDs []string) ([]entities.Movie, 
 			Message: result.Error.Error(),
 			From:    "GetMoviesByIDs",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -139,6 +143,7 @@ func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
 			Message: err.Error(),
 			From:    "UpdadeMovie",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -157,6 +162,7 @@ func (c *MovieRepository) GetMovies() ([]entities.Movie, error) {
 			Message: result.Error.Error(),
 			From:    "GetMovies",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}

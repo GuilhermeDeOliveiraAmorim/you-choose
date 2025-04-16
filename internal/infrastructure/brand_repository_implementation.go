@@ -43,6 +43,7 @@ func (c *BrandRepository) CreateBrand(brand entities.Brand) error {
 			Message: err.Error(),
 			From:    "CreateBrand",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -64,6 +65,7 @@ func (c *BrandRepository) GetBrandByID(brandID string) (entities.Brand, error) {
 			Message: result.Error.Error(),
 			From:    "GetBrandByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.Brand{}, result.Error
 	}
@@ -84,6 +86,7 @@ func (c *BrandRepository) ThisBrandExist(brandName string) (bool, error) {
 			Message: result.Error.Error(),
 			From:    "ThisBrandExist",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -101,6 +104,7 @@ func (c *BrandRepository) GetBrandsByIDs(brandsIDs []string) ([]entities.Brand, 
 			Message: result.Error.Error(),
 			From:    "GetBrandsByIDs",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -135,6 +139,7 @@ func (c *BrandRepository) UpdadeBrand(brand entities.Brand) error {
 			Message: err.Error(),
 			From:    "UpdadeBrand",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -153,6 +158,7 @@ func (c *BrandRepository) GetBrands() ([]entities.Brand, error) {
 			Message: result.Error.Error(),
 			From:    "GetBrands",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}

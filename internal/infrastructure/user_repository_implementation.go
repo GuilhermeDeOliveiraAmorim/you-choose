@@ -44,6 +44,7 @@ func (u *UserRepository) CreateUser(user entities.User) error {
 			Message: err.Error(),
 			From:    "CreateUser",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -65,6 +66,7 @@ func (u *UserRepository) GetUserByEmail(userEmail string) (entities.User, error)
 			Message: result.Error.Error(),
 			From:    "GetUserByEmail",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.User{}, result.Error
 	}
@@ -85,6 +87,7 @@ func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
 			Message: result.Error.Error(),
 			From:    "ThisUserEmailExists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -105,6 +108,7 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 			Message: result.Error.Error(),
 			From:    "ThisUserNameExists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -125,6 +129,7 @@ func (u *UserRepository) GetUser(userID string) (entities.User, error) {
 			Message: result.Error.Error(),
 			From:    "GetUser",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.User{}, result.Error
 	}

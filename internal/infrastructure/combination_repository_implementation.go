@@ -30,6 +30,7 @@ func (c *CombinationRepository) GetCombinationsByListID(listID string) ([]entiti
 			Message: result.Error.Error(),
 			From:    "GetCombinationsByListID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -57,6 +58,7 @@ func (c *CombinationRepository) GetCombinationsAlreadyVoted(listID string) ([]en
 			Message: result.Error.Error(),
 			From:    "GetCombinationsAlreadyVoted",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}

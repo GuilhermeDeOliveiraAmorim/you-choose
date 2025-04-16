@@ -11,6 +11,14 @@ type Layer struct {
 	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION string
 	INTERFACE_HANDLERS                         string
 	USE_CASES                                  string
+	CONFIGURATION                              string
+	MIDDLEWARES                                string
+}
+
+type TypeLog struct {
+	ERROR   string
+	INFO    string
+	WARNING string
 }
 
 var LoggerLayers = Layer{
@@ -19,6 +27,14 @@ var LoggerLayers = Layer{
 	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION: "INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION",
 	INTERFACE_HANDLERS:                         "INTERFACE_HANDLERS",
 	USE_CASES:                                  "USE_CASES",
+	CONFIGURATION:                              "CONFIGURATION",
+	MIDDLEWARES:                                "MIDDLEWARES",
+}
+
+var LoggerTypes = TypeLog{
+	ERROR:   "ERROR",
+	INFO:    "INFO",
+	WARNING: "WARNING",
 }
 
 type Logger struct {
@@ -29,8 +45,16 @@ type Logger struct {
 	TypeLog string `json:"type_log"`
 }
 
+var logger *slog.Logger
+
+func InitLogger() {
+	logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+}
+
 func NewLogger(log Logger) {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	if logger == nil {
+		InitLogger()
+	}
 
 	switch log.TypeLog {
 	case "ERROR":

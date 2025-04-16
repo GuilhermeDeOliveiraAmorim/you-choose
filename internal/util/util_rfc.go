@@ -1,6 +1,7 @@
 package util
 
 const (
+	RFC200 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.1"
 	RFC204 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.5"
 	RFC400 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1"
 	RFC401 = "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1"
@@ -12,6 +13,7 @@ const (
 )
 
 const (
+	RFC200_CODE = 200
 	RFC204_CODE = 204
 	RFC400_CODE = 400
 	RFC401_CODE = 401

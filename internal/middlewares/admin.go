@@ -16,8 +16,8 @@ func NewAdminMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    util.RFC401_CODE,
 				Message: "User ID not found in context",
 				From:    "AdminMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -35,8 +35,8 @@ func NewAdminMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    util.RFC403_CODE,
 				Message: "User is not an administrator",
 				From:    "AdminMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{

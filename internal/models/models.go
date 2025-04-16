@@ -220,6 +220,7 @@ func Migration(db *gorm.DB, sqlDB *sql.DB) {
 			Message: err.Error(),
 			From:    "Migration",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return
 	}

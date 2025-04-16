@@ -44,6 +44,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 			Message: err.Error(),
 			From:    "CreateList 1",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -58,6 +59,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 					Message: err.Error(),
 					From:    "CreateList 2",
 					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+					TypeLog: util.LoggerTypes.ERROR,
 				})
 				tx.Rollback()
 				return err
@@ -69,6 +71,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 					Message: err.Error(),
 					From:    "CreateList 3",
 					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+					TypeLog: util.LoggerTypes.ERROR,
 				})
 				tx.Rollback()
 				return err
@@ -83,6 +86,7 @@ func (c *ListRepository) CreateList(list entities.List) error {
 				Message: err.Error(),
 				From:    "CreateList 4",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			tx.Rollback()
 			return err
@@ -102,6 +106,7 @@ func (c *ListRepository) ThisListExistByName(listName string) (bool, error) {
 			Message: result.Error.Error(),
 			From:    "ThisListExistByName",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -119,6 +124,7 @@ func (c *ListRepository) ThisListExistByID(listID string) (bool, error) {
 			Message: result.Error.Error(),
 			From:    "ThisListExistByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -144,6 +150,7 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 					Message: err.Error(),
 					From:    "AddMovies 1",
 					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+					TypeLog: util.LoggerTypes.ERROR,
 				})
 				tx.Rollback()
 				return err
@@ -158,6 +165,7 @@ func (c *ListRepository) AddMovies(list entities.List) error {
 				Message: err.Error(),
 				From:    "AddMovies 2",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			tx.Rollback()
 			return err
@@ -180,6 +188,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 			Message: resultListModel.Error.Error(),
 			From:    "GetListByID 1",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.List{}, resultListModel.Error
 	}
@@ -191,6 +200,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 			Message: err.Error(),
 			From:    "GetListByID 2",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.List{}, err
 	}
@@ -209,6 +219,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 			Message: result.Error.Error(),
 			From:    "GetListByID 3",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return entities.List{}, result.Error
 	}
@@ -231,6 +242,7 @@ func (c *ListRepository) GetLists() ([]entities.List, error) {
 			Message: result.Error.Error(),
 			From:    "GetLists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -264,6 +276,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 				Message: resultMoviesModel.Error.Error(),
 				From:    "FetchItemsByListType 1",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			return nil, resultMoviesModel.Error
 		}
@@ -288,6 +301,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 				Message: resultBrandsModel.Error.Error(),
 				From:    "FetchItemsByListType 2",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			return nil, resultBrandsModel.Error
 		}
@@ -302,6 +316,7 @@ func (c *ListRepository) FetchItemsByListType(listID, listType string) ([]interf
 			Message: errors.New("invalid list type").Error(),
 			From:    "FetchItemsByListType 2",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return nil, errors.New("Invalid list type")
 	}
@@ -327,6 +342,7 @@ func (c *ListRepository) AddBrands(list entities.List) error {
 					Message: err.Error(),
 					From:    "AddBrands 1",
 					Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+					TypeLog: util.LoggerTypes.ERROR,
 				})
 				tx.Rollback()
 				return err
@@ -341,6 +357,7 @@ func (c *ListRepository) AddBrands(list entities.List) error {
 				Message: err.Error(),
 				From:    "AddBrands 2",
 				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			tx.Rollback()
 			return err

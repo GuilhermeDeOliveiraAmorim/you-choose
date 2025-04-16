@@ -31,6 +31,7 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 			Message: err.Error(),
 			From:    "StorageNewClient",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return "", err
 	}
@@ -43,6 +44,7 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 			Message: err.Error(),
 			From:    "GetImage",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return "", err
 	}
@@ -55,6 +57,7 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 			Message: err.Error(),
 			From:    "ReadAll",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return "", err
 	}
@@ -73,6 +76,7 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 			Message: err.Error(),
 			From:    "SaveImage",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		writer.Close()
 		return "", err
@@ -84,6 +88,7 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 			Message: err.Error(),
 			From:    "SaveImage",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: util.LoggerTypes.ERROR,
 		})
 		return "", err
 	}

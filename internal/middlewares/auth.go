@@ -21,8 +21,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    401,
 				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader").Detail,
 				From:    "AuthMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader")),
@@ -36,8 +36,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    401,
 				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer").Detail,
 				From:    "AuthMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer")),
@@ -53,8 +53,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 					Code:    401,
 					Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse").Detail,
 					From:    "AuthMiddleware",
-					Layer:   "Infra",
-					TypeLog: "ERROR",
+					Layer:   util.LoggerLayers.MIDDLEWARES,
+					TypeLog: util.LoggerTypes.ERROR,
 				})
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 					"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse")),
@@ -69,8 +69,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    401,
 				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken").Detail,
 				From:    "AuthMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken")),
@@ -83,8 +83,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    401,
 				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedToken").Detail,
 				From:    "AuthMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedToken")),
@@ -101,8 +101,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    401,
 				Message: util.GetErrorMessage("LoginUseCase", "UserNotFound").Detail,
 				From:    "AuthMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 				"error": util.NewProblemDetails(util.NotFound, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
@@ -115,8 +115,8 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				Code:    401,
 				Message: util.GetErrorMessage("LoginUseCase", "UserNotActive").Detail,
 				From:    "AuthMiddleware",
-				Layer:   "Infra",
-				TypeLog: "ERROR",
+				Layer:   util.LoggerLayers.MIDDLEWARES,
+				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error": util.NewProblemDetails(util.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),

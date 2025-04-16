@@ -9,7 +9,7 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	gormLogger "gorm.io/gorm/logger"
 )
 
 const (
@@ -18,11 +18,11 @@ const (
 	LOCAL    = "local"
 )
 
-func NewLoggerGorm() logger.Interface {
-	newLogger := logger.New(
+func NewLoggerGorm() gormLogger.Interface {
+	newLogger := gormLogger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
-		logger.Config{
-			LogLevel:                  logger.Info,
+		gormLogger.Config{
+			LogLevel:                  gormLogger.Info,
 			IgnoreRecordNotFoundError: true,
 			SlowThreshold:             200 * time.Millisecond,
 			ParameterizedQueries:      true,
