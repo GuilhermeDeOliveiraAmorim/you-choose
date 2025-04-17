@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"log/slog"
 	"os"
 )
@@ -10,7 +11,7 @@ type Layer struct {
 	FACTORIES                                  string
 	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION string
 	INTERFACE_HANDLERS                         string
-	USE_CASES                                  string
+	USECASES                                   string
 	CONFIGURATION                              string
 	MIDDLEWARES                                string
 }
@@ -26,7 +27,7 @@ var LoggerLayers = Layer{
 	FACTORIES:    "FACTORIES",
 	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION: "INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION",
 	INTERFACE_HANDLERS:                         "INTERFACE_HANDLERS",
-	USE_CASES:                                  "USE_CASES",
+	USECASES:                                   "USECASES",
 	CONFIGURATION:                              "CONFIGURATION",
 	MIDDLEWARES:                                "MIDDLEWARES",
 }
@@ -38,11 +39,12 @@ var LoggerTypes = TypeLog{
 }
 
 type Logger struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	From    string `json:"from"`
-	Layer   string `json:"layer"`
-	TypeLog string `json:"type_log"`
+	Context context.Context `json:"context"`
+	Code    int             `json:"code"`
+	Message string          `json:"message"`
+	From    string          `json:"from"`
+	Layer   string          `json:"layer"`
+	TypeLog string          `json:"type_log"`
 }
 
 var logger *slog.Logger
@@ -58,7 +60,8 @@ func NewLogger(log Logger) {
 
 	switch log.TypeLog {
 	case "ERROR":
-		logger.Error(
+		logger.ErrorContext(
+			log.Context,
 			"ERROR",
 			"code:", log.Code,
 			"message:", log.Message,
@@ -66,7 +69,8 @@ func NewLogger(log Logger) {
 			"layer:", log.Layer,
 		)
 	case "INFO":
-		logger.Info(
+		logger.InfoContext(
+			log.Context,
 			"INFO",
 			"code:", log.Code,
 			"message:", log.Message,
@@ -74,7 +78,8 @@ func NewLogger(log Logger) {
 			"layer:", log.Layer,
 		)
 	case "WARNING":
-		logger.Warn(
+		logger.WarnContext(
+			log.Context,
 			"WARNING",
 			"code:", log.Code,
 			"message:", log.Message,

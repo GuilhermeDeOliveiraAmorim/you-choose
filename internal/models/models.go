@@ -6,6 +6,7 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"golang.org/x/net/context"
 	"gorm.io/gorm"
 )
 
@@ -204,7 +205,7 @@ func (b *Brands) ToEntity() *entities.Brand {
 	}
 }
 
-func Migration(db *gorm.DB, sqlDB *sql.DB) {
+func Migration(ctx context.Context, db *gorm.DB, sqlDB *sql.DB) {
 	if err := db.AutoMigrate(
 		Lists{},
 		Movies{},
@@ -216,12 +217,14 @@ func Migration(db *gorm.DB, sqlDB *sql.DB) {
 		ListBrands{},
 	); err != nil {
 		util.NewLogger(util.Logger{
+			Context: ctx,
 			Code:    util.RFC500_CODE,
 			Message: err.Error(),
 			From:    "Migration",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
 			TypeLog: util.LoggerTypes.ERROR,
 		})
+
 		return
 	}
 }

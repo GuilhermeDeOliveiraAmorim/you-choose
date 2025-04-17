@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"os"
@@ -35,9 +36,7 @@ func NewLoggerGorm() gormLogger.Interface {
 
 func NewPostgresDB() *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_CONTAINER.DB_HOST + " user=" + config.DB_POSTGRES_CONTAINER.DB_USER + " password=" + config.DB_POSTGRES_CONTAINER.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_CONTAINER.DB_NAME + " port=" + config.DB_POSTGRES_CONTAINER.DB_PORT + " sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: NewLoggerGorm(),
-	})
+	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		log.Printf("Error connecting to database: %v", err)
 		return nil
@@ -47,9 +46,7 @@ func NewPostgresDB() *gorm.DB {
 
 func NewPostgresDBLocal() *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_LOCAL.DB_HOST + " user=" + config.DB_POSTGRES_LOCAL.DB_USER + " password=" + config.DB_POSTGRES_LOCAL.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_LOCAL.DB_NAME + " port=" + config.DB_POSTGRES_LOCAL.DB_PORT + " sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: NewLoggerGorm(),
-	})
+	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		log.Printf("Error connecting to database: %v", err)
 		return nil
@@ -57,7 +54,7 @@ func NewPostgresDBLocal() *gorm.DB {
 	return db
 }
 
-func SetupDatabaseConnection(SGBD string) (*gorm.DB, *sql.DB, error) {
+func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.DB) {
 	var db *gorm.DB
 
 	switch SGBD {
@@ -68,19 +65,46 @@ func SetupDatabaseConnection(SGBD string) (*gorm.DB, *sql.DB, error) {
 	case LOCAL:
 		db = NewPostgresDBLocal()
 	default:
-		return nil, nil, nil
+		NewLogger(Logger{
+			Context: ctx,
+			Code:    RFC400_CODE,
+			Message: "Invalid SGBD type provided: " + SGBD,
+			From:    "SetupDatabaseConnection",
+			Layer:   LoggerLayers.CONFIGURATION,
+			TypeLog: LoggerTypes.ERROR,
+		})
+
+		panic("failed to connect database")
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		return nil, nil, err
+		NewLogger(Logger{
+			Context: ctx,
+			Code:    RFC500_CODE,
+			Message: err.Error(),
+			From:    "SetupDatabaseConnection",
+			Layer:   LoggerLayers.CONFIGURATION,
+			TypeLog: LoggerTypes.ERROR,
+		})
+
+		panic("failed to connect database")
 	}
 
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(20)
 	sqlDB.SetConnMaxLifetime(2 * time.Minute)
 
-	return db, sqlDB, nil
+	NewLogger(Logger{
+		Context: ctx,
+		Code:    RFC200_CODE,
+		Message: "Database connection successfully configured",
+		From:    "SetupDatabaseConnection",
+		Layer:   LoggerLayers.CONFIGURATION,
+		TypeLog: LoggerTypes.INFO,
+	})
+
+	return db, sqlDB
 }
 
 func CheckConnection(db *gorm.DB) bool {

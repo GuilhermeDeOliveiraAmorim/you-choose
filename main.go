@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
@@ -29,31 +31,14 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	ctx := context.Background()
+
 	util.InitLogger()
 	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.PT_BR)
 
-	db, sqlDB, err := util.SetupDatabaseConnection(util.LOCAL)
-	if err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC200_CODE,
-			Message: err.Error(),
-			From:    "Main",
-			Layer:   util.LoggerLayers.CONFIGURATION,
-			TypeLog: util.LoggerTypes.ERROR,
-		})
+	db, sqlDB := util.SetupDatabaseConnection(ctx, util.LOCAL)
 
-		panic("Failed to connect database")
-	}
-
-	models.Migration(db, sqlDB)
-
-	util.NewLogger(util.Logger{
-		Code:    util.RFC200_CODE,
-		Message: "Database connection and migration completed successfully",
-		From:    "Main",
-		Layer:   util.LoggerLayers.CONFIGURATION,
-		TypeLog: util.LoggerTypes.INFO,
-	})
+	models.Migration(ctx, db, sqlDB)
 
 	inputFactory := util.ImputFactory{
 		DB:         db,

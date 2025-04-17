@@ -72,7 +72,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	output, errs := h.userFactory.Login.Execute(input)
+	output, errs := h.userFactory.Login.Execute(c.Request.Context(), input)
 	if len(errs) > 0 {
 		util.HandleErrors(c, errs)
 		return
