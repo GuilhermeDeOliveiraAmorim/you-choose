@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"golang.org/x/net/context"
 	"gorm.io/gorm"
@@ -218,7 +219,7 @@ func Migration(ctx context.Context, db *gorm.DB, sqlDB *sql.DB) {
 	); err != nil {
 		util.NewLogger(util.Logger{
 			Context: ctx,
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "Migration",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,

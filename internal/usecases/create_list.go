@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type List struct {
@@ -49,40 +49,40 @@ func NewCreateListUseCase(
 	}
 }
 
-func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []util.ProblemDetails) {
+func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []exceptions.ProblemDetails) {
 	if len(input.List.Items) < 2 {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
+		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Bad Request",
 				Status:   400,
 				Detail:   "You must provide at least two items to create a list.",
-				Instance: util.RFC400,
+				Instance: exceptions.RFC400,
 			},
 		}
 	}
 
 	listExists, errThisListExist := u.ListRepository.ThisListExistByName(input.List.Name)
 	if errThisListExist != nil && strings.Compare(errThisListExist.Error(), "list not found") > 0 {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
+		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing list",
 				Status:   500,
 				Detail:   "There was a problem checking if the list already exists.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
 
 	if listExists {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
+		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Conflict",
 				Status:   409,
 				Detail:   "A list with this name already exists. Please choose a different name.",
-				Instance: util.RFC409,
+				Instance: exceptions.RFC409,
 			},
 		}
 	}
@@ -99,13 +99,13 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	}
 
 	if !isValidType {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
+		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Bad Request",
 				Status:   400,
 				Detail:   "The list type provided is not valid. Allowed types: " + strings.Join(list.GetTypes(), ", "),
-				Instance: util.RFC400,
+				Instance: exceptions.RFC400,
 			},
 		}
 	}
@@ -120,23 +120,23 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 		movies, err = u.MovieRepository.GetMoviesByIDs(input.List.Items)
 		if err != nil {
-			return CreateListOutputDTO{}, []util.ProblemDetails{
+			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching movies",
 					Status:   500,
 					Detail:   "We couldn't retrieve the movies at this time. Please try again later.",
-					Instance: util.RFC500,
+					Instance: exceptions.RFC500,
 				},
 			}
 		} else if len(movies) == 0 {
-			return CreateListOutputDTO{}, []util.ProblemDetails{
+			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Not Found",
 					Title:    "Movies not found",
 					Status:   404,
 					Detail:   "No movies were found for the given IDs.",
-					Instance: util.RFC404,
+					Instance: exceptions.RFC404,
 				},
 			}
 		}
@@ -155,23 +155,23 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 		brands, err = u.BrandRepository.GetBrandsByIDs(input.List.Items)
 		if err != nil {
-			return CreateListOutputDTO{}, []util.ProblemDetails{
+			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching brands",
 					Status:   500,
 					Detail:   "We couldn't retrieve the brands at this moment. Please try again later.",
-					Instance: util.RFC500,
+					Instance: exceptions.RFC500,
 				},
 			}
 		} else if len(brands) == 0 {
-			return CreateListOutputDTO{}, []util.ProblemDetails{
+			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Not Found",
 					Title:    "Brands not found",
 					Status:   404,
 					Detail:   "No brands were found for the given IDs.",
-					Instance: util.RFC404,
+					Instance: exceptions.RFC404,
 				},
 			}
 		}
@@ -193,13 +193,13 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	cover, err := u.ImageRepository.SaveImage(input.List.Cover)
 	if err != nil {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
+		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error saving cover",
 				Status:   500,
 				Detail:   "The cover image could not be saved at this time.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
@@ -208,13 +208,13 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	err = u.ListRepository.CreateList(*list)
 	if err != nil {
-		return CreateListOutputDTO{}, []util.ProblemDetails{
+		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating list",
 				Status:   500,
 				Detail:   "An error occurred while saving the list. Please try again later.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}

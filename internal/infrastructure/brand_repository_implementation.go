@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
@@ -39,7 +40,7 @@ func (c *BrandRepository) CreateBrand(brand entities.Brand) error {
 		VotesCount:    brand.VotesCount,
 	}).Error; err != nil {
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "CreateBrand",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -61,7 +62,7 @@ func (c *BrandRepository) GetBrandByID(brandID string) (entities.Brand, error) {
 			return entities.Brand{}, errors.New("brand not found")
 		}
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetBrandByID",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -82,7 +83,7 @@ func (c *BrandRepository) ThisBrandExist(brandName string) (bool, error) {
 			return false, nil
 		}
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "ThisBrandExist",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -100,7 +101,7 @@ func (c *BrandRepository) GetBrandsByIDs(brandsIDs []string) ([]entities.Brand, 
 	result := c.gorm.Model(&models.Brands{}).Where("id IN?", brandsIDs).Find(&brandsModel)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetBrandsByIDs",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -135,7 +136,7 @@ func (c *BrandRepository) UpdadeBrand(brand entities.Brand) error {
 		Logo:          brand.Logo,
 	}).Error; err != nil {
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "UpdadeBrand",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -154,7 +155,7 @@ func (c *BrandRepository) GetBrands() ([]entities.Brand, error) {
 	result := c.gorm.Model(&models.Brands{}).Where("active =?", true).Find(&brandsModel)
 	if result.Error != nil {
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetBrands",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,

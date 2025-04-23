@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 )
 
 type Brand struct {
@@ -13,7 +13,7 @@ type Brand struct {
 	Logo string `json:"logo"`
 }
 
-func NewBrand(name, logo string) (*Brand, []util.ProblemDetails) {
+func NewBrand(name, logo string) (*Brand, []exceptions.ProblemDetails) {
 	return &Brand{
 		SharedEntity: *NewSharedEntity(),
 		Votable:      *NewVotable(),

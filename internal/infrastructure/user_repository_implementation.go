@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
@@ -40,7 +41,7 @@ func (u *UserRepository) CreateUser(user entities.User) error {
 		IsAdmin:       user.IsAdmin,
 	}).Error; err != nil {
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "CreateUser",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -62,7 +63,7 @@ func (u *UserRepository) GetUserByEmail(userEmail string) (entities.User, error)
 			return entities.User{}, errors.New("user not found")
 		}
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetUserByEmail",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -83,7 +84,7 @@ func (u *UserRepository) ThisUserEmailExists(userEmail string) (bool, error) {
 			return false, errors.New("email not found")
 		}
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "ThisUserEmailExists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -104,7 +105,7 @@ func (u *UserRepository) ThisUserNameExists(userName string) (bool, error) {
 			return false, errors.New("username not found")
 		}
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "ThisUserNameExists",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
@@ -125,7 +126,7 @@ func (u *UserRepository) GetUser(userID string) (entities.User, error) {
 			return entities.User{}, errors.New("user not found")
 		}
 		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetUser",
 			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,

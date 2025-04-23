@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 )
 
 const (
@@ -21,7 +21,7 @@ type List struct {
 	Combinations []Combination `json:"combinations"`
 }
 
-func NewList(name string, cover string) (*List, []util.ProblemDetails) {
+func NewList(name string, cover string) (*List, []exceptions.ProblemDetails) {
 	return &List{
 		SharedEntity: *NewSharedEntity(),
 		Name:         name,
@@ -79,7 +79,7 @@ func (l *List) AddCombinations(combinations []Combination) {
 	l.Combinations = uniqueCombinations
 }
 
-func (l *List) GetCombinations(itemIDs []string) ([]Combination, []util.ProblemDetails) {
+func (l *List) GetCombinations(itemIDs []string) ([]Combination, []exceptions.ProblemDetails) {
 	var combinations []Combination
 
 	for i := range itemIDs {
@@ -96,7 +96,7 @@ func (l *List) GetCombinations(itemIDs []string) ([]Combination, []util.ProblemD
 	return combinations, nil
 }
 
-func (l *List) GetItemIDs() ([]string, []util.ProblemDetails) {
+func (l *List) GetItemIDs() ([]string, []exceptions.ProblemDetails) {
 	itemIDs := []string{}
 
 	for _, item := range l.Items {

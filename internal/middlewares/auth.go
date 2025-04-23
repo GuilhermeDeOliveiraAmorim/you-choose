@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/dgrijalva/jwt-go"
@@ -25,7 +26,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader")),
 			})
 			return
 		}
@@ -40,7 +41,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer")),
 			})
 			return
 		}
@@ -57,7 +58,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 					TypeLog: util.LoggerTypes.ERROR,
 				})
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse")),
+					"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse")),
 				})
 				return nil, fmt.Errorf("unexpected signing method")
 			}
@@ -73,7 +74,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken")),
 			})
 			return
 		}
@@ -87,7 +88,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": util.NewProblemDetails(util.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedToken")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedToken")),
 			})
 			return
 		}
@@ -105,7 +106,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": util.NewProblemDetails(util.NotFound, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
+				"error": exceptions.NewProblemDetails(exceptions.NotFound, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
 			})
 			return
 		}
@@ -119,7 +120,7 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 				TypeLog: util.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"error": util.NewProblemDetails(util.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),
+				"error": exceptions.NewProblemDetails(exceptions.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),
 			})
 			return
 		}

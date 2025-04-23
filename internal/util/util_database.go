@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
@@ -67,7 +68,7 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 	default:
 		NewLogger(Logger{
 			Context: ctx,
-			Code:    RFC400_CODE,
+			Code:    exceptions.RFC400_CODE,
 			Message: "Invalid SGBD type provided: " + SGBD,
 			From:    "SetupDatabaseConnection",
 			Layer:   LoggerLayers.CONFIGURATION,
@@ -81,7 +82,7 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 	if err != nil {
 		NewLogger(Logger{
 			Context: ctx,
-			Code:    RFC500_CODE,
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "SetupDatabaseConnection",
 			Layer:   LoggerLayers.CONFIGURATION,
@@ -97,7 +98,7 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 
 	NewLogger(Logger{
 		Context: ctx,
-		Code:    RFC200_CODE,
+		Code:    exceptions.RFC200_CODE,
 		Message: "Database connection successfully configured",
 		From:    "SetupDatabaseConnection",
 		Layer:   LoggerLayers.CONFIGURATION,

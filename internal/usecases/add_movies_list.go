@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
@@ -39,23 +40,23 @@ func NewAddMoviesListUseCase(
 	}
 }
 
-func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesListOutputDTO, []util.ProblemDetails) {
-	var problems []util.ProblemDetails
+func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesListOutputDTO, []exceptions.ProblemDetails) {
+	var problems []exceptions.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)
 	if errGetList != nil {
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.InternalServerError,
+		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+			exceptions.NewProblemDetails(
+				exceptions.InternalServerError,
 				util.GetErrorMessage("AddMoviesListUseCase", "ListNotFound"),
 			),
 		}
 	}
 
 	if list.ListType != entities.MOVIE_TYPE {
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.BadRequest,
+		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+			exceptions.NewProblemDetails(
+				exceptions.BadRequest,
 				util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType"),
 			),
 		}
@@ -67,8 +68,8 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 			case entities.Movie:
 				if item.ID == movieID {
 					problems = append(problems,
-						util.NewProblemDetails(
-							util.BadRequest,
+						exceptions.NewProblemDetails(
+							exceptions.BadRequest,
 							util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList"),
 						),
 					)
@@ -83,9 +84,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies.Movies)
 	if errGetMoviesByID != nil {
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.InternalServerError,
+		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+			exceptions.NewProblemDetails(
+				exceptions.InternalServerError,
 				util.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies"),
 			),
 		}
@@ -122,9 +123,9 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	errAddMovies := u.ListRepository.AddMovies(list)
 	if errAddMovies != nil {
-		return AddMoviesListOutputDTO{}, []util.ProblemDetails{
-			util.NewProblemDetails(
-				util.InternalServerError,
+		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+			exceptions.NewProblemDetails(
+				exceptions.InternalServerError,
 				util.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies"),
 			),
 		}

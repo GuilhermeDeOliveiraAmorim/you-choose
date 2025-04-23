@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,7 +17,7 @@ type Login struct {
 	Password string `json:"password"`
 }
 
-func NewLogin(email, password string) (*Login, []util.ProblemDetails) {
+func NewLogin(email, password string) (*Login, []exceptions.ProblemDetails) {
 	validationErrors := ValidateLogin(email, password)
 
 	if len(validationErrors) > 0 {
@@ -30,26 +30,26 @@ func NewLogin(email, password string) (*Login, []util.ProblemDetails) {
 	}, nil
 }
 
-func ValidateLogin(email, password string) []util.ProblemDetails {
-	var validationErrors []util.ProblemDetails
+func ValidateLogin(email, password string) []exceptions.ProblemDetails {
+	var validationErrors []exceptions.ProblemDetails
 
 	if !isValidEmail(email) {
-		validationErrors = append(validationErrors, util.ProblemDetails{
+		validationErrors = append(validationErrors, exceptions.ProblemDetails{
 			Type:     "Validation Error",
 			Title:    "Invalid email",
 			Status:   400,
 			Detail:   "Email is invalid",
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		})
 	}
 
 	if !isValidPassword(password) {
-		validationErrors = append(validationErrors, util.ProblemDetails{
+		validationErrors = append(validationErrors, exceptions.ProblemDetails{
 			Type:     "Validation Error",
 			Title:    "Invalid password",
 			Status:   400,
 			Detail:   "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		})
 	}
 
