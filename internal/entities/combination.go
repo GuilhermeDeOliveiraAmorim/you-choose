@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/oklog/ulid/v2"
 )
 
@@ -12,7 +12,7 @@ type Combination struct {
 	SecondItemID string `json:"second_item_id"`
 }
 
-func NewCombination(listId, firstItem, secondItem string) (*Combination, []util.ProblemDetails) {
+func NewCombination(listId, firstItem, secondItem string) (*Combination, []exceptions.ProblemDetails) {
 	return &Combination{
 		ID:           ulid.Make().String(),
 		ListID:       listId,

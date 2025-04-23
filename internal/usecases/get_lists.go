@@ -2,8 +2,8 @@ package usecases
 
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type SimpleList struct {
@@ -31,16 +31,16 @@ func NewGetListsUseCase(
 	}
 }
 
-func (u *GetListsUseCase) Execute(input GetListsInputDTO) (GetListsOutputDTO, []util.ProblemDetails) {
+func (u *GetListsUseCase) Execute(input GetListsInputDTO) (GetListsOutputDTO, []exceptions.ProblemDetails) {
 	lists, errGetLists := u.ListRepository.GetLists()
 	if errGetLists != nil {
-		return GetListsOutputDTO{}, []util.ProblemDetails{
+		return GetListsOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching lists",
 				Status:   500,
 				Detail:   "An error occurred while retrieving the lists from the database.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}

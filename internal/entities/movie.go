@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 )
 
 type Movie struct {
@@ -15,7 +15,7 @@ type Movie struct {
 	ExternalID string `json:"external_id"`
 }
 
-func NewMovie(name string, year int64, externalID string) (*Movie, []util.ProblemDetails) {
+func NewMovie(name string, year int64, externalID string) (*Movie, []exceptions.ProblemDetails) {
 	return &Movie{
 		SharedEntity: *NewSharedEntity(),
 		Votable:      *NewVotable(),

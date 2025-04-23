@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,14 +25,14 @@ func NewListHandler(factory *factories.ListFactory) *ListHandler {
 // @Accept json
 // @Produce json
 // @Param request body usecases.List true "List data"
-// @Success 201 {object} usecases.CreateListOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Success 201 {object} presenters.SuccessOutputDTO
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Security BearerAuth
 // @Router /lists [post]
 func (h *ListHandler) CreateList(c *gin.Context) {
-	userID, err := util.GetUserID(c)
+	userID, err := GetAuthenticatedUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -40,12 +40,12 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 
 	var list usecases.List
 	if err := c.ShouldBindJSON(&list); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
 			Status:   http.StatusBadRequest,
 			Detail:   err.Error(),
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		}})
 		return
 	}
@@ -57,7 +57,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 
 	output, errs := h.listFactory.CreateList.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -70,14 +70,14 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body usecases.Movies true "AddMoviesList data"
-// @Success 201 {object} usecases.AddMoviesListOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Success 201 {object} presenters.SuccessOutputDTO
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Security BearerAuth
 // @Router /lists/movies [post]
 func (h *ListHandler) AddMoviesList(c *gin.Context) {
-	userID, err := util.GetUserID(c)
+	userID, err := GetAuthenticatedUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -85,12 +85,12 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 
 	var movies usecases.Movies
 	if err := c.ShouldBindJSON(&movies); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
 			Status:   http.StatusBadRequest,
 			Detail:   err.Error(),
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		}})
 		return
 	}
@@ -102,7 +102,7 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 
 	output, errs := h.listFactory.AddMoviesList.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -116,13 +116,13 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 // @Produce json
 // @Param list_id query string true "List id"
 // @Success 201 {object} usecases.GetListByUserIDOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Security BearerAuth
 // @Router /lists/users [get]
 func (h *ListHandler) GetListByUserID(c *gin.Context) {
-	userID, err := util.GetUserID(c)
+	userID, err := GetAuthenticatedUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -137,7 +137,7 @@ func (h *ListHandler) GetListByUserID(c *gin.Context) {
 
 	output, errs := h.listFactory.GetListByUserID.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -151,9 +151,9 @@ func (h *ListHandler) GetListByUserID(c *gin.Context) {
 // @Produce json
 // @Param list_id query string true "List id"
 // @Success 201 {object} usecases.GetListByIDOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Router /lists [get]
 func (h *ListHandler) GetListByID(c *gin.Context) {
 	listID := c.Query("list_id")
@@ -164,7 +164,7 @@ func (h *ListHandler) GetListByID(c *gin.Context) {
 
 	output, errs := h.listFactory.GetListByID.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -177,16 +177,16 @@ func (h *ListHandler) GetListByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 201 {object} usecases.GetListsOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Router /lists/all [get]
 func (h *ListHandler) GetLists(c *gin.Context) {
 	input := usecases.GetListsInputDTO{}
 
 	output, errs := h.listFactory.GetLists.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -199,14 +199,14 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body usecases.Brands true "AddBrandsList data"
-// @Success 201 {object} usecases.AddBrandsListOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Success 201 {object} presenters.SuccessOutputDTO
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Security BearerAuth
 // @Router /lists/brands [post]
 func (h *ListHandler) AddBrandsList(c *gin.Context) {
-	userID, err := util.GetUserID(c)
+	userID, err := GetAuthenticatedUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -214,12 +214,12 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 
 	var brands usecases.Brands
 	if err := c.ShouldBindJSON(&brands); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
 			Status:   http.StatusBadRequest,
 			Detail:   err.Error(),
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		}})
 		return
 	}
@@ -231,7 +231,7 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 
 	output, errs := h.listFactory.AddBrandsList.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -245,9 +245,9 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 // @Produce json
 // @Param list_type query string true "List Type (MOVIE or BRAND)"
 // @Success 201 {object} usecases.ShowsRankingItemsOutputDTO
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
-// @Failure 500 {object} util.ProblemDetails "Internal Server Error"
-// @Failure 401 {object} util.ProblemDetails "Unauthorized"
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
+// @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
+// @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
 // @Router /items [get]
 func (h *ListHandler) ShowsRankingItems(c *gin.Context) {
 	listType := c.Query("list_type")
@@ -258,7 +258,7 @@ func (h *ListHandler) ShowsRankingItems(c *gin.Context) {
 
 	output, errs := h.listFactory.ShowsRankingItems.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 

@@ -3,7 +3,7 @@ package entities
 import (
 	"time"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/oklog/ulid/v2"
 )
 
@@ -17,7 +17,7 @@ type Vote struct {
 	WinnerID      string     `json:"winner_id"`
 }
 
-func NewVote(userID, combinationID, winnerID string) (*Vote, []util.ProblemDetails) {
+func NewVote(userID, combinationID, winnerID string) (*Vote, []exceptions.ProblemDetails) {
 	return &Vote{
 		ID:            ulid.Make().String(),
 		Active:        true,

@@ -5,7 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/oklog/ulid/v2"
 
 	"cloud.google.com/go/storage"
@@ -26,11 +27,12 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "StorageNewClient",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return "", err
 	}
@@ -38,11 +40,12 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 
 	resp, err := http.Get(image)
 	if err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "GetImage",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return "", err
 	}
@@ -50,11 +53,12 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 
 	imageData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "ReadAll",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return "", err
 	}
@@ -68,22 +72,24 @@ func (c *ImageRepository) SaveImage(image string) (string, error) {
 	writer.ContentType = http.DetectContentType(imageData)
 
 	if _, err := writer.Write(imageData); err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "SaveImage",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		writer.Close()
 		return "", err
 	}
 
 	if err := writer.Close(); err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "SaveImage",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return "", err
 	}

@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,25 +25,25 @@ func NewUserHandler(factory *factories.UserFactory) *UserHandler {
 // @Accept json
 // @Produce json
 // @Param CreateUserRequest body usecases.CreateUserInputDto true "User data"
-// @Success 201 {object} usecases.CreateUserOutputDto
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
+// @Success 201 {object} presenters.SuccessOutputDTO
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Router /signup [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input usecases.CreateUserInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
 			Status:   http.StatusBadRequest,
 			Detail:   err.Error(),
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		}})
 		return
 	}
 
 	output, errs := h.userFactory.CreateUser.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -57,24 +57,24 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 // @Produce json
 // @Param LoginRequest body usecases.LoginInputDto true "User credentials"
 // @Success 200 {object} usecases.LoginOutputDto
-// @Failure 400 {object} util.ProblemDetails "Bad Request"
+// @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Router /login [post]
 func (h *UserHandler) Login(c *gin.Context) {
 	var input usecases.LoginInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": util.ProblemDetails{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
 			Type:     "Bad Request",
 			Title:    "Did not bind JSON",
 			Status:   http.StatusBadRequest,
 			Detail:   err.Error(),
-			Instance: util.RFC400,
+			Instance: exceptions.RFC400,
 		}})
 		return
 	}
 
-	output, errs := h.userFactory.Login.Execute(input)
+	output, errs := h.userFactory.Login.Execute(c.Request.Context(), input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 

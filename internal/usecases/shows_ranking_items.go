@@ -4,8 +4,8 @@ import (
 	"sort"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type ShowsRankingItemsInputDTO struct {
@@ -31,20 +31,20 @@ func NewShowsRankingItemsUseCase(
 	}
 }
 
-func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (ShowsRankingItemsOutputDTO, []util.ProblemDetails) {
+func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (ShowsRankingItemsOutputDTO, []exceptions.ProblemDetails) {
 	var ranking []interface{}
 
 	switch input.ListType {
 	case entities.MOVIE_TYPE:
 		movies, err := u.MovieRepository.GetMovies()
 		if err != nil {
-			return ShowsRankingItemsOutputDTO{}, []util.ProblemDetails{
+			return ShowsRankingItemsOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching movies",
 					Detail:   "An error occurred while retrieving the list of movies from the database.",
 					Status:   500,
-					Instance: util.RFC500,
+					Instance: exceptions.RFC500,
 				},
 			}
 		}
@@ -62,13 +62,13 @@ func (u *ShowsRankingItemsUseCase) Execute(input ShowsRankingItemsInputDTO) (Sho
 	case entities.BRAND_TYPE:
 		brands, err := u.BrandRepository.GetBrands()
 		if err != nil {
-			return ShowsRankingItemsOutputDTO{}, []util.ProblemDetails{
+			return ShowsRankingItemsOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching brands",
 					Detail:   "An error occurred while retrieving the list of brands from the database.",
 					Status:   500,
-					Instance: util.RFC500,
+					Instance: exceptions.RFC500,
 				},
 			}
 		}

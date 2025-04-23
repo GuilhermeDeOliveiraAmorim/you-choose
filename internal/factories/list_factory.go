@@ -1,9 +1,9 @@
 package factories
 
 import (
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
 	repositories_implementation "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/infrastructure"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type ListFactory struct {
@@ -16,7 +16,7 @@ type ListFactory struct {
 	ShowsRankingItems *usecases.ShowsRankingItemsUseCase
 }
 
-func NewListFactory(input util.ImputFactory) *ListFactory {
+func NewListFactory(input database.StorageInput) *ListFactory {
 	listRepository := repositories_implementation.NewListRepository(input.DB)
 	movieResository := repositories_implementation.NewMovieRepository(input.DB)
 	voteRepository := repositories_implementation.NewVoteRepository(input.DB)

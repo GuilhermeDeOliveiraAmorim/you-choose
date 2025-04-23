@@ -1,9 +1,6 @@
-package util
+package language
 
-type ErrorMessage struct {
-	Title  string
-	Detail string
-}
+import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 
 var (
 	currentLanguage = "en-US"
@@ -586,11 +583,11 @@ func GetLanguage() string {
 	return currentLanguage
 }
 
-func GetErrorMessage(useCase, errorCode string) ErrorMessage {
+func GetErrorMessage(useCase, errorCode string) exceptions.ErrorMessage {
 	if langMsgs, ok := errorMessages[currentLanguage]; ok {
 		if uc, ok := langMsgs[useCase]; ok {
 			if err, ok := uc[errorCode]; ok {
-				return ErrorMessage{
+				return exceptions.ErrorMessage{
 					Title:  err["Title"],
 					Detail: err["Detail"],
 				}
@@ -600,14 +597,14 @@ func GetErrorMessage(useCase, errorCode string) ErrorMessage {
 
 	if uc, ok := errorMessages["en-US"][useCase]; ok {
 		if err, ok := uc[errorCode]; ok {
-			return ErrorMessage{
+			return exceptions.ErrorMessage{
 				Title:  err["Title"],
 				Detail: err["Detail"],
 			}
 		}
 	}
 
-	return ErrorMessage{
+	return exceptions.ErrorMessage{
 		Title:  "Internal Error",
 		Detail: "An unexpected error occurred.",
 	}

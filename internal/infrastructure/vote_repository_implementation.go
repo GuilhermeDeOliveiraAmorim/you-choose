@@ -5,8 +5,9 @@ import (
 	"sort"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -38,11 +39,12 @@ func (c *VoteRepository) CreateVote(vote entities.Vote) error {
 		CombinationID: vote.CombinationID,
 		WinnerID:      vote.WinnerID,
 	}).Error; err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "CreateVote",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -64,11 +66,12 @@ func (c *VoteRepository) GetVotesByUserIDAndListID(userID, listID string) ([]ent
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return nil, errors.New("votes not found")
 		}
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetVotesByUserIDAndListID",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -86,11 +89,12 @@ func (c *VoteRepository) VoteAlreadyRegistered(userID, combinationID string) (bo
 
 	result := c.gorm.Model(&models.Votes{}).Where("user_id =? AND combination_id =?", userID, combinationID).Count(&count)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "VoteAlreadyRegistered",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -103,11 +107,12 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 
 	result := c.gorm.Model(&models.Votes{}).Where("combination_id IN (SELECT id FROM combinations WHERE list_id =? AND active =?)", listID, true).Count(&count)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetNumberOfVotesByListID",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return 0, result.Error
 	}
@@ -118,11 +123,12 @@ func (c *VoteRepository) GetNumberOfVotesByListID(listID string) (int, error) {
 func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{}, error) {
 	var combinations []models.Combinations
 	if err := c.gorm.Where("list_id = ?", listID).Find(&combinations).Error; err != nil {
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "RankItemsByVotes",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, err
 	}
@@ -131,11 +137,12 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 	for _, combination := range combinations {
 		var votes []models.Votes
 		if err := c.gorm.Where("combination_id = ?", combination.ID).Find(&votes).Error; err != nil {
-			util.NewLogger(util.Logger{
-				Code:    util.RFC500_CODE,
+			logging.NewLogger(logging.Logger{
+				Code:    exceptions.RFC500_CODE,
 				Message: err.Error(),
 				From:    "RankItemsByVotes",
-				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			return nil, err
 		}
@@ -151,11 +158,12 @@ func (c *VoteRepository) RankItemsByVotes(listID, listType string) ([]interface{
 	case entities.BRAND_TYPE:
 		return c.RankBrandsByVotes(voteCounts)
 	default:
-		util.NewLogger(util.Logger{
-			Code:    util.RFC500_CODE,
+		logging.NewLogger(logging.Logger{
+			Code:    exceptions.RFC500_CODE,
 			Message: "Invalid list type",
 			From:    "RankItemsByVotes",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, errors.New("Invalid list type")
 	}
@@ -167,11 +175,12 @@ func (c *VoteRepository) RankMoviesByVotes(voteCounts map[string]int) ([]interfa
 	for movieID, count := range voteCounts {
 		var movie models.Movies
 		if err := c.gorm.First(&movie, "id = ?", movieID).Error; err != nil {
-			util.NewLogger(util.Logger{
-				Code:    util.RFC500_CODE,
+			logging.NewLogger(logging.Logger{
+				Code:    exceptions.RFC500_CODE,
 				Message: err.Error(),
 				From:    "RankMoviesByVotes",
-				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			return nil, err
 		}
@@ -197,11 +206,12 @@ func (c *VoteRepository) RankBrandsByVotes(voteCounts map[string]int) ([]interfa
 	for brandID, count := range voteCounts {
 		var brand models.Brands
 		if err := c.gorm.First(&brand, "id = ?", brandID).Error; err != nil {
-			util.NewLogger(util.Logger{
-				Code:    util.RFC500_CODE,
+			logging.NewLogger(logging.Logger{
+				Code:    exceptions.RFC500_CODE,
 				Message: err.Error(),
 				From:    "RankBrandsByVotes",
-				Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			return nil, err
 		}

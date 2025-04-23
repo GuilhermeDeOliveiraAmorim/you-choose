@@ -2,8 +2,8 @@ package usecases
 
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type GetListByUserIDInputDTO struct {
@@ -41,81 +41,81 @@ func NewGetListByUserIDUseCase(
 	}
 }
 
-func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetListByUserIDOutputDTO, []util.ProblemDetails) {
+func (u *GetListByUserIDUseCase) Execute(input GetListByUserIDInputDTO) (GetListByUserIDOutputDTO, []exceptions.ProblemDetails) {
 	list, errGetList := u.ListRepository.GetListByID(input.ListID)
 	if errGetList != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
 				Status:   500,
 				Detail:   "An error occurred while retrieving the list from the database.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
 
 	votes, errGetVotesByUserIDAndListID := u.VoteRepository.GetVotesByUserIDAndListID(input.UserID, input.ListID)
 	if errGetVotesByUserIDAndListID != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching votes",
 				Status:   500,
 				Detail:   "An error occurred while retrieving the votes for this user and list.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
 
 	numberOfVotes, errGetNumberOfVotesByListID := u.VoteRepository.GetNumberOfVotesByListID(input.ListID)
 	if errGetNumberOfVotesByListID != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching number of votes",
 				Status:   500,
 				Detail:   "An error occurred while retrieving the total number of votes for this list.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
 
 	rankItems, errGetRankItemsByVotes := u.VoteRepository.RankItemsByVotes(input.ListID, list.ListType)
 	if errGetRankItemsByVotes != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching ranked items",
 				Status:   500,
 				Detail:   "An error occurred while retrieving the ranked items for this list.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
 
 	outputRanking, err := list.FormatRanking(rankItems)
 	if err != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Invalid Input",
 				Title:    "Invalid list type",
 				Status:   400,
 				Detail:   "The list type provided is invalid or cannot be processed.",
-				Instance: util.RFC400,
+				Instance: exceptions.RFC400,
 			},
 		}
 	}
 
 	combinationsAlreadyVoted, errGetCombinationsAlreadyVoted := u.CombinationRepository.GetCombinationsAlreadyVoted(input.ListID)
 	if errGetCombinationsAlreadyVoted != nil {
-		return GetListByUserIDOutputDTO{}, []util.ProblemDetails{
+		return GetListByUserIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching combinations already voted",
 				Status:   500,
 				Detail:   "An error occurred while retrieving the combinations that have already been voted on.",
-				Instance: util.RFC500,
+				Instance: exceptions.RFC500,
 			},
 		}
 	}
