@@ -8,4 +8,5 @@ type UserRepository interface {
 	ThisUserEmailExists(userEmail string) (bool, error)
 	ThisUserNameExists(userName string) (bool, error)
 	GetUserByEmail(email string) (entities.User, error)
+	HashEmailWithHMAC(email string) (string, error)
 }

@@ -1,8 +1,12 @@
 package repositories_implementation
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
@@ -148,4 +152,12 @@ func (u *UserRepository) GetUser(userID string) (entities.User, error) {
 	}
 
 	return user, nil
+}
+
+func (u *UserRepository) HashEmailWithHMAC(email string) (string, error) {
+	key := []byte(config.SECRETS_VAR.JWT_SECRET)
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(email))
+
+	return hex.EncodeToString(h.Sum(nil)), nil
 }

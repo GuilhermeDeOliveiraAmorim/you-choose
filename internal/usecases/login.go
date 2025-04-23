@@ -47,7 +47,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		Message: "starting login process",
 	})
 
-	email, hashEmailWithHMACErr := util.HashEmailWithHMAC(input.Email)
+	email, hashEmailWithHMACErr := c.UserRepository.HashEmailWithHMAC(input.Email)
 	if hashEmailWithHMACErr != nil {
 		logging.NewLogger(logging.Logger{
 			Context: ctx,
@@ -58,7 +58,15 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 			Message: "error hashing email: " + input.Email,
 		})
 
-		return LoginOutputDto{}, hashEmailWithHMACErr
+		return LoginOutputDto{}, []exceptions.ProblemDetails{
+			{
+				Type:     "Internal Server Error",
+				Title:    "Error hashing email",
+				Status:   500,
+				Detail:   "An error occurred while hashing the email with HMAC.",
+				Instance: exceptions.RFC500,
+			},
+		}
 	}
 
 	user, getUserByEmailErr := c.UserRepository.GetUserByEmail(email)

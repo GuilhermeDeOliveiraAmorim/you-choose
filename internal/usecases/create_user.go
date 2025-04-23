@@ -6,7 +6,6 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type CreateUserInputDto struct {
@@ -34,7 +33,7 @@ func NewCreateUserUseCase(
 }
 
 func (c *CreateUserUseCase) Execute(input CreateUserInputDto) (CreateUserOutputDto, []exceptions.ProblemDetails) {
-	email, hashEmailWithHMACErr := util.HashEmailWithHMAC(input.Email)
+	email, hashEmailWithHMACErr := c.UserRepository.HashEmailWithHMAC(input.Email)
 	if hashEmailWithHMACErr != nil {
 		return CreateUserOutputDto{}, []exceptions.ProblemDetails{
 			{
