@@ -5,8 +5,8 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -39,12 +39,12 @@ func (c *BrandRepository) CreateBrand(brand entities.Brand) error {
 		Logo:          brand.Logo,
 		VotesCount:    brand.VotesCount,
 	}).Error; err != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "CreateBrand",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -61,12 +61,12 @@ func (c *BrandRepository) GetBrandByID(brandID string) (entities.Brand, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.Brand{}, errors.New("brand not found")
 		}
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetBrandByID",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return entities.Brand{}, result.Error
 	}
@@ -82,12 +82,12 @@ func (c *BrandRepository) ThisBrandExist(brandName string) (bool, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "ThisBrandExist",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -100,12 +100,12 @@ func (c *BrandRepository) GetBrandsByIDs(brandsIDs []string) ([]entities.Brand, 
 
 	result := c.gorm.Model(&models.Brands{}).Where("id IN?", brandsIDs).Find(&brandsModel)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetBrandsByIDs",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -135,12 +135,12 @@ func (c *BrandRepository) UpdadeBrand(brand entities.Brand) error {
 		UpdatedAt:     brand.UpdatedAt,
 		Logo:          brand.Logo,
 	}).Error; err != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "UpdadeBrand",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -154,12 +154,12 @@ func (c *BrandRepository) GetBrands() ([]entities.Brand, error) {
 
 	result := c.gorm.Model(&models.Brands{}).Where("active =?", true).Find(&brandsModel)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetBrands",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}

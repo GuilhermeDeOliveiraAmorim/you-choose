@@ -1,4 +1,4 @@
-package util
+package logging
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 )
 
 type Layer struct {
-	ENTITY_LAYER                               string
+	ENTITY                                     string
 	FACTORIES                                  string
 	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION string
 	INTERFACE_HANDLERS                         string
@@ -23,8 +23,8 @@ type TypeLog struct {
 }
 
 var LoggerLayers = Layer{
-	ENTITY_LAYER: "ENTITY_LAYER",
-	FACTORIES:    "FACTORIES",
+	ENTITY:    "ENTITY",
+	FACTORIES: "FACTORIES",
 	INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION: "INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION",
 	INTERFACE_HANDLERS:                         "INTERFACE_HANDLERS",
 	USECASES:                                   "USECASES",

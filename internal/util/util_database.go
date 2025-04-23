@@ -9,6 +9,7 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormLogger "gorm.io/gorm/logger"
@@ -66,13 +67,13 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 	case LOCAL:
 		db = NewPostgresDBLocal()
 	default:
-		NewLogger(Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
 			Code:    exceptions.RFC400_CODE,
 			Message: "Invalid SGBD type provided: " + SGBD,
 			From:    "SetupDatabaseConnection",
-			Layer:   LoggerLayers.CONFIGURATION,
-			TypeLog: LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 
 		panic("failed to connect database")
@@ -80,13 +81,13 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		NewLogger(Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
 			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "SetupDatabaseConnection",
-			Layer:   LoggerLayers.CONFIGURATION,
-			TypeLog: LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 
 		panic("failed to connect database")
@@ -96,13 +97,13 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 	sqlDB.SetMaxOpenConns(20)
 	sqlDB.SetConnMaxLifetime(2 * time.Minute)
 
-	NewLogger(Logger{
+	logging.NewLogger(logging.Logger{
 		Context: ctx,
 		Code:    exceptions.RFC200_CODE,
 		Message: "Database connection successfully configured",
 		From:    "SetupDatabaseConnection",
-		Layer:   LoggerLayers.CONFIGURATION,
-		TypeLog: LoggerTypes.INFO,
+		Layer:   logging.LoggerLayers.CONFIGURATION,
+		TypeLog: logging.LoggerTypes.INFO,
 	})
 
 	return db, sqlDB

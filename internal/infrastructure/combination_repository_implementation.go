@@ -3,8 +3,8 @@ package repositories_implementation
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -26,12 +26,12 @@ func (c *CombinationRepository) GetCombinationsByListID(listID string) ([]entiti
 		Where("list_id = ?", listID).
 		Find(&combinationsModel)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetCombinationsByListID",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -54,12 +54,12 @@ func (c *CombinationRepository) GetCombinationsAlreadyVoted(listID string) ([]en
 		Where("list_id =?", listID).
 		Find(&combinationsModel)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetCombinationsAlreadyVoted",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}

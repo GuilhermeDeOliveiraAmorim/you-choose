@@ -7,6 +7,7 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/routes"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
@@ -33,7 +34,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	util.InitLogger()
+	logging.InitLogger()
 	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.PT_BR)
 
 	db, sqlDB := util.SetupDatabaseConnection(ctx, util.LOCAL)

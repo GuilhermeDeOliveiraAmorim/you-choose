@@ -5,8 +5,8 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"gorm.io/gorm"
 )
 
@@ -41,12 +41,12 @@ func (c *MovieRepository) CreateMovie(movie entities.Movie) error {
 		ExternalID:    movie.ExternalID,
 		VotesCount:    movie.VotesCount,
 	}).Error; err != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "CreateMovie",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -63,12 +63,12 @@ func (c *MovieRepository) GetMovieByID(movieID string) (entities.Movie, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return entities.Movie{}, errors.New("movie not found")
 		}
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetMovieByID",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return entities.Movie{}, result.Error
 	}
@@ -84,12 +84,12 @@ func (c *MovieRepository) ThisMovieExist(movieExternalID string) (bool, error) {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, nil
 		}
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "ThisMovieExist",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return false, result.Error
 	}
@@ -102,12 +102,12 @@ func (c *MovieRepository) GetMoviesByIDs(moviesIDs []string) ([]entities.Movie, 
 
 	result := c.gorm.Model(&models.Movies{}).Where("id IN?", moviesIDs).Find(&moviesModel)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetMoviesByIDs",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}
@@ -139,12 +139,12 @@ func (c *MovieRepository) UpdadeMovie(movie entities.Movie) error {
 		UpdatedAt:     movie.UpdatedAt,
 		ExternalID:    movie.ExternalID,
 	}).Error; err != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "UpdadeMovie",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		tx.Rollback()
 		return err
@@ -158,12 +158,12 @@ func (c *MovieRepository) GetMovies() ([]entities.Movie, error) {
 
 	result := c.gorm.Model(&models.Movies{}).Where("active =?", true).Find(&moviesModel)
 	if result.Error != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Code:    exceptions.RFC500_CODE,
 			Message: result.Error.Error(),
 			From:    "GetMovies",
-			Layer:   util.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-			TypeLog: util.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+			TypeLog: logging.LoggerTypes.ERROR,
 		})
 		return nil, result.Error
 	}

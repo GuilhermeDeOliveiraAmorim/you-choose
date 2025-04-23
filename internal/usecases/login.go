@@ -7,6 +7,7 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/dgrijalva/jwt-go"
@@ -37,10 +38,10 @@ func NewLoginUseCase(
 }
 
 func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginOutputDto, []exceptions.ProblemDetails) {
-	util.NewLogger(util.Logger{
+	logging.NewLogger(logging.Logger{
 		Context: ctx,
-		TypeLog: util.LoggerTypes.INFO,
-		Layer:   util.LoggerLayers.USECASES,
+		TypeLog: logging.LoggerTypes.INFO,
+		Layer:   logging.LoggerLayers.USECASES,
 		Code:    exceptions.RFC200_CODE,
 		From:    "LoginUseCase",
 		Message: "starting login process",
@@ -48,10 +49,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 
 	email, hashEmailWithHMACErr := util.HashEmailWithHMAC(input.Email)
 	if hashEmailWithHMACErr != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
-			TypeLog: util.LoggerTypes.ERROR,
-			Layer:   util.LoggerLayers.USECASES,
+			TypeLog: logging.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.USECASES,
 			Code:    exceptions.RFC500_CODE,
 			From:    "LoginUseCase",
 			Message: "error hashing email: " + input.Email,
@@ -63,10 +64,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 	user, getUserByEmailErr := c.UserRepository.GetUserByEmail(email)
 	if getUserByEmailErr != nil {
 		if strings.Compare(getUserByEmailErr.Error(), "user not found") == 0 {
-			util.NewLogger(util.Logger{
+			logging.NewLogger(logging.Logger{
 				Context: ctx,
-				TypeLog: util.LoggerTypes.INFO,
-				Layer:   util.LoggerLayers.USECASES,
+				TypeLog: logging.LoggerTypes.INFO,
+				Layer:   logging.LoggerLayers.USECASES,
 				Code:    exceptions.RFC400_CODE,
 				From:    "LoginUseCase",
 				Message: "user not found: " + input.Email,
@@ -77,10 +78,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 			}
 		}
 
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
-			TypeLog: util.LoggerTypes.ERROR,
-			Layer:   util.LoggerLayers.USECASES,
+			TypeLog: logging.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.USECASES,
 			Code:    exceptions.RFC500_CODE,
 			From:    "LoginUseCase",
 			Message: "error retrieving user: " + getUserByEmailErr.Error(),
@@ -90,10 +91,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 			exceptions.NewProblemDetails(exceptions.InternalServerError, util.GetErrorMessage("LoginUseCase", "ErrorGettingUser")),
 		}
 	} else if !user.Active {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
-			TypeLog: util.LoggerTypes.INFO,
-			Layer:   util.LoggerLayers.USECASES,
+			TypeLog: logging.LoggerTypes.INFO,
+			Layer:   logging.LoggerLayers.USECASES,
 			Code:    exceptions.RFC400_CODE,
 			From:    "LoginUseCase",
 			Message: "user is inactive: " + user.ID,
@@ -105,10 +106,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 	}
 
 	if !user.Login.DecryptPassword(input.Password) {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
-			TypeLog: util.LoggerTypes.INFO,
-			Layer:   util.LoggerLayers.USECASES,
+			TypeLog: logging.LoggerTypes.INFO,
+			Layer:   logging.LoggerLayers.USECASES,
 			Code:    exceptions.RFC400_CODE,
 			From:    "LoginUseCase",
 			Message: "invalid credentials: " + input.Email,
@@ -131,10 +132,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
-		util.NewLogger(util.Logger{
+		logging.NewLogger(logging.Logger{
 			Context: ctx,
-			TypeLog: util.LoggerTypes.ERROR,
-			Layer:   util.LoggerLayers.USECASES,
+			TypeLog: logging.LoggerTypes.ERROR,
+			Layer:   logging.LoggerLayers.USECASES,
 			Code:    exceptions.RFC400_CODE,
 			From:    "LoginUseCase",
 			Message: "error signing JWT: " + err.Error(),
@@ -145,10 +146,10 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		}
 	}
 
-	util.NewLogger(util.Logger{
+	logging.NewLogger(logging.Logger{
 		Context: ctx,
-		TypeLog: util.LoggerTypes.INFO,
-		Layer:   util.LoggerLayers.USECASES,
+		TypeLog: logging.LoggerTypes.INFO,
+		Layer:   logging.LoggerLayers.USECASES,
 		Code:    exceptions.RFC200_CODE,
 		From:    "LoginUseCase",
 		Message: "login successful: " + user.ID,
