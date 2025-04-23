@@ -7,9 +7,9 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -21,13 +21,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 		if authHeader == "" {
 			logging.NewLogger(logging.Logger{
 				Code:    401,
-				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader").Detail,
+				Message: language.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader").Detail,
 				From:    "AuthMiddleware",
 				Layer:   logging.LoggerLayers.MIDDLEWARES,
 				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("AuthMiddleware", "UnauthorizedHeader")),
 			})
 			return
 		}
@@ -36,13 +36,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			logging.NewLogger(logging.Logger{
 				Code:    401,
-				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer").Detail,
+				Message: language.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer").Detail,
 				From:    "AuthMiddleware",
 				Layer:   logging.LoggerLayers.MIDDLEWARES,
 				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("AuthMiddleware", "UnauthorizedBearer")),
 			})
 			return
 		}
@@ -53,13 +53,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				logging.NewLogger(logging.Logger{
 					Code:    401,
-					Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse").Detail,
+					Message: language.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse").Detail,
 					From:    "AuthMiddleware",
 					Layer:   logging.LoggerLayers.MIDDLEWARES,
 					TypeLog: logging.LoggerTypes.ERROR,
 				})
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-					"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse")),
+					"error": exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("AuthMiddleware", "UnauthorizedTokenParse")),
 				})
 				return nil, fmt.Errorf("unexpected signing method")
 			}
@@ -69,13 +69,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 		if err != nil {
 			logging.NewLogger(logging.Logger{
 				Code:    401,
-				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken").Detail,
+				Message: language.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken").Detail,
 				From:    "AuthMiddleware",
 				Layer:   logging.LoggerLayers.MIDDLEWARES,
 				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("AuthMiddleware", "UnauthorizedInvalidToken")),
 			})
 			return
 		}
@@ -83,13 +83,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 		if !token.Valid {
 			logging.NewLogger(logging.Logger{
 				Code:    401,
-				Message: util.GetErrorMessage("AuthMiddleware", "UnauthorizedToken").Detail,
+				Message: language.GetErrorMessage("AuthMiddleware", "UnauthorizedToken").Detail,
 				From:    "AuthMiddleware",
 				Layer:   logging.LoggerLayers.MIDDLEWARES,
 				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("AuthMiddleware", "UnauthorizedToken")),
+				"error": exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("AuthMiddleware", "UnauthorizedToken")),
 			})
 			return
 		}
@@ -101,13 +101,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 		if err != nil {
 			logging.NewLogger(logging.Logger{
 				Code:    401,
-				Message: util.GetErrorMessage("LoginUseCase", "UserNotFound").Detail,
+				Message: language.GetErrorMessage("LoginUseCase", "UserNotFound").Detail,
 				From:    "AuthMiddleware",
 				Layer:   logging.LoggerLayers.MIDDLEWARES,
 				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-				"error": exceptions.NewProblemDetails(exceptions.NotFound, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
+				"error": exceptions.NewProblemDetails(exceptions.NotFound, language.GetErrorMessage("LoginUseCase", "UserNotFound")),
 			})
 			return
 		}
@@ -115,13 +115,13 @@ func NewAuthMiddleware(userRepo repositories.UserRepository) gin.HandlerFunc {
 		if !user.Active {
 			logging.NewLogger(logging.Logger{
 				Code:    401,
-				Message: util.GetErrorMessage("LoginUseCase", "UserNotActive").Detail,
+				Message: language.GetErrorMessage("LoginUseCase", "UserNotActive").Detail,
 				From:    "AuthMiddleware",
 				Layer:   logging.LoggerLayers.MIDDLEWARES,
 				TypeLog: logging.LoggerTypes.ERROR,
 			})
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"error": exceptions.NewProblemDetails(exceptions.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),
+				"error": exceptions.NewProblemDetails(exceptions.Forbidden, language.GetErrorMessage("LoginUseCase", "UserNotActive")),
 			})
 			return
 		}

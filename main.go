@@ -8,10 +8,10 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/routes"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 // @title You Choose API
@@ -36,7 +36,7 @@ func main() {
 	ctx := context.Background()
 
 	logging.InitLogger()
-	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.PT_BR)
+	language.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.PT_BR)
 
 	db, sqlDB := database.SetupDatabaseConnection(ctx, database.LOCAL)
 

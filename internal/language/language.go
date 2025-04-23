@@ -1,4 +1,4 @@
-package util
+package language
 
 import "github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 

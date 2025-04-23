@@ -3,8 +3,8 @@ package usecases
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type Brands struct {
@@ -48,14 +48,14 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddBrandsListUseCase", "ListNotFound"),
+				language.GetErrorMessage("AddBrandsListUseCase", "ListNotFound"),
 			),
 		}
 	} else if list.ListType != entities.BRAND_TYPE {
 		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddBrandsListUseCase", "InvalidListType"),
+				language.GetErrorMessage("AddBrandsListUseCase", "InvalidListType"),
 			),
 		}
 	}
@@ -68,7 +68,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 					problems = append(problems,
 						exceptions.NewProblemDetails(
 							exceptions.BadRequest,
-							util.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList"),
+							language.GetErrorMessage("AddBrandsListUseCase", "BrandAlreadyInList"),
 						),
 					)
 				}
@@ -85,7 +85,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands"),
+				language.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands"),
 			),
 		}
 	}
@@ -125,7 +125,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands"),
+				language.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands"),
 			),
 		}
 	}

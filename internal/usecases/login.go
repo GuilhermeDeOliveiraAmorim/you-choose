@@ -7,9 +7,9 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -82,7 +82,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 			})
 
 			return LoginOutputDto{}, []exceptions.ProblemDetails{
-				exceptions.NewProblemDetails(exceptions.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotFound")),
+				exceptions.NewProblemDetails(exceptions.Forbidden, language.GetErrorMessage("LoginUseCase", "UserNotFound")),
 			}
 		}
 
@@ -96,7 +96,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		})
 
 		return LoginOutputDto{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(exceptions.InternalServerError, util.GetErrorMessage("LoginUseCase", "ErrorGettingUser")),
+			exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("LoginUseCase", "ErrorGettingUser")),
 		}
 	} else if !user.Active {
 		logging.NewLogger(logging.Logger{
@@ -109,7 +109,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		})
 
 		return LoginOutputDto{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(exceptions.Forbidden, util.GetErrorMessage("LoginUseCase", "UserNotActive")),
+			exceptions.NewProblemDetails(exceptions.Forbidden, language.GetErrorMessage("LoginUseCase", "UserNotActive")),
 		}
 	}
 
@@ -124,7 +124,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		})
 
 		return LoginOutputDto{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(exceptions.Unauthorized, util.GetErrorMessage("LoginUseCase", "InvalidCredentials")),
+			exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("LoginUseCase", "InvalidCredentials")),
 		}
 	}
 
@@ -150,7 +150,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		})
 
 		return LoginOutputDto{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(exceptions.InternalServerError, util.GetErrorMessage("LoginUseCase", "JWTError")),
+			exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("LoginUseCase", "JWTError")),
 		}
 	}
 

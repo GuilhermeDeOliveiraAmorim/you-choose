@@ -3,8 +3,8 @@ package usecases
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 )
 
 type Movies struct {
@@ -48,7 +48,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddMoviesListUseCase", "ListNotFound"),
+				language.GetErrorMessage("AddMoviesListUseCase", "ListNotFound"),
 			),
 		}
 	}
@@ -57,7 +57,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.BadRequest,
-				util.GetErrorMessage("AddMoviesListUseCase", "InvalidListType"),
+				language.GetErrorMessage("AddMoviesListUseCase", "InvalidListType"),
 			),
 		}
 	}
@@ -70,7 +70,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 					problems = append(problems,
 						exceptions.NewProblemDetails(
 							exceptions.BadRequest,
-							util.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList"),
+							language.GetErrorMessage("AddMoviesListUseCase", "MovieAlreadyInList"),
 						),
 					)
 				}
@@ -87,7 +87,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies"),
+				language.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies"),
 			),
 		}
 	}
@@ -126,7 +126,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
-				util.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies"),
+				language.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies"),
 			),
 		}
 	}
