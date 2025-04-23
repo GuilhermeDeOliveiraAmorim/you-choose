@@ -42,13 +42,13 @@ func main() {
 
 	models.Migration(ctx, db, sqlDB)
 
-	inputFactory := util.ImputFactory{
+	storageInput := database.StorageInput{
 		DB:         db,
 		BucketName: config.GOOGLE_VAR.IMAGE_BUCKET_NAME,
 	}
 
-	handlerFactory := handlers.NewHandlerFactory(inputFactory)
-	middlewareFactory := factories.NewMiddlewareFactory(inputFactory)
+	handlerFactory := handlers.NewHandlerFactory(storageInput)
+	middlewareFactory := factories.NewMiddlewareFactory(storageInput)
 
 	router := routes.SetupRouter(handlerFactory, middlewareFactory)
 

@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ type HandlerFactory struct {
 	BrandHandler *BrandHandler
 }
 
-func NewHandlerFactory(inputFactory util.ImputFactory) *HandlerFactory {
+func NewHandlerFactory(inputFactory database.StorageInput) *HandlerFactory {
 	movieFactory := factories.NewMovieFactory(inputFactory)
 	listFactory := factories.NewListFactory(inputFactory)
 	voteFactory := factories.NewVoteFactory(inputFactory)

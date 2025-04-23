@@ -21,6 +21,11 @@ const (
 	LOCAL    = "local"
 )
 
+type StorageInput struct {
+	DB         *gorm.DB
+	BucketName string
+}
+
 func NewLoggerGorm() gormLogger.Interface {
 	newLogger := gormLogger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
