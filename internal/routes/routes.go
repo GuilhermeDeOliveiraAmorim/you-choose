@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
 	"github.com/gin-contrib/cors"
@@ -12,7 +13,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRouter(handlerFactory *handlers.HandlerFactory, middlewareFactory *factories.MiddlewareFactory) *gin.Engine {
+func SetupRouter(storageInput database.StorageInput) *gin.Engine {
+	handlerFactory := handlers.NewHandlerFactory(storageInput)
+	middlewareFactory := factories.NewMiddlewareFactory(storageInput)
+
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{

@@ -6,8 +6,6 @@ import (
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/models"
@@ -42,15 +40,10 @@ func main() {
 
 	models.Migration(ctx, db, sqlDB)
 
-	storageInput := database.StorageInput{
+	router := routes.SetupRouter(database.StorageInput{
 		DB:         db,
 		BucketName: config.GOOGLE_VAR.IMAGE_BUCKET_NAME,
-	}
-
-	handlerFactory := handlers.NewHandlerFactory(storageInput)
-	middlewareFactory := factories.NewMiddlewareFactory(storageInput)
-
-	router := routes.SetupRouter(handlerFactory, middlewareFactory)
+	})
 
 	router.Run(":8080")
 }
