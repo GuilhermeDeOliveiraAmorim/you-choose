@@ -5,6 +5,7 @@ import (
 
 	_ "github.com/GuilhermeDeOliveiraAmorim/you-choose/api"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/handlers"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
@@ -37,7 +38,7 @@ func main() {
 	logging.InitLogger()
 	util.SetLanguage(config.AVAILABLE_LANGUAGES_VAR.PT_BR)
 
-	db, sqlDB := util.SetupDatabaseConnection(ctx, util.LOCAL)
+	db, sqlDB := database.SetupDatabaseConnection(ctx, database.LOCAL)
 
 	models.Migration(ctx, db, sqlDB)
 

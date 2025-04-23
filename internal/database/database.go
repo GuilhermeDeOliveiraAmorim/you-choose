@@ -1,4 +1,4 @@
-package util
+package database
 
 import (
 	"context"
@@ -36,21 +36,35 @@ func NewLoggerGorm() gormLogger.Interface {
 	return newLogger
 }
 
-func NewPostgresDB() *gorm.DB {
+func NewPostgresDB(ctx context.Context) *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_CONTAINER.DB_HOST + " user=" + config.DB_POSTGRES_CONTAINER.DB_USER + " password=" + config.DB_POSTGRES_CONTAINER.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_CONTAINER.DB_NAME + " port=" + config.DB_POSTGRES_CONTAINER.DB_PORT + " sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
-		log.Printf("Error connecting to database: %v", err)
+		logging.NewLogger(logging.Logger{
+			Context: ctx,
+			Code:    exceptions.RFC500_CODE,
+			Message: err.Error(),
+			From:    "NewPostgresDB",
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
+		})
 		return nil
 	}
 	return db
 }
 
-func NewPostgresDBLocal() *gorm.DB {
+func NewPostgresDBLocal(ctx context.Context) *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_LOCAL.DB_HOST + " user=" + config.DB_POSTGRES_LOCAL.DB_USER + " password=" + config.DB_POSTGRES_LOCAL.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_LOCAL.DB_NAME + " port=" + config.DB_POSTGRES_LOCAL.DB_PORT + " sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
-		log.Printf("Error connecting to database: %v", err)
+		logging.NewLogger(logging.Logger{
+			Context: ctx,
+			Code:    exceptions.RFC500_CODE,
+			Message: err.Error(),
+			From:    "NewPostgresDBLocal",
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
+		})
 		return nil
 	}
 	return db
@@ -61,11 +75,11 @@ func SetupDatabaseConnection(ctx context.Context, SGBD string) (*gorm.DB, *sql.D
 
 	switch SGBD {
 	case POSTGRES:
-		db = NewPostgresDB()
+		db = NewPostgresDB(ctx)
 	case NEON:
-		db = NeonConnection()
+		db = NeonConnection(ctx)
 	case LOCAL:
-		db = NewPostgresDBLocal()
+		db = NewPostgresDBLocal(ctx)
 	default:
 		logging.NewLogger(logging.Logger{
 			Context: ctx,
@@ -122,24 +136,49 @@ func CheckConnection(db *gorm.DB) bool {
 	return true
 }
 
-func Shutdown(db *gorm.DB) {
+func Shutdown(ctx context.Context, db *gorm.DB) {
 	sqlDB, err := db.DB()
 	if err != nil {
-		log.Printf("Error getting DB instance: %v", err)
+		logging.NewLogger(logging.Logger{
+			Context: ctx,
+			Code:    exceptions.RFC500_CODE,
+			Message: "Error getting DB instance: " + err.Error(),
+			From:    "Shutdown",
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
+		})
+
 		return
 	}
+
 	if err := sqlDB.Close(); err != nil {
-		log.Printf("Error closing database connection: %v", err)
+		logging.NewLogger(logging.Logger{
+			Context: ctx,
+			Code:    exceptions.RFC500_CODE,
+			Message: "Error closing database connection: " + err.Error(),
+			From:    "Shutdown",
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
+		})
 	}
 }
 
-func NeonConnection() *gorm.DB {
+func NeonConnection(ctx context.Context) *gorm.DB {
 	dsn := "postgresql://" + config.DB_NEON.DB_USER + ":" + config.DB_NEON.DB_PASSWORD + "@" + config.DB_NEON.DB_HOST + "/" + config.DB_NEON.DB_NAME + "?sslmode=require"
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: NewLoggerGorm(),
 	})
+
 	if err != nil {
-		log.Printf("Error connecting to database: %v", err)
+		logging.NewLogger(logging.Logger{
+			Context: ctx,
+			Code:    exceptions.RFC500_CODE,
+			Message: err.Error(),
+			From:    "NeonConnection",
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
+		})
 		return nil
 	}
 	return db
