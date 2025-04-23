@@ -5,6 +5,7 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
 
@@ -18,11 +19,6 @@ type List struct {
 type CreateListInputDTO struct {
 	List   List   `json:"list"`
 	UserID string `json:"user_id"`
-}
-
-type CreateListOutputDTO struct {
-	SuccessMessage string `json:"success_message"`
-	ContentMessage string `json:"content_message"`
 }
 
 type CreateListUseCase struct {
@@ -49,9 +45,9 @@ func NewCreateListUseCase(
 	}
 }
 
-func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputDTO, []exceptions.ProblemDetails) {
+func (u *CreateListUseCase) Execute(input CreateListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	if len(input.List.Items) < 2 {
-		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Bad Request",
@@ -64,7 +60,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	listExists, errThisListExist := u.ListRepository.ThisListExistByName(input.List.Name)
 	if errThisListExist != nil && strings.Compare(errThisListExist.Error(), "list not found") > 0 {
-		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing list",
@@ -76,7 +72,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	}
 
 	if listExists {
-		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Conflict",
@@ -89,7 +85,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	list, problems := entities.NewList(input.List.Name, input.List.Cover)
 	if len(problems) > 0 {
-		return CreateListOutputDTO{}, problems
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	isValidType := false
@@ -99,7 +95,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 	}
 
 	if !isValidType {
-		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Bad Request",
@@ -120,7 +116,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 		movies, err = u.MovieRepository.GetMoviesByIDs(input.List.Items)
 		if err != nil {
-			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching movies",
@@ -130,7 +126,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 				},
 			}
 		} else if len(movies) == 0 {
-			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Not Found",
 					Title:    "Movies not found",
@@ -155,7 +151,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 		brands, err = u.BrandRepository.GetBrandsByIDs(input.List.Items)
 		if err != nil {
-			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching brands",
@@ -165,7 +161,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 				},
 			}
 		} else if len(brands) == 0 {
-			return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Not Found",
 					Title:    "Brands not found",
@@ -186,14 +182,14 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	combinations, errGetCombinations := list.GetCombinations(input.List.Items)
 	if len(errGetCombinations) > 0 {
-		return CreateListOutputDTO{}, errGetCombinations
+		return presenters.SuccessOutputDTO{}, errGetCombinations
 	}
 
 	list.AddCombinations(combinations)
 
 	cover, err := u.ImageRepository.SaveImage(input.List.Cover)
 	if err != nil {
-		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error saving cover",
@@ -208,7 +204,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 
 	err = u.ListRepository.CreateList(*list)
 	if err != nil {
-		return CreateListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating list",
@@ -219,7 +215,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (CreateListOutputD
 		}
 	}
 
-	return CreateListOutputDTO{
+	return presenters.SuccessOutputDTO{
 		SuccessMessage: "List created successfully!",
 		ContentMessage: list.Name,
 	}, nil

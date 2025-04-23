@@ -25,7 +25,7 @@ func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
 // @Accept json
 // @Produce json
 // @Param request body usecases.Movie true "Movie data"
-// @Success 201 {object} usecases.CreateMovieOutputDTO
+// @Success 201 {object} presenters.SuccessOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"

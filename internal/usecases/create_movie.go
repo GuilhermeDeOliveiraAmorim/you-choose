@@ -5,6 +5,7 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
 
@@ -18,11 +19,6 @@ type Movie struct {
 type CreateMovieInputDTO struct {
 	UserID string `json:"user_id"`
 	Movie  Movie  `json:"movie"`
-}
-
-type CreateMovieOutputDTO struct {
-	SuccessMessage string `json:"success_message"`
-	ContentMessage string `json:"content_message"`
 }
 
 type CreateMovieUseCase struct {
@@ -43,10 +39,10 @@ func NewCreateMovieUseCase(
 	}
 }
 
-func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutputDTO, []exceptions.ProblemDetails) {
+func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.Movie.ExternalID)
 	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
-		return CreateMovieOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing movie",
@@ -58,7 +54,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 	}
 
 	if movieExists {
-		return CreateMovieOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Conflict",
 				Title:    "Movie already exists",
@@ -76,12 +72,12 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 	)
 
 	if len(problems) > 0 {
-		return CreateMovieOutputDTO{}, problems
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	poster, errSaveImage := u.ImageRepository.SaveImage(input.Movie.Poster)
 	if errSaveImage != nil {
-		return CreateMovieOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error saving poster",
@@ -96,7 +92,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 
 	errCreateMovie := u.MovieRepository.CreateMovie(*movie)
 	if errCreateMovie != nil {
-		return CreateMovieOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating movie",
@@ -107,7 +103,7 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (CreateMovieOutp
 		}
 	}
 
-	return CreateMovieOutputDTO{
+	return presenters.SuccessOutputDTO{
 		SuccessMessage: "Movie created successfully!",
 		ContentMessage: "The movie '" + movie.Name + "' was created successfully.",
 	}, nil

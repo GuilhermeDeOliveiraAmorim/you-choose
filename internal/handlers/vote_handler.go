@@ -25,7 +25,7 @@ func NewVoteHandler(factory *factories.VoteFactory) *VoteHandler {
 // @Accept json
 // @Produce json
 // @Param request body usecases.Vote true "Vote data"
-// @Success 201 {object} usecases.VoteOutputDTO
+// @Success 201 {object} presenters.SuccessOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"

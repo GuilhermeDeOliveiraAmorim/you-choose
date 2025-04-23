@@ -25,7 +25,7 @@ func NewListHandler(factory *factories.ListFactory) *ListHandler {
 // @Accept json
 // @Produce json
 // @Param request body usecases.List true "List data"
-// @Success 201 {object} usecases.CreateListOutputDTO
+// @Success 201 {object} presenters.SuccessOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
@@ -70,7 +70,7 @@ func (h *ListHandler) CreateList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body usecases.Movies true "AddMoviesList data"
-// @Success 201 {object} usecases.AddMoviesListOutputDTO
+// @Success 201 {object} presenters.SuccessOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
@@ -199,7 +199,7 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param request body usecases.Brands true "AddBrandsList data"
-// @Success 201 {object} usecases.AddBrandsListOutputDTO
+// @Success 201 {object} presenters.SuccessOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"

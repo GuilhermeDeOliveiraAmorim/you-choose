@@ -4,6 +4,7 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
 
@@ -15,11 +16,6 @@ type Brands struct {
 type AddBrandsListInputDTO struct {
 	UserID string `json:"user_id"`
 	Brands Brands `json:"add_brands_list"`
-}
-
-type AddBrandsListOutputDTO struct {
-	SuccessMessage string `json:"success_message"`
-	ContentMessage string `json:"content_message"`
 }
 
 type AddBrandsListUseCase struct {
@@ -40,19 +36,19 @@ func NewAddBrandsListUseCase(
 	}
 }
 
-func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsListOutputDTO, []exceptions.ProblemDetails) {
+func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	var problems []exceptions.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Brands.ListID)
 	if errGetList != nil {
-		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddBrandsListUseCase", "ListNotFound"),
 			),
 		}
 	} else if list.ListType != entities.BRAND_TYPE {
-		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddBrandsListUseCase", "InvalidListType"),
@@ -77,12 +73,12 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 	}
 
 	if len(problems) > 0 {
-		return AddBrandsListOutputDTO{}, problems
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	brands, errGetBrandsByID := u.BrandRepository.GetBrandsByIDs(input.Brands.Brands)
 	if errGetBrandsByID != nil {
-		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands"),
@@ -94,7 +90,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 
 	getOldBrandIDs, errGetBrandIDs := list.GetItemIDs()
 	if len(errGetBrandIDs) > 0 {
-		return AddBrandsListOutputDTO{}, errGetBrandIDs
+		return presenters.SuccessOutputDTO{}, errGetBrandIDs
 	}
 
 	brandIDs = append(brandIDs, getOldBrandIDs...)
@@ -108,21 +104,21 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 
 	getNewBrandIDs, errGetBrandIDs := list.GetItemIDs()
 	if len(errGetBrandIDs) > 0 {
-		return AddBrandsListOutputDTO{}, errGetBrandIDs
+		return presenters.SuccessOutputDTO{}, errGetBrandIDs
 	}
 
 	brandIDs = append(brandIDs, getNewBrandIDs...)
 
 	combinations, errGetCombinations := list.GetCombinations(brandIDs)
 	if len(errGetCombinations) > 0 {
-		return AddBrandsListOutputDTO{}, errGetCombinations
+		return presenters.SuccessOutputDTO{}, errGetCombinations
 	}
 
 	list.AddCombinations(combinations)
 
 	errAddBrands := u.ListRepository.AddBrands(list)
 	if errAddBrands != nil {
-		return AddBrandsListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands"),
@@ -130,7 +126,7 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (AddBrandsLi
 		}
 	}
 
-	return AddBrandsListOutputDTO{
+	return presenters.SuccessOutputDTO{
 		SuccessMessage: "Brands added successfully.",
 		ContentMessage: "The brands were successfully added to the list.",
 	}, nil

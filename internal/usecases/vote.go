@@ -3,6 +3,7 @@ package usecases
 import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
 
@@ -15,11 +16,6 @@ type Vote struct {
 type VoteInputDTO struct {
 	UserID string `json:"user_id"`
 	Vote   Vote   `json:"vote"`
-}
-
-type VoteOutputDTO struct {
-	SuccessMessage string `json:"success_message"`
-	ContentMessage string `json:"content_message"`
 }
 
 type VoteUseCase struct {
@@ -46,10 +42,10 @@ func NewVoteUseCase(
 	}
 }
 
-func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.ProblemDetails) {
+func (u *VoteUseCase) Execute(input VoteInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	list, errGetListByID := u.ListRepository.GetListByID(input.Vote.ListID)
 	if errGetListByID != nil {
-		return VoteOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching list",
@@ -62,7 +58,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 
 	voteAlreadyRegistered, errVoteAlreadyRegistered := u.VoteRepository.VoteAlreadyRegistered(input.UserID, input.Vote.CombinationID)
 	if (errVoteAlreadyRegistered != nil) || voteAlreadyRegistered {
-		return VoteOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Conflict",
@@ -75,14 +71,14 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 
 	newVote, newVoteErr := entities.NewVote(input.UserID, input.Vote.CombinationID, input.Vote.WinnerID)
 	if newVoteErr != nil {
-		return VoteOutputDTO{}, newVoteErr
+		return presenters.SuccessOutputDTO{}, newVoteErr
 	}
 
 	switch list.ListType {
 	case entities.MOVIE_TYPE:
 		movie, errGetMovie := u.MovieRepository.GetMovieByID(input.Vote.WinnerID)
 		if errGetMovie != nil {
-			return VoteOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching winner movie",
@@ -97,7 +93,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 
 		errUpdateWinner := u.MovieRepository.UpdadeMovie(movie)
 		if errUpdateWinner != nil {
-			return VoteOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error updating winner movie",
@@ -111,7 +107,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 	case entities.BRAND_TYPE:
 		brand, errGetBrand := u.BrandRepository.GetBrandByID(input.Vote.WinnerID)
 		if errGetBrand != nil {
-			return VoteOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error fetching winner brand",
@@ -126,7 +122,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 
 		errUpdateWinner := u.BrandRepository.UpdadeBrand(brand)
 		if errUpdateWinner != nil {
-			return VoteOutputDTO{}, []exceptions.ProblemDetails{
+			return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 				{
 					Type:     "Internal Server Error",
 					Title:    "Error updating winner brand",
@@ -140,7 +136,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 
 	errVote := u.VoteRepository.CreateVote(*newVote)
 	if errVote != nil {
-		return VoteOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating vote",
@@ -151,7 +147,7 @@ func (u *VoteUseCase) Execute(input VoteInputDTO) (VoteOutputDTO, []exceptions.P
 		}
 	}
 
-	return VoteOutputDTO{
+	return presenters.SuccessOutputDTO{
 		SuccessMessage: "Vote created successfully!",
 		ContentMessage: input.Vote.ListID,
 	}, nil

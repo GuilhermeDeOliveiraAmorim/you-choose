@@ -4,6 +4,7 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
 
@@ -15,11 +16,6 @@ type Movies struct {
 type AddMoviesListInputDTO struct {
 	UserID string `json:"user_id"`
 	Movies Movies `json:"add_movies_list"`
-}
-
-type AddMoviesListOutputDTO struct {
-	SuccessMessage string `json:"success_message"`
-	ContentMessage string `json:"content_message"`
 }
 
 type AddMoviesListUseCase struct {
@@ -40,12 +36,12 @@ func NewAddMoviesListUseCase(
 	}
 }
 
-func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesListOutputDTO, []exceptions.ProblemDetails) {
+func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	var problems []exceptions.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)
 	if errGetList != nil {
-		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddMoviesListUseCase", "ListNotFound"),
@@ -54,7 +50,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	}
 
 	if list.ListType != entities.MOVIE_TYPE {
-		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.BadRequest,
 				language.GetErrorMessage("AddMoviesListUseCase", "InvalidListType"),
@@ -79,12 +75,12 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 	}
 
 	if len(problems) > 0 {
-		return AddMoviesListOutputDTO{}, problems
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies.Movies)
 	if errGetMoviesByID != nil {
-		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies"),
@@ -96,7 +92,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	getOldMovieIDs, errGetMovieIDs := list.GetItemIDs()
 	if len(errGetMovieIDs) > 0 {
-		return AddMoviesListOutputDTO{}, errGetMovieIDs
+		return presenters.SuccessOutputDTO{}, errGetMovieIDs
 	}
 	movieIDs = append(movieIDs, getOldMovieIDs...)
 
@@ -109,21 +105,21 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 
 	getNewMovieIDs, errGetMovieIDs := list.GetItemIDs()
 	if len(errGetMovieIDs) > 0 {
-		return AddMoviesListOutputDTO{}, errGetMovieIDs
+		return presenters.SuccessOutputDTO{}, errGetMovieIDs
 	}
 
 	movieIDs = append(movieIDs, getNewMovieIDs...)
 
 	combinations, errGetCombinations := list.GetCombinations(movieIDs)
 	if len(errGetCombinations) > 0 {
-		return AddMoviesListOutputDTO{}, errGetCombinations
+		return presenters.SuccessOutputDTO{}, errGetCombinations
 	}
 
 	list.AddCombinations(combinations)
 
 	errAddMovies := u.ListRepository.AddMovies(list)
 	if errAddMovies != nil {
-		return AddMoviesListOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(
 				exceptions.InternalServerError,
 				language.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies"),
@@ -131,7 +127,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (AddMoviesLi
 		}
 	}
 
-	return AddMoviesListOutputDTO{
+	return presenters.SuccessOutputDTO{
 		SuccessMessage: "Movies added successfully.",
 		ContentMessage: "The movies were successfully added to the list.",
 	}, nil

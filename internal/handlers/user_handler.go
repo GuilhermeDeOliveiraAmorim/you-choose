@@ -25,7 +25,7 @@ func NewUserHandler(factory *factories.UserFactory) *UserHandler {
 // @Accept json
 // @Produce json
 // @Param CreateUserRequest body usecases.CreateUserInputDto true "User data"
-// @Success 201 {object} usecases.CreateUserOutputDto
+// @Success 201 {object} presenters.SuccessOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Router /signup [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {

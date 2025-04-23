@@ -5,6 +5,7 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
 
@@ -16,11 +17,6 @@ type Brand struct {
 type CreateBrandInputDTO struct {
 	UserID string `json:"user_id"`
 	Brand  Brand  `json:"brand"`
-}
-
-type CreateBrandOutputDTO struct {
-	SuccessMessage string `json:"success_message"`
-	ContentMessage string `json:"content_message"`
 }
 
 type CreateBrandUseCase struct {
@@ -41,10 +37,10 @@ func NewCreateBrandUseCase(
 	}
 }
 
-func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutputDTO, []exceptions.ProblemDetails) {
+func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	brandExists, errThisBrandExist := u.BrandRepository.ThisBrandExist(input.Brand.Name)
 	if errThisBrandExist != nil && strings.Compare(errThisBrandExist.Error(), "brand not found") > 0 {
-		return CreateBrandOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error fetching existing brand",
@@ -56,7 +52,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 	}
 
 	if brandExists {
-		return CreateBrandOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Validation Error",
 				Title:    "Conflict",
@@ -73,12 +69,12 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 	)
 
 	if len(problems) > 0 {
-		return CreateBrandOutputDTO{}, problems
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	logo, errSaveImage := u.ImageRepository.SaveImage(input.Brand.Logo)
 	if errSaveImage != nil {
-		return CreateBrandOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error saving logo",
@@ -93,7 +89,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 
 	errCreateBrand := u.BrandRepository.CreateBrand(*brand)
 	if errCreateBrand != nil {
-		return CreateBrandOutputDTO{}, []exceptions.ProblemDetails{
+		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",
 				Title:    "Error creating brand",
@@ -104,7 +100,7 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (CreateBrandOutp
 		}
 	}
 
-	return CreateBrandOutputDTO{
+	return presenters.SuccessOutputDTO{
 		SuccessMessage: "Brand created successfully!",
 		ContentMessage: brand.Name,
 	}, nil
