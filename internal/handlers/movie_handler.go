@@ -6,7 +6,6 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,7 +32,7 @@ func NewMovieHandler(factory *factories.MovieFactory) *MovieHandler {
 // @Security BearerAuth
 // @Router /items/movies [post]
 func (h *MovieHandler) CreateMovie(c *gin.Context) {
-	userID, err := util.GetUserID(c)
+	userID, err := GetAuthenticatedUserID(c)
 	if err != nil {
 		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
 		return
@@ -58,7 +57,7 @@ func (h *MovieHandler) CreateMovie(c *gin.Context) {
 
 	output, errs := h.movieFactory.CreateMovie.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 

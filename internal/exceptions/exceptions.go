@@ -1,5 +1,7 @@
 package exceptions
 
+import "github.com/gin-gonic/gin"
+
 const (
 	RFC200 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.1"
 	RFC204 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.5"
@@ -79,4 +81,13 @@ func NewProblemDetails(errorType ErrorType, msg ErrorMessage) ProblemDetails {
 		Detail:   msg.Detail,
 		Instance: meta.Instance,
 	}
+}
+
+func HandleErrors(c *gin.Context, errs []ProblemDetails) {
+	if len(errs) == 0 {
+		return
+	}
+
+	status := errs[0].Status
+	c.JSON(status, gin.H{"errors": errs})
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -44,7 +43,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	output, errs := h.userFactory.CreateUser.Execute(input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
@@ -75,7 +74,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	output, errs := h.userFactory.Login.Execute(c.Request.Context(), input)
 	if len(errs) > 0 {
-		util.HandleErrors(c, errs)
+		exceptions.HandleErrors(c, errs)
 		return
 	}
 
