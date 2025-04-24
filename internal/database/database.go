@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"log"
-	"os"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/config"
@@ -12,7 +11,7 @@ import (
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	gormLogger "gorm.io/gorm/logger"
+	"gorm.io/gorm/logger"
 )
 
 const (
@@ -26,24 +25,23 @@ type StorageInput struct {
 	BucketName string
 }
 
-func NewLoggerGorm() gormLogger.Interface {
-	newLogger := gormLogger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags),
-		gormLogger.Config{
-			LogLevel:                  gormLogger.Info,
+func NewPostgresDB(ctx context.Context) *gorm.DB {
+	newLogger := logger.New(
+		log.New(nil, "", 0),
+		logger.Config{
+			SlowThreshold:             time.Second,
+			LogLevel:                  logger.Silent,
 			IgnoreRecordNotFoundError: true,
-			SlowThreshold:             200 * time.Millisecond,
-			ParameterizedQueries:      true,
-			Colorful:                  true,
+			Colorful:                  false,
 		},
 	)
 
-	return newLogger
-}
-
-func NewPostgresDB(ctx context.Context) *gorm.DB {
 	dsn := "host=" + config.DB_POSTGRES_CONTAINER.DB_HOST + " user=" + config.DB_POSTGRES_CONTAINER.DB_USER + " password=" + config.DB_POSTGRES_CONTAINER.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_CONTAINER.DB_NAME + " port=" + config.DB_POSTGRES_CONTAINER.DB_PORT + " sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn))
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
+
 	if err != nil {
 		logging.NewLogger(logging.Logger{
 			Context: ctx,
@@ -59,14 +57,59 @@ func NewPostgresDB(ctx context.Context) *gorm.DB {
 }
 
 func NewPostgresDBLocal(ctx context.Context) *gorm.DB {
+	newLogger := logger.New(
+		log.New(nil, "", 0),
+		logger.Config{
+			SlowThreshold:             time.Second,
+			LogLevel:                  logger.Silent,
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  false,
+		},
+	)
+
 	dsn := "host=" + config.DB_POSTGRES_LOCAL.DB_HOST + " user=" + config.DB_POSTGRES_LOCAL.DB_USER + " password=" + config.DB_POSTGRES_LOCAL.DB_PASSWORD + " dbname=" + config.DB_POSTGRES_LOCAL.DB_NAME + " port=" + config.DB_POSTGRES_LOCAL.DB_PORT + " sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn))
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
+
 	if err != nil {
 		logging.NewLogger(logging.Logger{
 			Context: ctx,
 			Code:    exceptions.RFC500_CODE,
 			Message: err.Error(),
 			From:    "NewPostgresDBLocal",
+			Layer:   logging.LoggerLayers.CONFIGURATION,
+			TypeLog: logging.LoggerTypes.ERROR,
+		})
+		return nil
+	}
+	return db
+}
+
+func NeonConnection(ctx context.Context) *gorm.DB {
+	newLogger := logger.New(
+		log.New(nil, "", 0),
+		logger.Config{
+			SlowThreshold:             time.Second,
+			LogLevel:                  logger.Silent,
+			IgnoreRecordNotFoundError: true,
+			Colorful:                  false,
+		},
+	)
+
+	dsn := "postgresql://" + config.DB_NEON.DB_USER + ":" + config.DB_NEON.DB_PASSWORD + "@" + config.DB_NEON.DB_HOST + "/" + config.DB_NEON.DB_NAME + "?sslmode=require"
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: newLogger,
+	})
+
+	if err != nil {
+		logging.NewLogger(logging.Logger{
+			Context: ctx,
+			Code:    exceptions.RFC500_CODE,
+			Message: err.Error(),
+			From:    "NeonConnection",
 			Layer:   logging.LoggerLayers.CONFIGURATION,
 			TypeLog: logging.LoggerTypes.ERROR,
 		})
@@ -166,25 +209,4 @@ func Shutdown(ctx context.Context, db *gorm.DB) {
 			TypeLog: logging.LoggerTypes.ERROR,
 		})
 	}
-}
-
-func NeonConnection(ctx context.Context) *gorm.DB {
-	dsn := "postgresql://" + config.DB_NEON.DB_USER + ":" + config.DB_NEON.DB_PASSWORD + "@" + config.DB_NEON.DB_HOST + "/" + config.DB_NEON.DB_NAME + "?sslmode=require"
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: NewLoggerGorm(),
-	})
-
-	if err != nil {
-		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			Code:    exceptions.RFC500_CODE,
-			Message: err.Error(),
-			From:    "NeonConnection",
-			Layer:   logging.LoggerLayers.CONFIGURATION,
-			TypeLog: logging.LoggerTypes.ERROR,
-		})
-		return nil
-	}
-	return db
 }

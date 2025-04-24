@@ -30,6 +30,15 @@ func NewCreateUserUseCase(
 }
 
 func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDto) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+	logging.NewLogger(logging.Logger{
+		Context: ctx,
+		TypeLog: logging.LoggerTypes.INFO,
+		Layer:   logging.LoggerLayers.USECASES,
+		Code:    exceptions.RFC200_CODE,
+		From:    "CreateUserUseCase",
+		Message: "starting create user process",
+	})
+
 	email, hashEmailWithHMACErr := c.UserRepository.HashEmailWithHMAC(input.Email)
 	if hashEmailWithHMACErr != nil {
 		logging.NewLogger(logging.Logger{
