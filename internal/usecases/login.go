@@ -59,13 +59,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		})
 
 		return LoginOutputDto{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error hashing email",
-				Status:   500,
-				Detail:   "An error occurred while hashing the email with HMAC.",
-				Instance: exceptions.RFC500,
-			},
+			exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("LoginUseCase", "HMAC")),
 		}
 	}
 
@@ -97,19 +91,6 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 
 		return LoginOutputDto{}, []exceptions.ProblemDetails{
 			exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("LoginUseCase", "ErrorGettingUser")),
-		}
-	} else if !user.Active {
-		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.INFO,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC400_CODE,
-			From:    "LoginUseCase",
-			Message: "user is inactive: " + user.ID,
-		})
-
-		return LoginOutputDto{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(exceptions.Forbidden, language.GetErrorMessage("LoginUseCase", "UserNotActive")),
 		}
 	}
 

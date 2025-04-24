@@ -24,6 +24,10 @@ var (
 					"Title":  "JWT Error",
 					"Detail": "An error occurred while generating the JWT token.",
 				},
+				"HMAC": {
+					"Title":  "HMAC Error",
+					"Detail": "An error occurred while hashing the email with HMAC.",
+				},
 			},
 			"AddBrandsListUseCase": {
 				"UserNotFound": {
@@ -133,6 +137,10 @@ var (
 				"JWTError": {
 					"Title":  "Erro JWT",
 					"Detail": "Ocorreu um erro ao gerar o token JWT.",
+				},
+				"HMAC": {
+					"Title":  "Erro HMAC",
+					"Detail": "Ocorreu um erro ao fazer o hash do e-mail com HMAC.",
 				},
 			},
 			"AddBrandsListUseCase": {
