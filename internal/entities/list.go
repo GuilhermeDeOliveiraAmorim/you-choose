@@ -92,7 +92,7 @@ func (l *List) GetCombinations(itemIDs []string) []Combination {
 	return combinations
 }
 
-func (l *List) GetItemIDs() ([]string, []exceptions.ProblemDetails) {
+func (l *List) GetItemIDs() []string {
 	itemIDs := []string{}
 
 	for _, item := range l.Items {
@@ -102,7 +102,7 @@ func (l *List) GetItemIDs() ([]string, []exceptions.ProblemDetails) {
 		}
 	}
 
-	return itemIDs, nil
+	return itemIDs
 }
 
 func (l *List) AddCover(cover string) {

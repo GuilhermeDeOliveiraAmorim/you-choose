@@ -100,7 +100,7 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 		Movies: movies,
 	}
 
-	output, errs := h.listFactory.AddMoviesList.Execute(input)
+	output, errs := h.listFactory.AddMoviesList.Execute(c.Request.Context(), input)
 	if len(errs) > 0 {
 		exceptions.HandleErrors(c, errs)
 		return

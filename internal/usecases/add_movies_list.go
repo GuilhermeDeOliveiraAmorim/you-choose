@@ -1,9 +1,12 @@
 package usecases
 
 import (
+	"context"
+
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
@@ -36,26 +39,42 @@ func NewAddMoviesListUseCase(
 	}
 }
 
-func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+func (u *AddMoviesListUseCase) Execute(ctx context.Context, input AddMoviesListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	var problems []exceptions.ProblemDetails
 
 	list, errGetList := u.ListRepository.GetListByID(input.Movies.ListID)
 	if errGetList != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddMoviesListUseCase", "ListNotFound"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddMoviesListUseCase", "ListNotFound")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddMoviesListUseCase",
+			Message:  "error getting list by ID",
+			Error:    errGetList,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	if list.ListType != entities.MOVIE_TYPE {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.BadRequest,
-				language.GetErrorMessage("AddMoviesListUseCase", "InvalidListType"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.BadRequest, language.GetErrorMessage("AddMoviesListUseCase", "InvalidListType")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC400_CODE,
+			From:     "AddMoviesListUseCase",
+			Message:  "error adding movies to list",
+			Error:    errGetList,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	for _, movieID := range input.Movies.Movies {
@@ -75,25 +94,42 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (presenters.
 	}
 
 	if len(problems) > 0 {
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC400_CODE,
+			From:     "AddMoviesListUseCase",
+			Message:  "error adding movies to list",
+			Error:    errGetList,
+			Problems: problems,
+		})
+
 		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	movies, errGetMoviesByID := u.MovieRepository.GetMoviesByIDs(input.Movies.Movies)
 	if errGetMoviesByID != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddMoviesListUseCase", "ErrorFetchingMovies")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddMoviesListUseCase",
+			Message:  "error getting movies by IDs",
+			Error:    errGetMoviesByID,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	movieIDs := []string{}
 
-	getOldMovieIDs, errGetMovieIDs := list.GetItemIDs()
-	if len(errGetMovieIDs) > 0 {
-		return presenters.SuccessOutputDTO{}, errGetMovieIDs
-	}
+	getOldMovieIDs := list.GetItemIDs()
+
 	movieIDs = append(movieIDs, getOldMovieIDs...)
 
 	var items []interface{}
@@ -103,10 +139,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (presenters.
 
 	list.AddItems(items)
 
-	getNewMovieIDs, errGetMovieIDs := list.GetItemIDs()
-	if len(errGetMovieIDs) > 0 {
-		return presenters.SuccessOutputDTO{}, errGetMovieIDs
-	}
+	getNewMovieIDs := list.GetItemIDs()
 
 	movieIDs = append(movieIDs, getNewMovieIDs...)
 
@@ -116,12 +149,20 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (presenters.
 
 	errAddMovies := u.ListRepository.AddMovies(list)
 	if errAddMovies != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddMoviesListUseCase", "ErrorAddingMovies")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddMoviesListUseCase",
+			Message:  "error adding movies to list",
+			Error:    errAddMovies,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	return presenters.SuccessOutputDTO{

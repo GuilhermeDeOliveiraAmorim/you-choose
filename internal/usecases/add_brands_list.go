@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"context"
-	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
@@ -136,21 +135,7 @@ func (u *AddBrandsListUseCase) Execute(ctx context.Context, input AddBrandsListI
 
 	brandIDs := []string{}
 
-	getOldBrandIDs, errGetBrandIDs := list.GetItemIDs()
-	if len(errGetBrandIDs) > 0 {
-		logging.NewLogger(logging.Logger{
-			Context:  ctx,
-			TypeLog:  logging.LoggerTypes.ERROR,
-			Layer:    logging.LoggerLayers.USECASES,
-			Code:     exceptions.RFC500_CODE,
-			From:     "AddBrandsListUseCase",
-			Message:  "error getting old brand IDs from list: " + input.Brands.ListID,
-			Error:    errors.New("error getting old brand IDs from list"),
-			Problems: errGetBrandIDs,
-		})
-
-		return presenters.SuccessOutputDTO{}, errGetBrandIDs
-	}
+	getOldBrandIDs := list.GetItemIDs()
 
 	brandIDs = append(brandIDs, getOldBrandIDs...)
 
@@ -161,21 +146,7 @@ func (u *AddBrandsListUseCase) Execute(ctx context.Context, input AddBrandsListI
 
 	list.AddItems(items)
 
-	getNewBrandIDs, errGetBrandIDs := list.GetItemIDs()
-	if len(errGetBrandIDs) > 0 {
-		logging.NewLogger(logging.Logger{
-			Context:  ctx,
-			TypeLog:  logging.LoggerTypes.ERROR,
-			Layer:    logging.LoggerLayers.USECASES,
-			Code:     exceptions.RFC500_CODE,
-			From:     "AddBrandsListUseCase",
-			Message:  "error getting new brand IDs from list: " + input.Brands.ListID,
-			Error:    errors.New("error getting new brand IDs from list"),
-			Problems: errGetBrandIDs,
-		})
-
-		return presenters.SuccessOutputDTO{}, errGetBrandIDs
-	}
+	getNewBrandIDs := list.GetItemIDs()
 
 	brandIDs = append(brandIDs, getNewBrandIDs...)
 
