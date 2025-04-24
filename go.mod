@@ -96,6 +96,7 @@ require (
 	github.com/gin-contrib/cors v1.7.2
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/lmittmann/tint v1.0.7
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	golang.org/x/text v0.21.0 // indirect

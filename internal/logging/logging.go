@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/lmittmann/tint"
 )
 
 type Layer struct {
@@ -54,7 +55,10 @@ type Logger struct {
 var logger *slog.Logger
 
 func InitLogger() {
-	logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger = slog.New(tint.NewHandler(os.Stdout, &tint.Options{
+		Level:      slog.LevelDebug, // ou slog.LevelInfo
+		TimeFormat: "2006-01-02 15:04:05",
+	}))
 }
 
 func NewLogger(log Logger) {
