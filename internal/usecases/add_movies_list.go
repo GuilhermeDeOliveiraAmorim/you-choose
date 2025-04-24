@@ -110,10 +110,7 @@ func (u *AddMoviesListUseCase) Execute(input AddMoviesListInputDTO) (presenters.
 
 	movieIDs = append(movieIDs, getNewMovieIDs...)
 
-	combinations, errGetCombinations := list.GetCombinations(movieIDs)
-	if len(errGetCombinations) > 0 {
-		return presenters.SuccessOutputDTO{}, errGetCombinations
-	}
+	combinations := list.GetCombinations(movieIDs)
 
 	list.AddCombinations(combinations)
 

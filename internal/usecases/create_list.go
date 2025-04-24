@@ -180,10 +180,7 @@ func (u *CreateListUseCase) Execute(input CreateListInputDTO) (presenters.Succes
 		list.AddItems(items)
 	}
 
-	combinations, errGetCombinations := list.GetCombinations(input.List.Items)
-	if len(errGetCombinations) > 0 {
-		return presenters.SuccessOutputDTO{}, errGetCombinations
-	}
+	combinations := list.GetCombinations(input.List.Items)
 
 	list.AddCombinations(combinations)
 

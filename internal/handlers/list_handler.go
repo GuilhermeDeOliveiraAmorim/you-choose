@@ -229,7 +229,7 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 		Brands: brands,
 	}
 
-	output, errs := h.listFactory.AddBrandsList.Execute(input)
+	output, errs := h.listFactory.AddBrandsList.Execute(c.Request.Context(), input)
 	if len(errs) > 0 {
 		exceptions.HandleErrors(c, errs)
 		return
