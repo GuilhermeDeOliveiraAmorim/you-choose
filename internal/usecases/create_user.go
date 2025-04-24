@@ -2,10 +2,12 @@ package usecases
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
@@ -30,6 +32,8 @@ func NewCreateUserUseCase(
 }
 
 func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDto) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+	problems := []exceptions.ProblemDetails{}
+
 	logging.NewLogger(logging.Logger{
 		Context: ctx,
 		TypeLog: logging.LoggerTypes.INFO,
@@ -41,111 +45,86 @@ func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDt
 
 	email, hashEmailWithHMACErr := c.UserRepository.HashEmailWithHMAC(input.Email)
 	if hashEmailWithHMACErr != nil {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "EmailHMACError")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC500_CODE,
-			From:    "CreateUserUseCase",
-			Message: "error hashing email: " + input.Email,
-			Error:   hashEmailWithHMACErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "error hashing email: " + input.Email,
+			Error:    hashEmailWithHMACErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error hashing email",
-				Status:   500,
-				Detail:   "An error occurred while hashing the email with HMAC.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	userEmailExists, userEmailExistsErr := c.UserRepository.ThisUserEmailExists(email)
 	if userEmailExists {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.Conflict, language.GetErrorMessage("CreateUserUseCase", "EmailAlreadyExists")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC409_CODE,
-			From:    "CreateUserUseCase",
-			Message: "email already exists: " + input.Email,
-			Error:   userEmailExistsErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC409_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "email already exists: " + input.Email,
+			Error:    userEmailExistsErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Conflict",
-				Title:    "Email already exists",
-				Status:   409,
-				Detail:   "The provided email is already registered.",
-				Instance: exceptions.RFC409,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	} else if strings.Compare(userEmailExistsErr.Error(), "email not found") != 0 {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "EmailCheckError")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC500_CODE,
-			From:    "CreateUserUseCase",
-			Message: "error checking email existence: " + input.Email,
-			Error:   userEmailExistsErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "error checking email existence: " + input.Email,
+			Error:    userEmailExistsErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error checking user email existence",
-				Status:   500,
-				Detail:   "An error occurred while checking if the email already exists.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	userNameExists, userNameExistsErr := c.UserRepository.ThisUserNameExists(input.Name)
 	if userNameExists {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.Conflict, language.GetErrorMessage("CreateUserUseCase", "UsernameAlreadyExists")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC409_CODE,
-			From:    "CreateUserUseCase",
-			Message: "username already exists: " + input.Name,
-			Error:   userNameExistsErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC409_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "username already exists: " + input.Name,
+			Error:    userNameExistsErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Conflict",
-				Title:    "Username already exists",
-				Status:   409,
-				Detail:   "The provided username is already taken.",
-				Instance: exceptions.RFC409,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	} else if strings.Compare(userNameExistsErr.Error(), "username not found") != 0 {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "UsernameCheckError")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC500_CODE,
-			From:    "CreateUserUseCase",
-			Message: "error checking username existence: " + input.Name,
-			Error:   userNameExistsErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "error checking username existence: " + input.Name,
+			Error:    userNameExistsErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error checking user name existence",
-				Status:   500,
-				Detail:   "An error occurred while checking if the username already exists.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	newLogin, newLoginErr := entities.NewLogin(input.Email, input.Password)
@@ -154,9 +133,10 @@ func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDt
 			Context:  ctx,
 			TypeLog:  logging.LoggerTypes.ERROR,
 			Layer:    logging.LoggerLayers.USECASES,
-			Code:     exceptions.RFC500_CODE,
+			Code:     exceptions.RFC400_CODE,
 			From:     "CreateUserUseCase",
 			Message:  "error creating new login: " + input.Email,
+			Error:    errors.New("error creating new login"),
 			Problems: newLoginErr,
 		})
 
@@ -165,48 +145,38 @@ func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDt
 
 	encryptEmailErr := newLogin.EncryptEmail()
 	if encryptEmailErr != nil {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "EncryptEmailError")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC500_CODE,
-			From:    "CreateUserUseCase",
-			Message: "error encrypting email: " + input.Email,
-			Error:   encryptEmailErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "error encrypting email: " + input.Email,
+			Error:    encryptEmailErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error encrypting email",
-				Status:   500,
-				Detail:   "An error occurred while encrypting the email address.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	encryptPasswordErr := newLogin.EncryptPassword()
 	if encryptPasswordErr != nil {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "EncryptPasswordError")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC500_CODE,
-			From:    "CreateUserUseCase",
-			Message: "error encrypting password: " + input.Password,
-			Error:   encryptPasswordErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "error encrypting password: " + input.Password,
+			Error:    encryptPasswordErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error encrypting password",
-				Status:   500,
-				Detail:   "An error occurred while encrypting the password.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	newUser, newUserErr := entities.NewUser(input.Name, *newLogin)
@@ -218,41 +188,29 @@ func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDt
 			Code:     exceptions.RFC400_CODE,
 			From:     "CreateUserUseCase",
 			Message:  "error creating new user: " + input.Name,
+			Error:    errors.New("error creating new user"),
 			Problems: newUserErr,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Bad Request",
-				Title:    "Error creating user",
-				Status:   400,
-				Detail:   "An error occurred while creating the new user.",
-				Instance: exceptions.RFC400,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, newUserErr
 	}
 
 	createUserErr := c.UserRepository.CreateUser(*newUser)
 	if createUserErr != nil {
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "SaveUserError")))
+
 		logging.NewLogger(logging.Logger{
-			Context: ctx,
-			TypeLog: logging.LoggerTypes.ERROR,
-			Layer:   logging.LoggerLayers.USECASES,
-			Code:    exceptions.RFC500_CODE,
-			From:    "CreateUserUseCase",
-			Message: "error creating new user in database: " + input.Name,
-			Error:   createUserErr,
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateUserUseCase",
+			Message:  "error creating new user in database: " + input.Name,
+			Error:    createUserErr,
+			Problems: problems,
 		})
 
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error creating new user",
-				Status:   500,
-				Detail:   "An error occurred while saving the new user to the database.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	logging.NewLogger(logging.Logger{

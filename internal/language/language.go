@@ -29,6 +29,48 @@ var (
 					"Detail": "An error occurred while hashing the email with HMAC.",
 				},
 			},
+			"CreateUserUseCase": {
+				"EmailHMACError": {
+					"Title":  "Error hashing email",
+					"Detail": "An error occurred while hashing the email with HMAC.",
+				},
+				"EmailAlreadyExists": {
+					"Title":  "Email already exists",
+					"Detail": "The provided email is already registered.",
+				},
+				"EmailCheckError": {
+					"Title":  "Error checking user email existence",
+					"Detail": "An error occurred while checking if the email already exists.",
+				},
+				"UsernameAlreadyExists": {
+					"Title":  "Username already exists",
+					"Detail": "The provided username is already taken.",
+				},
+				"UsernameCheckError": {
+					"Title":  "Error checking user name existence",
+					"Detail": "An error occurred while checking if the username already exists.",
+				},
+				"NewLoginError": {
+					"Title":  "Error creating login",
+					"Detail": "An error occurred while creating the login entity.",
+				},
+				"EncryptEmailError": {
+					"Title":  "Error encrypting email",
+					"Detail": "An error occurred while encrypting the email address.",
+				},
+				"EncryptPasswordError": {
+					"Title":  "Error encrypting password",
+					"Detail": "An error occurred while encrypting the password.",
+				},
+				"NewUserError": {
+					"Title":  "Error creating user",
+					"Detail": "An error occurred while creating the new user.",
+				},
+				"SaveUserError": {
+					"Title":  "Error creating new user",
+					"Detail": "An error occurred while saving the new user to the database.",
+				},
+			},
 			"AddBrandsListUseCase": {
 				"UserNotFound": {
 					"Title":  "User Not Found",
@@ -141,6 +183,48 @@ var (
 				"HMAC": {
 					"Title":  "Erro HMAC",
 					"Detail": "Ocorreu um erro ao fazer o hash do e-mail com HMAC.",
+				},
+			},
+			"CreateUserUseCase": {
+				"EmailHMACError": {
+					"Title":  "Erro ao gerar hash do e-mail",
+					"Detail": "Ocorreu um erro ao aplicar o HMAC no endereço de e-mail.",
+				},
+				"EmailAlreadyExists": {
+					"Title":  "E-mail já cadastrado",
+					"Detail": "O e-mail informado já está registrado em nossa base de dados.",
+				},
+				"EmailCheckError": {
+					"Title":  "Erro ao verificar existência do e-mail",
+					"Detail": "Ocorreu um erro ao verificar se o e-mail já está cadastrado.",
+				},
+				"UsernameAlreadyExists": {
+					"Title":  "Nome de usuário já em uso",
+					"Detail": "O nome de usuário informado já está sendo utilizado por outro usuário.",
+				},
+				"UsernameCheckError": {
+					"Title":  "Erro ao verificar existência do nome de usuário",
+					"Detail": "Ocorreu um erro ao verificar se o nome de usuário já está cadastrado.",
+				},
+				"NewLoginError": {
+					"Title":  "Erro ao criar login",
+					"Detail": "Ocorreu um erro ao criar a entidade de login.",
+				},
+				"EncryptEmailError": {
+					"Title":  "Erro ao criptografar e-mail",
+					"Detail": "Ocorreu um erro ao criptografar o endereço de e-mail.",
+				},
+				"EncryptPasswordError": {
+					"Title":  "Erro ao criptografar senha",
+					"Detail": "Ocorreu um erro ao criptografar a senha do usuário.",
+				},
+				"NewUserError": {
+					"Title":  "Erro ao criar usuário",
+					"Detail": "Ocorreu um erro ao instanciar o novo usuário.",
+				},
+				"SaveUserError": {
+					"Title":  "Erro ao salvar usuário",
+					"Detail": "Ocorreu um erro ao salvar o novo usuário no banco de dados.",
 				},
 			},
 			"AddBrandsListUseCase": {
