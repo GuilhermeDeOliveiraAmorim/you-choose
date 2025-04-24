@@ -41,7 +41,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	output, errs := h.userFactory.CreateUser.Execute(input)
+	output, errs := h.userFactory.CreateUser.Execute(c.Request.Context(), input)
 	if len(errs) > 0 {
 		exceptions.HandleErrors(c, errs)
 		return

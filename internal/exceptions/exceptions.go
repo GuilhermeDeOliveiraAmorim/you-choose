@@ -4,6 +4,7 @@ import "github.com/gin-gonic/gin"
 
 const (
 	RFC200_CODE = 200
+	RFC201_CODE = 201
 	RFC204_CODE = 204
 	RFC400_CODE = 400
 	RFC401_CODE = 401
@@ -16,6 +17,7 @@ const (
 
 const (
 	RFC200 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.1"
+	RFC201 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.2"
 	RFC204 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.5"
 	RFC400 = "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1"
 	RFC401 = "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1"

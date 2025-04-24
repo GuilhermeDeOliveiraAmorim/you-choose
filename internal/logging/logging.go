@@ -4,6 +4,8 @@ import (
 	"context"
 	"log/slog"
 	"os"
+
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 )
 
 type Layer struct {
@@ -39,12 +41,14 @@ var LoggerTypes = TypeLog{
 }
 
 type Logger struct {
-	Context context.Context `json:"context"`
-	Code    int             `json:"code"`
-	Message string          `json:"message"`
-	From    string          `json:"from"`
-	Layer   string          `json:"layer"`
-	TypeLog string          `json:"type_log"`
+	Context  context.Context             `json:"context"`
+	Code     int                         `json:"code"`
+	Message  string                      `json:"message"`
+	From     string                      `json:"from"`
+	Layer    string                      `json:"layer"`
+	TypeLog  string                      `json:"type_log"`
+	Error    error                       `json:"error"`
+	Problems []exceptions.ProblemDetails `json:"problems"`
 }
 
 var logger *slog.Logger
@@ -67,6 +71,8 @@ func NewLogger(log Logger) {
 			"message:", log.Message,
 			"from:", log.From,
 			"layer:", log.Layer,
+			"error:", log.Error,
+			"problems:", log.Problems,
 		)
 	case "INFO":
 		logger.InfoContext(
@@ -76,6 +82,8 @@ func NewLogger(log Logger) {
 			"message:", log.Message,
 			"from:", log.From,
 			"layer:", log.Layer,
+			"error:", log.Error,
+			"problems:", log.Problems,
 		)
 	case "WARNING":
 		logger.WarnContext(
@@ -85,6 +93,8 @@ func NewLogger(log Logger) {
 			"message:", log.Message,
 			"from:", log.From,
 			"layer:", log.Layer,
+			"error:", log.Error,
+			"problems:", log.Problems,
 		)
 	}
 }
