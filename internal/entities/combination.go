@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/oklog/ulid/v2"
 )
 
@@ -12,13 +11,13 @@ type Combination struct {
 	SecondItemID string `json:"second_item_id"`
 }
 
-func NewCombination(listId, firstItem, secondItem string) (*Combination, []exceptions.ProblemDetails) {
+func NewCombination(listId, firstItem, secondItem string) *Combination {
 	return &Combination{
 		ID:           ulid.Make().String(),
 		ListID:       listId,
 		FirstItemID:  firstItem,
 		SecondItemID: secondItem,
-	}, nil
+	}
 }
 
 func (c *Combination) Equals(combination Combination) bool {

@@ -1,9 +1,13 @@
 package usecases
 
 import (
+	"context"
+	"errors"
+
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
@@ -36,24 +40,49 @@ func NewAddBrandsListUseCase(
 	}
 }
 
-func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+func (u *AddBrandsListUseCase) Execute(ctx context.Context, input AddBrandsListInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
 	var problems []exceptions.ProblemDetails
+
+	logging.NewLogger(logging.Logger{
+		Context: ctx,
+		TypeLog: logging.LoggerTypes.INFO,
+		Layer:   logging.LoggerLayers.USECASES,
+		Code:    exceptions.RFC200_CODE,
+		From:    "AddBrandsListUseCase",
+		Message: "starting add brands to list process",
+	})
 
 	list, errGetList := u.ListRepository.GetListByID(input.Brands.ListID)
 	if errGetList != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddBrandsListUseCase", "ListNotFound"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddBrandsListUseCase", "ListNotFound")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error getting list by ID: " + input.Brands.ListID,
+			Error:    errGetList,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	} else if list.ListType != entities.BRAND_TYPE {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddBrandsListUseCase", "InvalidListType"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddBrandsListUseCase", "InvalidListType")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error getting list by ID: " + input.Brands.ListID,
+			Error:    errGetList,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	for _, brandID := range input.Brands.Brands {
@@ -73,23 +102,53 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (presenters.
 	}
 
 	if len(problems) > 0 {
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC400_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error adding brands to list: " + input.Brands.ListID,
+			Error:    errGetList,
+			Problems: problems,
+		})
+
 		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	brands, errGetBrandsByID := u.BrandRepository.GetBrandsByIDs(input.Brands.Brands)
 	if errGetBrandsByID != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddBrandsListUseCase", "ErrorFetchingBrands"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddBrandsListUseCase", "BrandNotFound")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error getting brands by ID: " + input.Brands.ListID,
+			Error:    errGetBrandsByID,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	brandIDs := []string{}
 
 	getOldBrandIDs, errGetBrandIDs := list.GetItemIDs()
 	if len(errGetBrandIDs) > 0 {
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error getting old brand IDs from list: " + input.Brands.ListID,
+			Error:    errors.New("error getting old brand IDs from list"),
+			Problems: errGetBrandIDs,
+		})
+
 		return presenters.SuccessOutputDTO{}, errGetBrandIDs
 	}
 
@@ -104,26 +163,42 @@ func (u *AddBrandsListUseCase) Execute(input AddBrandsListInputDTO) (presenters.
 
 	getNewBrandIDs, errGetBrandIDs := list.GetItemIDs()
 	if len(errGetBrandIDs) > 0 {
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error getting new brand IDs from list: " + input.Brands.ListID,
+			Error:    errors.New("error getting new brand IDs from list"),
+			Problems: errGetBrandIDs,
+		})
+
 		return presenters.SuccessOutputDTO{}, errGetBrandIDs
 	}
 
 	brandIDs = append(brandIDs, getNewBrandIDs...)
 
-	combinations, errGetCombinations := list.GetCombinations(brandIDs)
-	if len(errGetCombinations) > 0 {
-		return presenters.SuccessOutputDTO{}, errGetCombinations
-	}
+	combinations := list.GetCombinations(brandIDs)
 
 	list.AddCombinations(combinations)
 
 	errAddBrands := u.ListRepository.AddBrands(list)
 	if errAddBrands != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			exceptions.NewProblemDetails(
-				exceptions.InternalServerError,
-				language.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands"),
-			),
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("AddBrandsListUseCase", "ErrorAddingBrands")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "AddBrandsListUseCase",
+			Message:  "error adding brands to list: " + input.Brands.ListID,
+			Error:    errAddBrands,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	return presenters.SuccessOutputDTO{

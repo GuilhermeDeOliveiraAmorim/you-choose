@@ -79,21 +79,17 @@ func (l *List) AddCombinations(combinations []Combination) {
 	l.Combinations = uniqueCombinations
 }
 
-func (l *List) GetCombinations(itemIDs []string) ([]Combination, []exceptions.ProblemDetails) {
+func (l *List) GetCombinations(itemIDs []string) []Combination {
 	var combinations []Combination
 
 	for i := range itemIDs {
 		for j := i + 1; j < len(itemIDs); j++ {
-			newCombination, errNewCombination := NewCombination(l.ID, itemIDs[i], itemIDs[j])
-			if errNewCombination != nil {
-				return []Combination{}, errNewCombination
-			}
-
+			newCombination := NewCombination(l.ID, itemIDs[i], itemIDs[j])
 			combinations = append(combinations, *newCombination)
 		}
 	}
 
-	return combinations, nil
+	return combinations
 }
 
 func (l *List) GetItemIDs() ([]string, []exceptions.ProblemDetails) {
