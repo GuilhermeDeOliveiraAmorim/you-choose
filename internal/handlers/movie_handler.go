@@ -66,7 +66,7 @@ func (h *MovieHandler) CreateMovie(c *gin.Context) {
 		Movie:  movie,
 	}
 
-	output, errs := h.movieFactory.CreateMovie.Execute(input)
+	output, errs := h.movieFactory.CreateMovie.Execute(ctx, input)
 	if len(errs) > 0 {
 		exceptions.HandleErrors(c, errs)
 		return

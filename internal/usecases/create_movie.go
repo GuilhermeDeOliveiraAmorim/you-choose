@@ -1,12 +1,16 @@
 package usecases
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
+	"golang.org/x/net/context"
 )
 
 type Movie struct {
@@ -39,30 +43,42 @@ func NewCreateMovieUseCase(
 	}
 }
 
-func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+func (u *CreateMovieUseCase) Execute(ctx context.Context, input CreateMovieInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+	problems := []exceptions.ProblemDetails{}
+
 	movieExists, errThisMovieExist := u.MovieRepository.ThisMovieExist(input.Movie.ExternalID)
 	if errThisMovieExist != nil && strings.Compare(errThisMovieExist.Error(), "movie not found") > 0 {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching existing movie",
-				Status:   500,
-				Detail:   "An error occurred while checking if the movie already exists.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateMovieUseCase", "ErrorFetchingExistingMovie")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateMovieUseCase",
+			Message:  "error checking if movie exists",
+			Error:    errThisMovieExist,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	if movieExists {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Conflict",
-				Title:    "Movie already exists",
-				Status:   409,
-				Detail:   "A movie with the same external ID already exists. Please check the external ID and try again.",
-				Instance: exceptions.RFC409,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.Conflict, language.GetErrorMessage("CreateMovieUseCase", "MovieAlreadyExists")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC409_CODE,
+			From:     "CreateMovieUseCase",
+			Message:  "error checking if movie exists",
+			Error:    errThisMovieExist,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	movie, problems := entities.NewMovie(
@@ -72,35 +88,56 @@ func (u *CreateMovieUseCase) Execute(input CreateMovieInputDTO) (presenters.Succ
 	)
 
 	if len(problems) > 0 {
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC400_CODE,
+			From:     "CreateMovieUseCase",
+			Message:  "error creating movie",
+			Error:    errors.New("error creating movie"),
+			Problems: problems,
+		})
+
 		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	poster, errSaveImage := u.ImageRepository.SaveImage(input.Movie.Poster)
 	if errSaveImage != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error saving poster",
-				Status:   500,
-				Detail:   "An error occurred while saving the movie poster.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateMovieUseCase", "ErrorSavingPoster")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateMovieUseCase",
+			Message:  "error saving movie poster",
+			Error:    errSaveImage,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	movie.AddPoster(poster)
 
 	errCreateMovie := u.MovieRepository.CreateMovie(*movie)
 	if errCreateMovie != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error creating movie",
-				Status:   500,
-				Detail:   "An error occurred while creating the movie in the database.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateMovieUseCase", "ErrorCreatingMovie")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateMovieUseCase",
+			Message:  "error creating movie",
+			Error:    errCreateMovie,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	return presenters.SuccessOutputDTO{

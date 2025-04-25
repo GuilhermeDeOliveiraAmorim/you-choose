@@ -21,6 +21,24 @@ var (
 					"Detail": "A valid user ID must be provided.",
 				},
 			},
+			"CreateMovieUseCase": {
+				"MovieAlreadyExists": {
+					"Title":  "Movie already exists",
+					"Detail": "A movie with the same external ID already exists. Please check the external ID and try again.",
+				},
+				"ErrorFetchingExistingMovie": {
+					"Title":  "Error fetching existing movie",
+					"Detail": "An error occurred while checking if the movie already exists.",
+				},
+				"ErrorSavingPoster": {
+					"Title":  "Error saving poster",
+					"Detail": "An error occurred while saving the movie poster. Please try again later.",
+				},
+				"ErrorCreatingMovie": {
+					"Title":  "Error creating movie",
+					"Detail": "An error occurred while creating the movie in the database.",
+				},
+			},
 			"LoginUseCase": {
 				"UserNotFound": {
 					"Title":  "User Not Found",
@@ -211,6 +229,24 @@ var (
 				"InvalidUserID": {
 					"Title":  "ID do Usuário inválido",
 					"Detail": "É necessário fornecer um ID de usuário válido.",
+				},
+			},
+			"CreateMovieUseCase": {
+				"MovieAlreadyExists": {
+					"Title":  "Filme já existe",
+					"Detail": "Já existe um filme com o mesmo ID externo. Verifique o ID externo e tente novamente.",
+				},
+				"ErrorFetchingExistingMovie": {
+					"Title":  "Erro ao buscar filme existente",
+					"Detail": "Ocorreu um erro ao verificar se o filme já existe.",
+				},
+				"ErrorSavingPoster": {
+					"Title":  "Erro ao salvar o pôster",
+					"Detail": "Ocorreu um erro ao salvar o pôster do filme. Tente novamente mais tarde.",
+				},
+				"ErrorCreatingMovie": {
+					"Title":  "Erro ao criar filme",
+					"Detail": "Ocorreu um erro ao salvar o filme no banco de dados.",
 				},
 			},
 			"LoginUseCase": {
