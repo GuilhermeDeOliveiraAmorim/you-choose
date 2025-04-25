@@ -107,9 +107,9 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 
 		logging.NewLogger(logging.Logger{
 			Context:  ctx,
-			TypeLog:  logging.LoggerTypes.INFO,
+			TypeLog:  logging.LoggerTypes.ERROR,
 			Layer:    logging.LoggerLayers.USECASES,
-			Code:     exceptions.RFC400_CODE,
+			Code:     exceptions.RFC401_CODE,
 			From:     "LoginUseCase",
 			Message:  "invalid credentials: " + input.Email,
 			Error:    getUserByEmailErr,
