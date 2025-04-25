@@ -2,6 +2,7 @@ package entities
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
@@ -35,21 +36,35 @@ func (l *List) AddItems(items []interface{}) {
 		return
 	}
 
-	uniqueItems := []interface{}{}
 	for _, newItem := range items {
+		newID := extractID(newItem)
+		if newID == "" {
+			continue
+		}
+
 		exists := false
 		for _, existingItem := range l.Items {
-			if existingItem == newItem {
+			if extractID(existingItem) == newID {
 				exists = true
 				break
 			}
 		}
+
 		if !exists {
-			uniqueItems = append(uniqueItems, newItem)
+			l.Items = append(l.Items, newItem)
 		}
 	}
+}
 
-	l.Items = uniqueItems
+func extractID(item interface{}) string {
+	switch v := item.(type) {
+	case Movie:
+		return v.ID
+	case Brand:
+		return v.ID
+	default:
+		return ""
+	}
 }
 
 func (l *List) ClearItems() {
@@ -63,20 +78,23 @@ func (l *List) AddCombinations(combinations []Combination) {
 	}
 
 	uniqueCombinations := []Combination{}
+
 	for _, newCombination := range combinations {
 		exists := false
 		for _, existingCombination := range l.Combinations {
 			if existingCombination.Equals(newCombination) {
+				fmt.Println("Combination already exists:", existingCombination)
 				exists = true
 				break
 			}
 		}
+
 		if !exists {
 			uniqueCombinations = append(uniqueCombinations, newCombination)
 		}
 	}
 
-	l.Combinations = uniqueCombinations
+	l.Combinations = append(l.Combinations, uniqueCombinations...)
 }
 
 func (l *List) GetCombinations(itemIDs []string) []Combination {

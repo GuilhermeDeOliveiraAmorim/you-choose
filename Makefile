@@ -20,4 +20,4 @@ swag:
 	swag init -g ./main.go -o ./api
 
 test:
-	go test -race -covermode=atomic -coverprofile=coverage.out $$(go list ./... | grep domain)
+	go test -race -covermode=atomic -coverprofile=coverage.out ./...
