@@ -29,6 +29,28 @@ var (
 					"Detail": "An error occurred while hashing the email with HMAC.",
 				},
 			},
+			"CreateBrandUseCase": {
+				"BrandAlreadyExists": {
+					"Title":  "Conflict",
+					"Detail": "A brand with the same name already exists in the system.",
+				},
+				"ErrorFetchingBrand": {
+					"Title":  "Error fetching existing brand",
+					"Detail": "An unexpected error occurred while verifying existing brand data.",
+				},
+				"InvalidBrandData": {
+					"Title":  "Invalid Brand Data",
+					"Detail": "The provided brand data is invalid. Please review the input fields.",
+				},
+				"ErrorSavingLogo": {
+					"Title":  "Error saving logo",
+					"Detail": "We encountered an issue while saving the brand's logo. Please try again later.",
+				},
+				"ErrorCreatingBrand": {
+					"Title":  "Error creating brand",
+					"Detail": "Something went wrong while creating the brand. Please contact support if the issue persists.",
+				},
+			},
 			"CreateUserUseCase": {
 				"EmailHMACError": {
 					"Title":  "Error hashing email",
@@ -183,6 +205,28 @@ var (
 				"HMAC": {
 					"Title":  "Erro HMAC",
 					"Detail": "Ocorreu um erro ao fazer o hash do e-mail com HMAC.",
+				},
+			},
+			"CreateBrandUseCase": {
+				"BrandAlreadyExists": {
+					"Title":  "Conflito",
+					"Detail": "Já existe uma marca com o mesmo nome no sistema.",
+				},
+				"ErrorFetchingBrand": {
+					"Title":  "Erro ao verificar marca existente",
+					"Detail": "Ocorreu um erro inesperado ao verificar os dados da marca.",
+				},
+				"InvalidBrandData": {
+					"Title":  "Dados inválidos da marca",
+					"Detail": "Os dados fornecidos para a marca são inválidos. Verifique os campos e tente novamente.",
+				},
+				"ErrorSavingLogo": {
+					"Title":  "Erro ao salvar logotipo",
+					"Detail": "Ocorreu um problema ao salvar o logotipo da marca. Tente novamente mais tarde.",
+				},
+				"ErrorCreatingBrand": {
+					"Title":  "Erro ao criar marca",
+					"Detail": "Algo deu errado ao tentar criar a marca. Caso o problema persista, entre em contato com o suporte.",
 				},
 			},
 			"CreateUserUseCase": {

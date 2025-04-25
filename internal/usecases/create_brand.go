@@ -1,10 +1,13 @@
 package usecases
 
 import (
+	"context"
 	"strings"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/entities"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/presenters"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/repositories"
 )
@@ -37,30 +40,42 @@ func NewCreateBrandUseCase(
 	}
 }
 
-func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+func (u *CreateBrandUseCase) Execute(ctx context.Context, input CreateBrandInputDTO) (presenters.SuccessOutputDTO, []exceptions.ProblemDetails) {
+	problems := []exceptions.ProblemDetails{}
+
 	brandExists, errThisBrandExist := u.BrandRepository.ThisBrandExist(input.Brand.Name)
 	if errThisBrandExist != nil && strings.Compare(errThisBrandExist.Error(), "brand not found") > 0 {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error fetching existing brand",
-				Status:   500,
-				Detail:   "An unexpected error occurred while verifying existing brand data.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateBrandUseCase", "ErrorFetchingBrand")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateBrandUseCase",
+			Message:  "error checking if brand exists",
+			Error:    errThisBrandExist,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	if brandExists {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Validation Error",
-				Title:    "Conflict",
-				Status:   409,
-				Detail:   "A brand with the same name already exists in the system.",
-				Instance: exceptions.RFC409,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.Conflict, language.GetErrorMessage("CreateBrandUseCase", "BrandAlreadyExists")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC409_CODE,
+			From:     "CreateBrandUseCase",
+			Message:  "brand already exists",
+			Error:    errThisBrandExist,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	brand, problems := entities.NewBrand(
@@ -69,35 +84,55 @@ func (u *CreateBrandUseCase) Execute(input CreateBrandInputDTO) (presenters.Succ
 	)
 
 	if len(problems) > 0 {
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC400_CODE,
+			From:     "CreateBrandUseCase",
+			Message:  "error creating brand",
+			Problems: problems,
+		})
+
 		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	logo, errSaveImage := u.ImageRepository.SaveImage(input.Brand.Logo)
 	if errSaveImage != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error saving logo",
-				Status:   500,
-				Detail:   "We encountered an issue while saving the brand's logo. Please try again later.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateBrandUseCase", "ErrorSavingLogo")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateBrandUseCase",
+			Message:  "error saving logo",
+			Error:    errSaveImage,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	brand.AddLogo(logo)
 
 	errCreateBrand := u.BrandRepository.CreateBrand(*brand)
 	if errCreateBrand != nil {
-		return presenters.SuccessOutputDTO{}, []exceptions.ProblemDetails{
-			{
-				Type:     "Internal Server Error",
-				Title:    "Error creating brand",
-				Status:   500,
-				Detail:   "Something went wrong while creating the brand. Please contact support if the issue persists.",
-				Instance: exceptions.RFC500,
-			},
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateBrandUseCase", "ErrorCreatingBrand")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.USECASES,
+			Code:     exceptions.RFC500_CODE,
+			From:     "CreateBrandUseCase",
+			Message:  "error creating brand",
+			Error:    errCreateBrand,
+			Problems: problems,
+		})
+
+		return presenters.SuccessOutputDTO{}, problems
 	}
 
 	return presenters.SuccessOutputDTO{
