@@ -150,5 +150,5 @@ func (lo *Login) ChangePassword(newPassword string) {
 }
 
 func (lo *Login) Equals(other *Login) bool {
-	return lo.VerifyEmail(other.Email) && lo.VerifyPassword(other.Password)
+	return lo.Email == other.Email
 }

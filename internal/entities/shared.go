@@ -28,6 +28,7 @@ func NewSharedEntity() *SharedEntity {
 
 func (se *SharedEntity) Activate() {
 	timeNow := time.Now()
+	se.DeactivatedAt = nil
 	se.UpdatedAt = &timeNow
 	se.Active = true
 }
