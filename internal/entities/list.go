@@ -2,7 +2,6 @@ package entities
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
@@ -72,29 +71,18 @@ func (l *List) ClearItems() {
 }
 
 func (l *List) AddCombinations(combinations []Combination) {
-	if len(l.Combinations) == 0 {
-		l.Combinations = combinations
-		return
-	}
-
-	uniqueCombinations := []Combination{}
-
-	for _, newCombination := range combinations {
-		exists := false
-		for _, existingCombination := range l.Combinations {
-			if existingCombination.Equals(newCombination) {
-				fmt.Println("Combination already exists:", existingCombination)
-				exists = true
+	for _, newComb := range combinations {
+		duplicate := false
+		for _, existingComb := range l.Combinations {
+			if existingComb.Equals(newComb) {
+				duplicate = true
 				break
 			}
 		}
-
-		if !exists {
-			uniqueCombinations = append(uniqueCombinations, newCombination)
+		if !duplicate {
+			l.Combinations = append(l.Combinations, newComb)
 		}
 	}
-
-	l.Combinations = append(l.Combinations, uniqueCombinations...)
 }
 
 func (l *List) GetCombinations(itemIDs []string) []Combination {
