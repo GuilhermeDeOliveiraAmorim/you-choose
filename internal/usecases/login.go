@@ -102,7 +102,7 @@ func (c *LoginUseCase) Execute(ctx context.Context, input LoginInputDto) (LoginO
 		return LoginOutputDto{}, problems
 	}
 
-	if !user.Login.DecryptPassword(input.Password) {
+	if !user.Login.VerifyPassword(input.Password) {
 		problems = append(problems, exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("LoginUseCase", "InvalidCredentials")))
 
 		logging.NewLogger(logging.Logger{

@@ -124,7 +124,7 @@ func (lo *Login) EncryptPassword() error {
 	return nil
 }
 
-func (lo *Login) DecryptEmail(email string) bool {
+func (lo *Login) VerifyEmail(email string) bool {
 	if lo.CompareAndDecrypt(lo.Email, email) {
 		return true
 	} else {
@@ -132,7 +132,7 @@ func (lo *Login) DecryptEmail(email string) bool {
 	}
 }
 
-func (lo *Login) DecryptPassword(password string) bool {
+func (lo *Login) VerifyPassword(password string) bool {
 	if lo.CompareAndDecrypt(lo.Password, password) {
 		return true
 	} else {
