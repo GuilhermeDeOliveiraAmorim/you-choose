@@ -99,7 +99,7 @@ func hashString(data string) (string, error) {
 	return string(hash), nil
 }
 
-func (lo *Login) CompareAndDecrypt(hashedData string, data string) bool {
+func (lo *Login) CompareBcryptHash(hashedData string, data string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedData), []byte(data))
 	return err == nil
 }
@@ -113,7 +113,7 @@ func (lo *Login) HashEmail() error {
 	return nil
 }
 
-func (lo *Login) EncryptPassword() error {
+func (lo *Login) HashPassword() error {
 	hashedPassword, err := hashString(lo.Password)
 	if err != nil {
 		return err
@@ -125,7 +125,7 @@ func (lo *Login) EncryptPassword() error {
 }
 
 func (lo *Login) VerifyEmail(email string) bool {
-	if lo.CompareAndDecrypt(lo.Email, email) {
+	if lo.CompareBcryptHash(lo.Email, email) {
 		return true
 	} else {
 		return false
@@ -133,7 +133,7 @@ func (lo *Login) VerifyEmail(email string) bool {
 }
 
 func (lo *Login) VerifyPassword(password string) bool {
-	if lo.CompareAndDecrypt(lo.Password, password) {
+	if lo.CompareBcryptHash(lo.Password, password) {
 		return true
 	} else {
 		return false

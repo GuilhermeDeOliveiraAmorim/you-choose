@@ -112,7 +112,7 @@ var (
 					"Title":  "Error encrypting email",
 					"Detail": "An error occurred while encrypting the email address.",
 				},
-				"EncryptPasswordError": {
+				"HashPasswordError": {
 					"Title":  "Error encrypting password",
 					"Detail": "An error occurred while encrypting the password.",
 				},
@@ -322,7 +322,7 @@ var (
 					"Title":  "Erro ao criptografar e-mail",
 					"Detail": "Ocorreu um erro ao criptografar o endereço de e-mail.",
 				},
-				"EncryptPasswordError": {
+				"HashPasswordError": {
 					"Title":  "Erro ao criptografar senha",
 					"Detail": "Ocorreu um erro ao criptografar a senha do usuário.",
 				},

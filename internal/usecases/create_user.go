@@ -161,9 +161,9 @@ func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDt
 		return presenters.SuccessOutputDTO{}, problems
 	}
 
-	encryptPasswordErr := newLogin.EncryptPassword()
+	encryptPasswordErr := newLogin.HashPassword()
 	if encryptPasswordErr != nil {
-		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "EncryptPasswordError")))
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "HashPasswordError")))
 
 		logging.NewLogger(logging.Logger{
 			Context:  ctx,
