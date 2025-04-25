@@ -91,7 +91,7 @@ func hasSpecialCharacter(password string) bool {
 	return strings.ContainsAny(password, specialCharacters)
 }
 
-func hashString(data string) (string, error) {
+func hashWithBcrypt(data string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(data), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
@@ -114,7 +114,7 @@ func (lo *Login) HashEmail() error {
 }
 
 func (lo *Login) HashPassword() error {
-	hashedPassword, err := hashString(lo.Password)
+	hashedPassword, err := hashWithBcrypt(lo.Password)
 	if err != nil {
 		return err
 	}
@@ -125,11 +125,11 @@ func (lo *Login) HashPassword() error {
 }
 
 func (lo *Login) VerifyEmail(email string) bool {
-	if lo.CompareBcryptHash(lo.Email, email) {
-		return true
-	} else {
-		return false
-	}
+	key := []byte(config.SECRETS_VAR.JWT_SECRET)
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(email))
+	hashedEmail := hex.EncodeToString(h.Sum(nil))
+	return lo.Email == hashedEmail
 }
 
 func (lo *Login) VerifyPassword(password string) bool {
