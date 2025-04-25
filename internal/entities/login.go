@@ -12,6 +12,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	SpecialCharacters = "@#$%&*"
+	UpperCaseLetters  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	LowerCaseLetters  = "abcdefghijklmnopqrstuvwxyz"
+	Digits            = "0123456789"
+)
+
 type Login struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -75,20 +82,19 @@ func hasMinimumLength(password string, length int) bool {
 }
 
 func hasUpperCaseLetter(password string) bool {
-	return strings.ContainsAny(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	return strings.ContainsAny(password, UpperCaseLetters)
 }
 
 func hasLowerCaseLetter(password string) bool {
-	return strings.ContainsAny(password, "abcdefghijklmnopqrstuvwxyz")
+	return strings.ContainsAny(password, LowerCaseLetters)
 }
 
 func hasDigit(password string) bool {
-	return strings.ContainsAny(password, "0123456789")
+	return strings.ContainsAny(password, Digits)
 }
 
 func hasSpecialCharacter(password string) bool {
-	specialCharacters := "@#$%&*"
-	return strings.ContainsAny(password, specialCharacters)
+	return strings.ContainsAny(password, SpecialCharacters)
 }
 
 func hashWithBcrypt(data string) (string, error) {
@@ -99,17 +105,20 @@ func hashWithBcrypt(data string) (string, error) {
 	return string(hash), nil
 }
 
-func (lo *Login) CompareBcryptHash(hashedData string, data string) bool {
+func hashEmail(email string) string {
+	key := []byte(config.SECRETS_VAR.JWT_SECRET)
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(email))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+func compareBcryptHash(hashedData, data string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedData), []byte(data))
 	return err == nil
 }
 
 func (lo *Login) HashEmail() error {
-	key := []byte(config.SECRETS_VAR.JWT_SECRET)
-	h := hmac.New(sha256.New, key)
-	h.Write([]byte(lo.Email))
-	lo.Email = hex.EncodeToString(h.Sum(nil))
-
+	lo.Email = hashEmail(lo.Email)
 	return nil
 }
 
@@ -125,19 +134,11 @@ func (lo *Login) HashPassword() error {
 }
 
 func (lo *Login) VerifyEmail(email string) bool {
-	key := []byte(config.SECRETS_VAR.JWT_SECRET)
-	h := hmac.New(sha256.New, key)
-	h.Write([]byte(email))
-	hashedEmail := hex.EncodeToString(h.Sum(nil))
-	return lo.Email == hashedEmail
+	return lo.Email == hashEmail(email)
 }
 
 func (lo *Login) VerifyPassword(password string) bool {
-	if lo.CompareBcryptHash(lo.Password, password) {
-		return true
-	} else {
-		return false
-	}
+	return compareBcryptHash(lo.Password, password)
 }
 
 func (lo *Login) ChangeEmail(newEmail string) {
@@ -149,5 +150,5 @@ func (lo *Login) ChangePassword(newPassword string) {
 }
 
 func (lo *Login) Equals(other *Login) bool {
-	return lo.Email == other.Email && lo.Password == other.Password
+	return lo.VerifyEmail(other.Email) && lo.VerifyPassword(other.Password)
 }
