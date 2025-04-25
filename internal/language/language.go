@@ -108,7 +108,7 @@ var (
 					"Title":  "Error creating login",
 					"Detail": "An error occurred while creating the login entity.",
 				},
-				"EncryptEmailError": {
+				"HashEmailError": {
 					"Title":  "Error encrypting email",
 					"Detail": "An error occurred while encrypting the email address.",
 				},
@@ -318,7 +318,7 @@ var (
 					"Title":  "Erro ao criar login",
 					"Detail": "Ocorreu um erro ao criar a entidade de login.",
 				},
-				"EncryptEmailError": {
+				"HashEmailError": {
 					"Title":  "Erro ao criptografar e-mail",
 					"Detail": "Ocorreu um erro ao criptografar o endereço de e-mail.",
 				},

@@ -143,9 +143,9 @@ func (c *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInputDt
 		return presenters.SuccessOutputDTO{}, newLoginErr
 	}
 
-	encryptEmailErr := newLogin.EncryptEmail()
+	encryptEmailErr := newLogin.HashEmail()
 	if encryptEmailErr != nil {
-		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "EncryptEmailError")))
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CreateUserUseCase", "HashEmailError")))
 
 		logging.NewLogger(logging.Logger{
 			Context:  ctx,
