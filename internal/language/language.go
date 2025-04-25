@@ -7,6 +7,20 @@ var (
 
 	errorMessages = map[string]map[string]map[string]map[string]string{
 		"en-US": {
+			"CommonErrors": {
+				"JsonBindingError": {
+					"Title":  "Failed to process request",
+					"Detail": "Could not parse the request body. Please check the JSON format sent.",
+				},
+				"MissingUserID": {
+					"Title":  "Missing User ID",
+					"Detail": "User ID is required to access this resource.",
+				},
+				"InvalidUserID": {
+					"Title":  "Invalid User ID",
+					"Detail": "A valid user ID must be provided.",
+				},
+			},
 			"LoginUseCase": {
 				"UserNotFound": {
 					"Title":  "User Not Found",
@@ -185,6 +199,20 @@ var (
 			},
 		},
 		"pt-BR": {
+			"CommonErrors": {
+				"JsonBindingError": {
+					"Title":  "Erro ao processar requisição",
+					"Detail": "Não foi possível interpretar o corpo da requisição. Verifique o formato do JSON enviado.",
+				},
+				"MissingUserID": {
+					"Title":  "ID do Usuário ausente",
+					"Detail": "O ID do usuário é obrigatório para acessar este recurso.",
+				},
+				"InvalidUserID": {
+					"Title":  "ID do Usuário inválido",
+					"Detail": "É necessário fornecer um ID de usuário válido.",
+				},
+			},
 			"LoginUseCase": {
 				"UserNotFound": {
 					"Title":  "Usuário Não Encontrado",

@@ -1,11 +1,14 @@
 package handlers
 
 import (
-	"net/http"
+	"context"
+	"errors"
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/database"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,28 +36,44 @@ func NewHandlerFactory(inputFactory database.StorageInput) *HandlerFactory {
 	}
 }
 
-func GetAuthenticatedUserID(c *gin.Context) (string, *exceptions.ProblemDetails) {
+func GetAuthenticatedUserID(ctx context.Context, c *gin.Context) (string, []exceptions.ProblemDetails) {
+	problems := []exceptions.ProblemDetails{}
+
 	userID, exists := c.Get("userID")
 	if !exists {
-		return "", &exceptions.ProblemDetails{
-			Type:     "Unauthorized",
-			Title:    "Missing User ID",
-			Status:   http.StatusUnauthorized,
-			Detail:   "User id is required",
-			Instance: exceptions.RFC401,
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.Unauthorized, language.GetErrorMessage("CommonErrors", "MissingUserID")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.INTERFACE_HANDLERS,
+			Code:     exceptions.RFC500_CODE,
+			From:     "GetAuthenticatedUserID",
+			Message:  "Failed to get user ID from context",
+			Error:    errors.New("user ID not found"),
+			Problems: problems,
+		})
+
+		return "", problems
 	}
 
 	userIDStr, ok := userID.(string)
 	if !ok || userIDStr == "" {
-		return "", &exceptions.ProblemDetails{
-			Type:     "Bad Request",
-			Title:    "Invalid User ID",
-			Status:   http.StatusBadRequest,
-			Detail:   "A valid user id is required",
-			Instance: exceptions.RFC400,
-		}
+		problems = append(problems, exceptions.NewProblemDetails(exceptions.BadRequest, language.GetErrorMessage("CommonErrors", "InvalidUserID")))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.INTERFACE_HANDLERS,
+			Code:     exceptions.RFC500_CODE,
+			From:     "GetAuthenticatedUserID",
+			Message:  "Failed to convert user ID to string",
+			Error:    errors.New("user ID conversion error"),
+			Problems: problems,
+		})
+
+		return "", problems
 	}
 
-	return userIDStr, nil
+	return userIDStr, []exceptions.ProblemDetails{}
 }

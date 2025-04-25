@@ -5,6 +5,8 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 	"github.com/gin-gonic/gin"
 )
@@ -32,21 +34,30 @@ func NewVoteHandler(factory *factories.VoteFactory) *VoteHandler {
 // @Security BearerAuth
 // @Router /votes [post]
 func (h *VoteHandler) Vote(c *gin.Context) {
-	userID, err := GetAuthenticatedUserID(c)
-	if err != nil {
-		c.AbortWithStatusJSON(err.Status, gin.H{"error": err})
+	ctx := c.Request.Context()
+
+	userID, problem := GetAuthenticatedUserID(ctx, c)
+	if len(problem) > 0 {
+		c.AbortWithStatusJSON(problem[0].Status, gin.H{"error": problem})
 		return
 	}
 
 	var vote usecases.Vote
 	if err := c.ShouldBindJSON(&vote); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
-			Type:     "Bad Request",
-			Title:    "Did not bind JSON",
-			Status:   http.StatusBadRequest,
-			Detail:   err.Error(),
-			Instance: exceptions.RFC400,
-		}})
+		problem := exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CommonErrors", "JsonBindingError"))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.INTERFACE_HANDLERS,
+			Code:     exceptions.RFC500_CODE,
+			From:     "VoteHandlerVote",
+			Message:  "Failed to bind JSON",
+			Error:    err,
+			Problems: []exceptions.ProblemDetails{problem},
+		})
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": problem})
 		return
 	}
 

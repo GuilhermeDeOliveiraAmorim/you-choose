@@ -5,6 +5,8 @@ import (
 
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/exceptions"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/factories"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/language"
+	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/logging"
 	"github.com/GuilhermeDeOliveiraAmorim/you-choose/internal/usecases"
 	"github.com/gin-gonic/gin"
 )
@@ -30,20 +32,29 @@ func NewUserHandler(factory *factories.UserFactory) *UserHandler {
 // @Router /signup [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input usecases.CreateUserInputDto
+	ctx := c.Request.Context()
+
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
-			Type:     "Bad Request",
-			Title:    "Did not bind JSON",
-			Status:   http.StatusBadRequest,
-			Detail:   err.Error(),
-			Instance: exceptions.RFC400,
-		}})
+		problem := exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CommonErrors", "JsonBindingError"))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.INTERFACE_HANDLERS,
+			Code:     exceptions.RFC500_CODE,
+			From:     "UserHandlerCreateUser",
+			Message:  "Failed to bind JSON",
+			Error:    err,
+			Problems: []exceptions.ProblemDetails{problem},
+		})
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": problem})
 		return
 	}
 
-	output, errs := h.userFactory.CreateUser.Execute(c.Request.Context(), input)
-	if len(errs) > 0 {
-		exceptions.HandleErrors(c, errs)
+	output, problems := h.userFactory.CreateUser.Execute(ctx, input)
+	if len(problems) > 0 {
+		exceptions.HandleErrors(c, problems)
 		return
 	}
 
@@ -60,21 +71,30 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Router /login [post]
 func (h *UserHandler) Login(c *gin.Context) {
+	ctx := c.Request.Context()
+
 	var input usecases.LoginInputDto
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": exceptions.ProblemDetails{
-			Type:     "Bad Request",
-			Title:    "Did not bind JSON",
-			Status:   http.StatusBadRequest,
-			Detail:   err.Error(),
-			Instance: exceptions.RFC400,
-		}})
+		problem := exceptions.NewProblemDetails(exceptions.InternalServerError, language.GetErrorMessage("CommonErrors", "JsonBindingError"))
+
+		logging.NewLogger(logging.Logger{
+			Context:  ctx,
+			TypeLog:  logging.LoggerTypes.ERROR,
+			Layer:    logging.LoggerLayers.INTERFACE_HANDLERS,
+			Code:     exceptions.RFC500_CODE,
+			From:     "UserHandlerLogin",
+			Message:  "Failed to bind JSON",
+			Error:    err,
+			Problems: []exceptions.ProblemDetails{problem},
+		})
+
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": problem})
 		return
 	}
 
-	output, errs := h.userFactory.Login.Execute(c.Request.Context(), input)
-	if len(errs) > 0 {
-		exceptions.HandleErrors(c, errs)
+	output, problems := h.userFactory.Login.Execute(ctx, input)
+	if len(problems) > 0 {
+		exceptions.HandleErrors(c, problems)
 		return
 	}
 
