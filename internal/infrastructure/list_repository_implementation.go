@@ -187,7 +187,7 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 				Message: resultListModel.Error.Error(),
 				From:    "GetListByID 0",
 				Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
-				TypeLog: logging.LoggerTypes.INFO,
+				TypeLog: logging.LoggerTypes.WARNING,
 			})
 
 			return entities.List{}, errors.New("list not found")
