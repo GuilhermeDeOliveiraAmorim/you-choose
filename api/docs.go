@@ -47,8 +47,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.ShowsRankingItemsOutputDTO"
                         }
@@ -211,8 +211,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.GetListByIDOutputDTO"
                         }
@@ -307,8 +307,8 @@ const docTemplate = `{
                 ],
                 "summary": "Get Lists",
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.GetListsOutputDTO"
                         }
@@ -476,8 +476,8 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.GetListByUserIDOutputDTO"
                         }

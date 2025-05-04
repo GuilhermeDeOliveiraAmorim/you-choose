@@ -135,7 +135,7 @@ func (h *ListHandler) AddMoviesList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param list_id query string true "List id"
-// @Success 201 {object} usecases.GetListByUserIDOutputDTO
+// @Success 200 {object} usecases.GetListByUserIDOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
@@ -163,7 +163,7 @@ func (h *ListHandler) GetListByUserID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, output)
+	c.JSON(http.StatusOK, output)
 }
 
 // @Summary Get List
@@ -172,7 +172,7 @@ func (h *ListHandler) GetListByUserID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param list_id query string true "List id"
-// @Success 201 {object} usecases.GetListByIDOutputDTO
+// @Success 200 {object} usecases.GetListByIDOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
@@ -190,7 +190,7 @@ func (h *ListHandler) GetListByID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, output)
+	c.JSON(http.StatusOK, output)
 }
 
 // @Summary Get Lists
@@ -198,7 +198,7 @@ func (h *ListHandler) GetListByID(c *gin.Context) {
 // @Tags Lists
 // @Accept json
 // @Produce json
-// @Success 201 {object} usecases.GetListsOutputDTO
+// @Success 200 {object} usecases.GetListsOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
@@ -212,7 +212,7 @@ func (h *ListHandler) GetLists(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, output)
+	c.JSON(http.StatusOK, output)
 }
 
 // @Summary Add brands to list
@@ -275,7 +275,7 @@ func (h *ListHandler) AddBrandsList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param list_type query string true "List Type (MOVIE or BRAND)"
-// @Success 201 {object} usecases.ShowsRankingItemsOutputDTO
+// @Success 200 {object} usecases.ShowsRankingItemsOutputDTO
 // @Failure 400 {object} exceptions.ProblemDetails "Bad Request"
 // @Failure 500 {object} exceptions.ProblemDetails "Internal Server Error"
 // @Failure 401 {object} exceptions.ProblemDetails "Unauthorized"
@@ -293,5 +293,5 @@ func (h *ListHandler) ShowsRankingItems(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, output)
+	c.JSON(http.StatusOK, output)
 }

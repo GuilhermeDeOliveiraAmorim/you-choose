@@ -44,8 +44,8 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.ShowsRankingItemsOutputDTO"
                         }
@@ -208,8 +208,8 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.GetListByIDOutputDTO"
                         }
@@ -304,8 +304,8 @@
                 ],
                 "summary": "Get Lists",
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.GetListsOutputDTO"
                         }
@@ -473,8 +473,8 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/usecases.GetListByUserIDOutputDTO"
                         }
