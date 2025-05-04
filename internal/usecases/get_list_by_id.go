@@ -34,6 +34,18 @@ func NewGetListByIDUseCase(
 func (u *GetListByIDUseCase) Execute(input GetListByIDInputDTO) (GetListByIDOutputDTO, []exceptions.ProblemDetails) {
 	list, errGetList := u.ListRepository.GetListByID(input.ListID)
 	if errGetList != nil {
+		if errGetList.Error() == "list not found" {
+			return GetListByIDOutputDTO{}, []exceptions.ProblemDetails{
+				{
+					Type:     "Not Found",
+					Title:    "List not found",
+					Status:   404,
+					Detail:   "The requested list was not found.",
+					Instance: exceptions.RFC404,
+				},
+			}
+		}
+
 		return GetListByIDOutputDTO{}, []exceptions.ProblemDetails{
 			{
 				Type:     "Internal Server Error",

@@ -182,6 +182,14 @@ func (c *ListRepository) GetListByID(listID string) (entities.List, error) {
 	resultListModel := c.gorm.Model(&models.Lists{}).Where("id = ? AND active = ?", listID, true).First(&listModel)
 	if resultListModel.Error != nil {
 		if errors.Is(resultListModel.Error, gorm.ErrRecordNotFound) {
+			logging.NewLogger(logging.Logger{
+				Code:    exceptions.RFC200_CODE,
+				Message: resultListModel.Error.Error(),
+				From:    "GetListByID 0",
+				Layer:   logging.LoggerLayers.INFRASTRUCTURE_REPOSITORIES_IMPLEMENTATION,
+				TypeLog: logging.LoggerTypes.INFO,
+			})
+
 			return entities.List{}, errors.New("list not found")
 		}
 		logging.NewLogger(logging.Logger{
